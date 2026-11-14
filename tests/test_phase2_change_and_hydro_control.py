@@ -14,9 +14,12 @@ from src.core.change_detector import (
 )
 from src.core.crs_manager import align_raster_to_reference, ensure_metric_crs
 from src.core.optical_providers import (
+    _item_bbox_coverage_fraction,
+    _item_covers_bbox,
     decode_scl_masks,
     filter_seasonally_comparable_items,
     load_native_s2_scene_bundle,
+    query_stac_seasonal_pair_candidates,
 )
 from src.core.parana_pilot_recon import (
     PARANA_MID_PILOT_BBOX_WGS84,
@@ -273,3 +276,68 @@ def test_parana_pilot_readiness_and_phase2_mcp_tools(
 
     pilot_tool_out = tool_evaluate_parana_pilot(offline_mode=True)
     assert pilot_tool_out["crs_epsg"] == 5347
+
+
+def test_stac_coverage_prioritizes_full_aoi_over_edge_tile() -> None:
+    """Verifica que una celda MGRS completa tenga prioridad sobre un borde truncado más reciente."""
+    aoi = (-60.66, -31.74, -60.53, -31.64)
+
+    class _ItemWithBbox:
+        def __init__(self, item_id: str, dt_iso: str, cloud: float, bbox: List[float]) -> None:
+            self.id = item_id
+            self.datetime = datetime.fromisoformat(dt_iso.replace("Z", "+00:00")).astimezone(timezone.utc)
+            self.properties = {"datetime": dt_iso, "eo:cloud_cover": cloud}
+            self.bbox = bbox
+
+    edge_recent = _ItemWithBbox(
+        "S2B_20JQL_20261111_0_L2A",
+        "2026-11-11T14:11:00Z",
+        6.0,
+        [-60.9118, -31.7058, -59.7326, -30.6922],
+    )
+    full_t1 = _ItemWithBbox(
+        "S2A_20HQK_20261108_1_L2A",
+        "2026-11-08T14:11:00Z",
+        7.8,
+        [-60.8919, -32.6075, -59.7003, -31.5933],
+    )
+    edge_t0 = _ItemWithBbox(
+        "S2A_20JQL_20241106_0_L2A",
+        "2024-11-06T14:11:00Z",
+        0.01,
+        [-60.9118, -31.7058, -59.7326, -30.6922],
+    )
+    full_t0 = _ItemWithBbox(
+        "S2A_20HQK_20241106_0_L2A",
+        "2024-11-06T14:11:00Z",
+        1.7,
+        [-60.8919, -32.6075, -59.7003, -31.5933],
+    )
+
+    assert _item_bbox_coverage_fraction(edge_recent, aoi) < 0.70
+    assert not _item_covers_bbox(edge_recent, aoi)
+    assert _item_covers_bbox(full_t1, aoi)
+
+    class _FakeSearch:
+        def __init__(self, items: List[_ItemWithBbox]) -> None:
+            self._items = items
+
+        def items(self) -> List[_ItemWithBbox]:
+            return self._items
+
+    class _FakeClient:
+        def search(self, **kwargs: Any) -> _FakeSearch:
+            dt = kwargs.get("datetime", "")
+            if dt.startswith("2026-"):
+                return _FakeSearch([edge_recent, full_t1])
+            return _FakeSearch([edge_t0, full_t0])
+
+    t1_sel, t0_list, _ = query_stac_seasonal_pair_candidates(
+        client=_FakeClient(),
+        bbox_wgs84=aoi,
+        end_dt=datetime(2026, 11, 14, tzinfo=timezone.utc),
+        lookback_years=2,
+    )
+    assert t1_sel is not None
+    assert t1_sel.id == "S2A_20HQK_20261108_1_L2A"
+    assert [it.id for it in t0_list] == ["S2A_20HQK_20241106_0_L2A"]

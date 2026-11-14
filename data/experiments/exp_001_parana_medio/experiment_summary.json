@@ -1,0 +1,2182 @@
+{
+  "experiment_id": "exp_001_parana_medio",
+  "executed_at_utc": "2026-11-14T22:20:07.076612+00:00",
+  "aoi_wgs84": [
+    -60.66,
+    -31.74,
+    -60.53,
+    -31.64
+  ],
+  "aoi_posgar_epsg": 5347,
+  "aoi_bounds_posgar": [
+    5437391.584462786,
+    6488754.389276497,
+    5449777.632601267,
+    6499910.04418973
+  ],
+  "aoi_dimensions_m": [
+    12386.05,
+    11155.65
+  ],
+  "aoi_area_ha": 13817.45,
+  "stac_endpoint": "https://earth-search.aws.element84.com/v1",
+  "collection": "sentinel-2-l2a",
+  "parameters": {
+    "grid_resolution_m": 10.0,
+    "swir_scl_native_resolution_m": 20.0,
+    "min_anomaly_area_m2": 1600.0,
+    "seasonal_window_days": 45,
+    "max_cloud_cover_pct": 20.0,
+    "delta_mndwi_threshold": 0.4,
+    "delta_bsi_threshold": 0.25,
+    "delta_ndvi_threshold": -0.3
+  },
+  "scenes": {
+    "S2A_20HQK_20261108_1_L2A": {
+      "scene_id": "S2A_20HQK_20261108_1_L2A",
+      "acquisition_date": "2026-11-08",
+      "datetime_utc": "2026-11-08T14:11:37.903000+00:00",
+      "cloud_cover_tile_pct": 7.781,
+      "grid_code": "MGRS-20HQK",
+      "boa_offset_applied": true,
+      "cached": true
+    },
+    "S2B_20HQK_20231107_0_L2A": {
+      "scene_id": "S2B_20HQK_20231107_0_L2A",
+      "acquisition_date": "2023-11-07",
+      "datetime_utc": "2023-11-07T14:11:34.839000+00:00",
+      "cloud_cover_tile_pct": 0.112,
+      "grid_code": "MGRS-20HQK",
+      "boa_offset_applied": true,
+      "cached": true
+    },
+    "S2A_20HQK_20241106_0_L2A": {
+      "scene_id": "S2A_20HQK_20241106_0_L2A",
+      "acquisition_date": "2024-11-06",
+      "datetime_utc": "2024-11-06T14:11:28.010000+00:00",
+      "cloud_cover_tile_pct": 1.703,
+      "grid_code": "MGRS-20HQK",
+      "boa_offset_applied": true,
+      "cached": true
+    },
+    "S2A_20HQK_20251113_1_L2A": {
+      "scene_id": "S2A_20HQK_20251113_1_L2A",
+      "acquisition_date": "2025-11-13",
+      "datetime_utc": "2025-11-13T14:11:46.877000+00:00",
+      "cloud_cover_tile_pct": 11.33,
+      "grid_code": "MGRS-20HQK",
+      "boa_offset_applied": true,
+      "cached": true
+    }
+  },
+  "run_bitemporal_2024_2026": {
+    "spectral": {
+      "status": "success",
+      "delta_mndwi_path": "/Users/pablotempone/rio-alerta-mcp/data/experiments/exp_001_parana_medio/processed/bitemporal_2024_2026/t1_S2A_20HQK_20261108_1_L2A_vnir10m_delta_mndwi.tif",
+      "delta_bsi_path": "/Users/pablotempone/rio-alerta-mcp/data/experiments/exp_001_parana_medio/processed/bitemporal_2024_2026/t1_S2A_20HQK_20261108_1_L2A_vnir10m_delta_bsi.tif",
+      "delta_ndvi_path": "/Users/pablotempone/rio-alerta-mcp/data/experiments/exp_001_parana_medio/processed/bitemporal_2024_2026/t1_S2A_20HQK_20261108_1_L2A_vnir10m_delta_ndvi.tif",
+      "crs_epsg": 5347,
+      "resolution_m": 9.996810442680092,
+      "effective_resolution_swir_m": 20.009770821454982,
+      "valid_pixel_fraction": 0.9877,
+      "bounds_posgar": [
+        5437391.584462786,
+        6488754.389276497,
+        5449777.632601267,
+        6499910.04418973
+      ],
+      "stats": {
+        "delta_mndwi_min": -1.5952,
+        "delta_mndwi_max": 1.5866,
+        "delta_mndwi_mean": 0.1805,
+        "delta_mndwi_std": 0.3291,
+        "delta_bsi_min": -1.1619,
+        "delta_bsi_max": 1.4276,
+        "delta_bsi_mean": 0.0165,
+        "delta_bsi_std": 0.2369,
+        "delta_ndvi_min": -1.9131,
+        "delta_ndvi_max": 1.4712,
+        "delta_ndvi_mean": -0.1874,
+        "delta_ndvi_std": 0.4211,
+        "water_stage_delta_pct": 26.29
+      }
+    },
+    "detection_metadata": {
+      "crs_metric_epsg": 5347,
+      "grid_resolution_m": 9.996810442680092,
+      "effective_swir_resolution_m": 20.009770821454982,
+      "min_anomaly_area_m2": 1600.0,
+      "baseline_scenes_count": 1,
+      "valid_pixel_fraction": 0.9877,
+      "hydrological_controls": {
+        "water_stage_delta_pct": 26.29,
+        "is_systemic_stage_rise": true,
+        "is_systemic_stage_drop": false,
+        "bar_migration_dipoles_filtered": 19,
+        "bar_migration_details": [
+          {
+            "erosion_area_m2": 3897.5,
+            "accretion_area_m2": 9394.0,
+            "area_ratio": 0.415,
+            "centroid_separation_m": 174.5
+          },
+          {
+            "erosion_area_m2": 1698.9,
+            "accretion_area_m2": 999.4,
+            "area_ratio": 1.7,
+            "centroid_separation_m": 367.4
+          },
+          {
+            "erosion_area_m2": 5396.6,
+            "accretion_area_m2": 4297.3,
+            "area_ratio": 1.256,
+            "centroid_separation_m": 304.6
+          },
+          {
+            "erosion_area_m2": 1099.3,
+            "accretion_area_m2": 1698.9,
+            "area_ratio": 0.647,
+            "centroid_separation_m": 175.8
+          },
+          {
+            "erosion_area_m2": 16489.5,
+            "accretion_area_m2": 19887.3,
+            "area_ratio": 0.829,
+            "centroid_separation_m": 74.0
+          },
+          {
+            "erosion_area_m2": 1499.0,
+            "accretion_area_m2": 1299.2,
+            "area_ratio": 1.154,
+            "centroid_separation_m": 206.1
+          },
+          {
+            "erosion_area_m2": 11592.6,
+            "accretion_area_m2": 9793.7,
+            "area_ratio": 1.184,
+            "centroid_separation_m": 246.4
+          },
+          {
+            "erosion_area_m2": 1199.2,
+            "accretion_area_m2": 2598.3,
+            "area_ratio": 0.462,
+            "centroid_separation_m": 82.2
+          },
+          {
+            "erosion_area_m2": 2198.6,
+            "accretion_area_m2": 1898.8,
+            "area_ratio": 1.158,
+            "centroid_separation_m": 282.8
+          },
+          {
+            "erosion_area_m2": 1798.9,
+            "accretion_area_m2": 3497.8,
+            "area_ratio": 0.514,
+            "centroid_separation_m": 152.7
+          },
+          {
+            "erosion_area_m2": 1199.2,
+            "accretion_area_m2": 1099.3,
+            "area_ratio": 1.091,
+            "centroid_separation_m": 391.0
+          },
+          {
+            "erosion_area_m2": 47869.4,
+            "accretion_area_m2": 33178.8,
+            "area_ratio": 1.443,
+            "centroid_separation_m": 216.0
+          },
+          {
+            "erosion_area_m2": 14490.8,
+            "accretion_area_m2": 14690.6,
+            "area_ratio": 0.986,
+            "centroid_separation_m": 373.4
+          },
+          {
+            "erosion_area_m2": 14590.7,
+            "accretion_area_m2": 9593.9,
+            "area_ratio": 1.521,
+            "centroid_separation_m": 326.2
+          },
+          {
+            "erosion_area_m2": 2698.3,
+            "accretion_area_m2": 1998.7,
+            "area_ratio": 1.35,
+            "centroid_separation_m": 446.2
+          },
+          {
+            "erosion_area_m2": 899.4,
+            "accretion_area_m2": 2198.6,
+            "area_ratio": 0.409,
+            "centroid_separation_m": 430.2
+          },
+          {
+            "erosion_area_m2": 1199.2,
+            "accretion_area_m2": 1898.8,
+            "area_ratio": 0.632,
+            "centroid_separation_m": 260.0
+          },
+          {
+            "erosion_area_m2": 2798.2,
+            "accretion_area_m2": 1599.0,
+            "area_ratio": 1.75,
+            "centroid_separation_m": 149.7
+          },
+          {
+            "erosion_area_m2": 1698.9,
+            "accretion_area_m2": 1099.3,
+            "area_ratio": 1.545,
+            "centroid_separation_m": 103.2
+          }
+        ],
+        "riparian_ndvi_seasonal_shift": -0.0797,
+        "riparian_bsi_seasonal_shift": -0.0285
+      },
+      "candidate_count": 452,
+      "institutional_note": "Las geometrías detectadas son anomalías morfológicas candidatas; no constituyen por sí solas infracción ni extracción ilegal sin cruce catastral oficial y revisión humana."
+    },
+    "total_candidates": 452,
+    "by_type": {
+      "apertura_camino_acceso": 20,
+      "desmonte_ribera_acopio": 255,
+      "frente_excavacion_inundado": 177
+    },
+    "top_anomalies": [
+      {
+        "id": "RIO-0170",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.81,
+        "area_m2": 274705.32,
+        "area_ha": 27.4705,
+        "rectangularity": 0.542,
+        "elongation": 1.447,
+        "delta_mndwi_mean": 0.7967,
+        "delta_bsi_mean": 0.1582,
+        "delta_ndvi_mean": -1.3261,
+        "bbox_posgar": [
+          5449052.863844172,
+          6497775.875440648,
+          5449772.634196046,
+          6498525.583432129
+        ],
+        "centroid_posgar": [
+          5449363.58,
+          6498204.56
+        ],
+        "centroid_wgs84": [
+          -60.533885,
+          -31.655365
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 26.29,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 1,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+26.3%).",
+            "Evaluación basada en única escena histórica T0 (sin serie multitemporal extensa)."
+          ]
+        },
+        "rank_area": 1,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.797 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.54, elong=1.45. Pulso hidrométrico regional fuerte en el tramo (+26.3% área de agua)."
+      },
+      {
+        "id": "RIO-0067",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.788,
+        "area_m2": 237131.95,
+        "area_ha": 23.7132,
+        "rectangularity": 0.461,
+        "elongation": 3.365,
+        "delta_mndwi_mean": 0.9879,
+        "delta_bsi_mean": -0.0398,
+        "delta_ndvi_mean": -0.8054,
+        "bbox_posgar": [
+          5441495.2751495065,
+          6493647.483434227,
+          5442724.882833956,
+          6494097.308229116
+        ],
+        "centroid_posgar": [
+          5442210.67,
+          6493877.95
+        ],
+        "centroid_wgs84": [
+          -60.609552,
+          -31.694045
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 26.29,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 1,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+26.3%).",
+            "Evaluación basada en única escena histórica T0 (sin serie multitemporal extensa)."
+          ]
+        },
+        "rank_area": 2,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.988 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.46, elong=3.37. Pulso hidrométrico regional fuerte en el tramo (+26.3% área de agua)."
+      },
+      {
+        "id": "RIO-0153",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.828,
+        "area_m2": 163883.86,
+        "area_ha": 16.3884,
+        "rectangularity": 0.592,
+        "elongation": 1.618,
+        "delta_mndwi_mean": 1.1021,
+        "delta_bsi_mean": 0.4489,
+        "delta_ndvi_mean": -1.4386,
+        "bbox_posgar": [
+          5443284.704218746,
+          6496566.346547726,
+          5444004.474570619,
+          6497026.167449167
+        ],
+        "centroid_posgar": [
+          5443559.86,
+          6496773.79
+        ],
+        "centroid_wgs84": [
+          -60.595155,
+          -31.667997
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 26.29,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 1,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+26.3%).",
+            "Evaluación basada en única escena histórica T0 (sin serie multitemporal extensa)."
+          ]
+        },
+        "rank_area": 3,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+1.102 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.59, elong=1.62. Pulso hidrométrico regional fuerte en el tramo (+26.3% área de agua)."
+      },
+      {
+        "id": "RIO-0131",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.799,
+        "area_m2": 154990.16,
+        "area_ha": 15.499,
+        "rectangularity": 0.498,
+        "elongation": 1.483,
+        "delta_mndwi_mean": 0.9857,
+        "delta_bsi_mean": -0.0229,
+        "delta_ndvi_mean": -0.778,
+        "bbox_posgar": [
+          5446473.686749961,
+          6495576.731998972,
+          5446933.540030324,
+          6496246.4711380275
+        ],
+        "centroid_posgar": [
+          5446696.28,
+          6495837.82
+        ],
+        "centroid_wgs84": [
+          -60.562135,
+          -31.676588
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 26.29,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 1,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+26.3%).",
+            "Evaluación basada en única escena histórica T0 (sin serie multitemporal extensa)."
+          ]
+        },
+        "rank_area": 4,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.986 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.50, elong=1.48. Pulso hidrométrico regional fuerte en el tramo (+26.3% área de agua)."
+      },
+      {
+        "id": "RIO-0429",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "confidence": 0.77,
+        "area_m2": 137202.77,
+        "area_ha": 13.7203,
+        "rectangularity": 0.401,
+        "elongation": 2.182,
+        "delta_mndwi_mean": 0.2764,
+        "delta_bsi_mean": 0.5693,
+        "delta_ndvi_mean": -1.2422,
+        "bbox_posgar": [
+          5446583.651664831,
+          6498595.556178,
+          5447193.457101834,
+          6499305.279743269
+        ],
+        "centroid_posgar": [
+          5446884.03,
+          6498980.31
+        ],
+        "centroid_wgs84": [
+          -60.559985,
+          -31.648257
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 26.29,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 1,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+26.3%).",
+            "Evaluación basada en única escena histórica T0 (sin serie multitemporal extensa)."
+          ]
+        },
+        "rank_area": 5,
+        "explanation": "Disparada por incremento de suelo desnudo/acopio y caída de vigor vegetal (ΔBSI_adj=+0.569 > +0.25, ΔNDVI_adj=-1.242 < -0.30, BSI_T1 > -0.02, MNDWI_T1 < +0.10). Morfología: rect=0.40, elong=2.18. Pulso hidrométrico regional fuerte en el tramo (+26.3% área de agua)."
+      },
+      {
+        "id": "RIO-0041",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.716,
+        "area_m2": 117316.86,
+        "area_ha": 11.7317,
+        "rectangularity": 0.221,
+        "elongation": 2.806,
+        "delta_mndwi_mean": 0.9658,
+        "delta_bsi_mean": 0.0719,
+        "delta_ndvi_mean": -0.8038,
+        "bbox_posgar": [
+          5441555.256012162,
+          6491938.149213652,
+          5442584.927487758,
+          6492677.861098579
+        ],
+        "centroid_posgar": [
+          5441989.56,
+          6492311.18
+        ],
+        "centroid_wgs84": [
+          -60.611977,
+          -31.708163
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 26.29,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 1,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+26.3%).",
+            "Evaluación basada en única escena histórica T0 (sin serie multitemporal extensa)."
+          ]
+        },
+        "rank_area": 6,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.966 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.22, elong=2.81. Pulso hidrométrico regional fuerte en el tramo (+26.3% área de agua)."
+      },
+      {
+        "id": "RIO-0168",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.729,
+        "area_m2": 110821.46,
+        "area_ha": 11.0821,
+        "rectangularity": 0.495,
+        "elongation": 1.459,
+        "delta_mndwi_mean": 0.8772,
+        "delta_bsi_mean": 0.1777,
+        "delta_ndvi_mean": -0.8604,
+        "bbox_posgar": [
+          5440995.434627372,
+          6497925.817038944,
+          5441365.316613751,
+          6498465.60679281
+        ],
+        "centroid_posgar": [
+          5441171.62,
+          6498250.04
+        ],
+        "centroid_wgs84": [
+          -60.620249,
+          -31.654564
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": true,
+          "water_stage_delta_pct": 26.29,
+          "natural_dynamics_confounder_score": 0.6,
+          "persistence_scenes_count": 1,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Contorno adyacente a píxeles de nube o sombra en máscara SCL (buffer <= 40 m).",
+            "Variación hidrométrica regional detectada en el tramo (+26.3%).",
+            "Evaluación basada en única escena histórica T0 (sin serie multitemporal extensa)."
+          ]
+        },
+        "rank_area": 7,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.877 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.49, elong=1.46. ATENCIÓN: borde adyacente (<=40 m) a máscara nube/sombra SCL. Pulso hidrométrico regional fuerte en el tramo (+26.3% área de agua)."
+      },
+      {
+        "id": "RIO-0118",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.823,
+        "area_m2": 104625.85,
+        "area_ha": 10.4626,
+        "rectangularity": 0.577,
+        "elongation": 4.179,
+        "delta_mndwi_mean": 0.8968,
+        "delta_bsi_mean": 0.231,
+        "delta_ndvi_mean": -0.8752,
+        "bbox_posgar": [
+          5445034.146046215,
+          6495256.856589273,
+          5445633.954672776,
+          6495836.6307693515
+        ],
+        "centroid_posgar": [
+          5445298.72,
+          6495550.63
+        ],
+        "centroid_wgs84": [
+          -60.576888,
+          -31.679112
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 26.29,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 1,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+26.3%).",
+            "Evaluación basada en única escena histórica T0 (sin serie multitemporal extensa)."
+          ]
+        },
+        "rank_area": 8,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.897 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.58, elong=4.18. Pulso hidrométrico regional fuerte en el tramo (+26.3% área de agua)."
+      },
+      {
+        "id": "RIO-0160",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.785,
+        "area_m2": 97730.74,
+        "area_ha": 9.7731,
+        "rectangularity": 0.449,
+        "elongation": 1.291,
+        "delta_mndwi_mean": 0.8804,
+        "delta_bsi_mean": 0.4425,
+        "delta_ndvi_mean": -1.3373,
+        "bbox_posgar": [
+          5441745.195410573,
+          6497106.136301592,
+          5442225.042311822,
+          6497535.968883374
+        ],
+        "centroid_posgar": [
+          5441974.55,
+          6497284.25
+        ],
+        "centroid_wgs84": [
+          -60.611841,
+          -31.663315
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 26.29,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 1,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+26.3%).",
+            "Evaluación basada en única escena histórica T0 (sin serie multitemporal extensa)."
+          ]
+        },
+        "rank_area": 9,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.880 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.45, elong=1.29. Pulso hidrométrico regional fuerte en el tramo (+26.3% área de agua)."
+      },
+      {
+        "id": "RIO-0215",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "confidence": 0.776,
+        "area_m2": 87537.96,
+        "area_ha": 8.7538,
+        "rectangularity": 0.418,
+        "elongation": 1.85,
+        "delta_mndwi_mean": 0.0666,
+        "delta_bsi_mean": 0.5454,
+        "delta_ndvi_mean": -0.9165,
+        "bbox_posgar": [
+          5439775.823753365,
+          6491318.390607361,
+          5440225.680223286,
+          6491878.172574333
+        ],
+        "centroid_posgar": [
+          5440017.62,
+          6491573.19
+        ],
+        "centroid_wgs84": [
+          -60.632824,
+          -31.714717
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 26.29,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 1,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+26.3%).",
+            "Evaluación basada en única escena histórica T0 (sin serie multitemporal extensa)."
+          ]
+        },
+        "rank_area": 10,
+        "explanation": "Disparada por incremento de suelo desnudo/acopio y caída de vigor vegetal (ΔBSI_adj=+0.545 > +0.25, ΔNDVI_adj=-0.916 < -0.30, BSI_T1 > -0.02, MNDWI_T1 < +0.10). Morfología: rect=0.42, elong=1.85. Pulso hidrométrico regional fuerte en el tramo (+26.3% área de agua)."
+      },
+      {
+        "id": "RIO-0078",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.751,
+        "area_m2": 84340.23,
+        "area_ha": 8.434,
+        "rectangularity": 0.337,
+        "elongation": 1.68,
+        "delta_mndwi_mean": 0.8364,
+        "delta_bsi_mean": 0.247,
+        "delta_ndvi_mean": -1.1976,
+        "bbox_posgar": [
+          5439136.027885034,
+          6494047.32769635,
+          5439565.890734069,
+          6494617.105769876
+        ],
+        "centroid_posgar": [
+          5439317.74,
+          6494331.11
+        ],
+        "centroid_wgs84": [
+          -60.640037,
+          -31.689809
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 26.29,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 1,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+26.3%).",
+            "Evaluación basada en única escena histórica T0 (sin serie multitemporal extensa)."
+          ]
+        },
+        "rank_area": 11,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.836 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.34, elong=1.68. Pulso hidrométrico regional fuerte en el tramo (+26.3% área de agua)."
+      },
+      {
+        "id": "RIO-0333",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "confidence": 0.757,
+        "area_m2": 81842.0,
+        "area_ha": 8.1842,
+        "rectangularity": 0.356,
+        "elongation": 2.145,
+        "delta_mndwi_mean": 0.2149,
+        "delta_bsi_mean": 0.4261,
+        "delta_ndvi_mean": -0.8124,
+        "bbox_posgar": [
+          5448273.112629644,
+          6496726.284252575,
+          5448672.985047351,
+          6497336.046752313
+        ],
+        "centroid_posgar": [
+          5448484.79,
+          6497031.34
+        ],
+        "centroid_wgs84": [
+          -60.543211,
+          -31.665906
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 26.29,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 1,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+26.3%).",
+            "Evaluación basada en única escena histórica T0 (sin serie multitemporal extensa)."
+          ]
+        },
+        "rank_area": 12,
+        "explanation": "Disparada por incremento de suelo desnudo/acopio y caída de vigor vegetal (ΔBSI_adj=+0.426 > +0.25, ΔNDVI_adj=-0.812 < -0.30, BSI_T1 > -0.02, MNDWI_T1 < +0.10). Morfología: rect=0.36, elong=2.15. Pulso hidrométrico regional fuerte en el tramo (+26.3% área de agua)."
+      },
+      {
+        "id": "RIO-0114",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.778,
+        "area_m2": 73348.02,
+        "area_ha": 7.3348,
+        "rectangularity": 0.426,
+        "elongation": 4.038,
+        "delta_mndwi_mean": 0.8987,
+        "delta_bsi_mean": 0.4587,
+        "delta_ndvi_mean": -1.1713,
+        "bbox_posgar": [
+          5439755.83013248,
+          6495246.86048272,
+          5440405.622811254,
+          6495766.658023479
+        ],
+        "centroid_posgar": [
+          5440082.54,
+          6495515.89
+        ],
+        "centroid_wgs84": [
+          -60.631898,
+          -31.679165
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 26.29,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 1,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+26.3%).",
+            "Evaluación basada en única escena histórica T0 (sin serie multitemporal extensa)."
+          ]
+        },
+        "rank_area": 13,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.899 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.43, elong=4.04. Pulso hidrométrico regional fuerte en el tramo (+26.3% área de agua)."
+      },
+      {
+        "id": "RIO-0019",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.796,
+        "area_m2": 64254.46,
+        "area_ha": 6.4254,
+        "rectangularity": 0.487,
+        "elongation": 3.169,
+        "delta_mndwi_mean": 1.0323,
+        "delta_bsi_mean": -0.0537,
+        "delta_ndvi_mean": -0.7587,
+        "bbox_posgar": [
+          5438686.171415113,
+          6490008.900648908,
+          5439295.976852117,
+          6490208.822779969
+        ],
+        "centroid_posgar": [
+          5438985.9,
+          6490092.41
+        ],
+        "centroid_wgs84": [
+          -60.643801,
+          -31.728016
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 26.29,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 1,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+26.3%).",
+            "Evaluación basada en única escena histórica T0 (sin serie multitemporal extensa)."
+          ]
+        },
+        "rank_area": 14,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+1.032 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.49, elong=3.17. Pulso hidrométrico regional fuerte en el tramo (+26.3% área de agua)."
+      },
+      {
+        "id": "RIO-0027",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.692,
+        "area_m2": 61156.66,
+        "area_ha": 6.1157,
+        "rectangularity": 0.446,
+        "elongation": 2.686,
+        "delta_mndwi_mean": 0.6664,
+        "delta_bsi_mean": 0.1027,
+        "delta_ndvi_mean": -0.4003,
+        "bbox_posgar": [
+          5449292.787294797,
+          6491638.26601706,
+          5449772.634196046,
+          6491958.141426758
+        ],
+        "centroid_posgar": [
+          5449584.64,
+          6491831.56
+        ],
+        "centroid_wgs84": [
+          -60.531882,
+          -31.712848
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 26.29,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 1,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+26.3%).",
+            "Evaluación basada en única escena histórica T0 (sin serie multitemporal extensa)."
+          ]
+        },
+        "rank_area": 15,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.666 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.45, elong=2.69. Pulso hidrométrico regional fuerte en el tramo (+26.3% área de agua)."
+      },
+      {
+        "id": "RIO-0150",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.85,
+        "area_m2": 58258.71,
+        "area_ha": 5.8259,
+        "rectangularity": 0.668,
+        "elongation": 3.818,
+        "delta_mndwi_mean": 1.1318,
+        "delta_bsi_mean": 0.113,
+        "delta_ndvi_mean": -1.2399,
+        "bbox_posgar": [
+          5441745.195410573,
+          6496696.295932916,
+          5442265.029553592,
+          6496936.20249019
+        ],
+        "centroid_posgar": [
+          5442015.68,
+          6496811.14
+        ],
+        "centroid_wgs84": [
+          -60.611436,
+          -31.667583
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 26.29,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 1,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+26.3%).",
+            "Evaluación basada en única escena histórica T0 (sin serie multitemporal extensa)."
+          ]
+        },
+        "rank_area": 16,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+1.132 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.67, elong=3.82. Pulso hidrométrico regional fuerte en el tramo (+26.3% área de agua)."
+      },
+      {
+        "id": "RIO-0381",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "confidence": 0.769,
+        "area_m2": 56060.27,
+        "area_ha": 5.606,
+        "rectangularity": 0.397,
+        "elongation": 2.01,
+        "delta_mndwi_mean": 0.0332,
+        "delta_bsi_mean": 0.5602,
+        "delta_ndvi_mean": -0.887,
+        "bbox_posgar": [
+          5438886.107623966,
+          6498085.754743793,
+          5439385.948146101,
+          6498345.653514174
+        ],
+        "centroid_posgar": [
+          5439173.89,
+          6498235.09
+        ],
+        "centroid_wgs84": [
+          -60.641312,
+          -31.654595
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 26.29,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 1,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+26.3%).",
+            "Evaluación basada en única escena histórica T0 (sin serie multitemporal extensa)."
+          ]
+        },
+        "rank_area": 17,
+        "explanation": "Disparada por incremento de suelo desnudo/acopio y caída de vigor vegetal (ΔBSI_adj=+0.560 > +0.25, ΔNDVI_adj=-0.887 < -0.30, BSI_T1 > -0.02, MNDWI_T1 < +0.10). Morfología: rect=0.40, elong=2.01. Pulso hidrométrico regional fuerte en el tramo (+26.3% área de agua)."
+      },
+      {
+        "id": "RIO-0329",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "confidence": 0.802,
+        "area_m2": 52362.89,
+        "area_ha": 5.2363,
+        "rectangularity": 0.506,
+        "elongation": 1.669,
+        "delta_mndwi_mean": 0.5603,
+        "delta_bsi_mean": 0.4694,
+        "delta_ndvi_mean": -1.2228,
+        "bbox_posgar": [
+          5445314.05673861,
+          6496926.206383636,
+          5445593.967431005,
+          6497286.066219548
+        ],
+        "centroid_posgar": [
+          5445447.77,
+          6497122.56
+        ],
+        "centroid_wgs84": [
+          -60.575229,
+          -31.664943
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 26.29,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 1,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+26.3%).",
+            "Evaluación basada en única escena histórica T0 (sin serie multitemporal extensa)."
+          ]
+        },
+        "rank_area": 18,
+        "explanation": "Disparada por incremento de suelo desnudo/acopio y caída de vigor vegetal (ΔBSI_adj=+0.469 > +0.25, ΔNDVI_adj=-1.223 < -0.30, BSI_T1 > -0.02, MNDWI_T1 < +0.10). Morfología: rect=0.51, elong=1.67. Pulso hidrométrico regional fuerte en el tramo (+26.3% área de agua)."
+      },
+      {
+        "id": "RIO-0095",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.806,
+        "area_m2": 50863.95,
+        "area_ha": 5.0864,
+        "rectangularity": 0.521,
+        "elongation": 3.481,
+        "delta_mndwi_mean": 0.9669,
+        "delta_bsi_mean": 0.334,
+        "delta_ndvi_mean": -1.1655,
+        "bbox_posgar": [
+          5437596.519076861,
+          6494916.988966469,
+          5438046.375546781,
+          6495276.848802379
+        ],
+        "centroid_posgar": [
+          5437756.67,
+          6495088.83
+        ],
+        "centroid_wgs84": [
+          -60.656453,
+          -31.682892
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 26.29,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 1,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+26.3%).",
+            "Evaluación basada en única escena histórica T0 (sin serie multitemporal extensa)."
+          ]
+        },
+        "rank_area": 19,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.967 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.52, elong=3.48. Pulso hidrométrico regional fuerte en el tramo (+26.3% área de agua)."
+      },
+      {
+        "id": "RIO-0080",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.796,
+        "area_m2": 50664.1,
+        "area_ha": 5.0664,
+        "rectangularity": 0.485,
+        "elongation": 1.531,
+        "delta_mndwi_mean": 0.8768,
+        "delta_bsi_mean": 0.0468,
+        "delta_ndvi_mean": -0.891,
+        "bbox_posgar": [
+          5439435.932198314,
+          6494447.1719584735,
+          5439715.84289071,
+          6494797.035687831
+        ],
+        "centroid_posgar": [
+          5439562.82,
+          6494622.67
+        ],
+        "centroid_wgs84": [
+          -60.637434,
+          -31.687193
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 26.29,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 1,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+26.3%).",
+            "Evaluación basada en única escena histórica T0 (sin serie multitemporal extensa)."
+          ]
+        },
+        "rank_area": 20,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.877 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.48, elong=1.53. Pulso hidrométrico regional fuerte en el tramo (+26.3% área de agua)."
+      }
+    ]
+  },
+  "run_baseline_median_2023_2025_vs_2026": {
+    "spectral": {
+      "status": "success",
+      "delta_mndwi_path": "/Users/pablotempone/rio-alerta-mcp/data/experiments/exp_001_parana_medio/processed/mediana_2023_2025_vs_2026/t1_S2A_20HQK_20261108_1_L2A_vnir10m_delta_mndwi.tif",
+      "delta_bsi_path": "/Users/pablotempone/rio-alerta-mcp/data/experiments/exp_001_parana_medio/processed/mediana_2023_2025_vs_2026/t1_S2A_20HQK_20261108_1_L2A_vnir10m_delta_bsi.tif",
+      "delta_ndvi_path": "/Users/pablotempone/rio-alerta-mcp/data/experiments/exp_001_parana_medio/processed/mediana_2023_2025_vs_2026/t1_S2A_20HQK_20261108_1_L2A_vnir10m_delta_ndvi.tif",
+      "crs_epsg": 5347,
+      "resolution_m": 9.996810442680092,
+      "effective_resolution_swir_m": 20.009770821454982,
+      "valid_pixel_fraction": 0.9881,
+      "bounds_posgar": [
+        5437391.584462786,
+        6488754.389276497,
+        5449777.632601267,
+        6499910.04418973
+      ],
+      "stats": {
+        "delta_mndwi_min": -1.5341,
+        "delta_mndwi_max": 1.545,
+        "delta_mndwi_mean": 0.1662,
+        "delta_mndwi_std": 0.2988,
+        "delta_bsi_min": -1.0117,
+        "delta_bsi_max": 1.3547,
+        "delta_bsi_mean": 0.0084,
+        "delta_bsi_std": 0.221,
+        "delta_ndvi_min": -1.8731,
+        "delta_ndvi_max": 1.2921,
+        "delta_ndvi_mean": -0.1598,
+        "delta_ndvi_std": 0.4031,
+        "water_stage_delta_pct": 25.15
+      }
+    },
+    "detection_metadata": {
+      "crs_metric_epsg": 5347,
+      "grid_resolution_m": 9.996810442680092,
+      "effective_swir_resolution_m": 20.009770821454982,
+      "min_anomaly_area_m2": 1600.0,
+      "baseline_scenes_count": 3,
+      "valid_pixel_fraction": 0.9881,
+      "hydrological_controls": {
+        "water_stage_delta_pct": 25.15,
+        "is_systemic_stage_rise": false,
+        "is_systemic_stage_drop": false,
+        "bar_migration_dipoles_filtered": 22,
+        "bar_migration_details": [
+          {
+            "erosion_area_m2": 1299.2,
+            "accretion_area_m2": 3198.0,
+            "area_ratio": 0.406,
+            "centroid_separation_m": 253.7
+          },
+          {
+            "erosion_area_m2": 1099.3,
+            "accretion_area_m2": 1898.8,
+            "area_ratio": 0.579,
+            "centroid_separation_m": 380.5
+          },
+          {
+            "erosion_area_m2": 4397.2,
+            "accretion_area_m2": 6395.9,
+            "area_ratio": 0.688,
+            "centroid_separation_m": 137.6
+          },
+          {
+            "erosion_area_m2": 1199.2,
+            "accretion_area_m2": 1299.2,
+            "area_ratio": 0.923,
+            "centroid_separation_m": 430.4
+          },
+          {
+            "erosion_area_m2": 1499.0,
+            "accretion_area_m2": 2098.7,
+            "area_ratio": 0.714,
+            "centroid_separation_m": 422.3
+          },
+          {
+            "erosion_area_m2": 4697.0,
+            "accretion_area_m2": 1998.7,
+            "area_ratio": 2.35,
+            "centroid_separation_m": 445.6
+          },
+          {
+            "erosion_area_m2": 3597.7,
+            "accretion_area_m2": 1998.7,
+            "area_ratio": 1.8,
+            "centroid_separation_m": 345.4
+          },
+          {
+            "erosion_area_m2": 2198.6,
+            "accretion_area_m2": 1199.2,
+            "area_ratio": 1.833,
+            "centroid_separation_m": 441.4
+          },
+          {
+            "erosion_area_m2": 1698.9,
+            "accretion_area_m2": 999.4,
+            "area_ratio": 1.7,
+            "centroid_separation_m": 225.0
+          },
+          {
+            "erosion_area_m2": 8194.8,
+            "accretion_area_m2": 10493.3,
+            "area_ratio": 0.781,
+            "centroid_separation_m": 227.5
+          },
+          {
+            "erosion_area_m2": 3397.8,
+            "accretion_area_m2": 1399.1,
+            "area_ratio": 2.429,
+            "centroid_separation_m": 104.1
+          },
+          {
+            "erosion_area_m2": 899.4,
+            "accretion_area_m2": 1898.8,
+            "area_ratio": 0.474,
+            "centroid_separation_m": 220.0
+          },
+          {
+            "erosion_area_m2": 2198.6,
+            "accretion_area_m2": 3198.0,
+            "area_ratio": 0.688,
+            "centroid_separation_m": 299.3
+          },
+          {
+            "erosion_area_m2": 1998.7,
+            "accretion_area_m2": 2898.2,
+            "area_ratio": 0.69,
+            "centroid_separation_m": 152.6
+          },
+          {
+            "erosion_area_m2": 899.4,
+            "accretion_area_m2": 999.4,
+            "area_ratio": 0.9,
+            "centroid_separation_m": 355.7
+          },
+          {
+            "erosion_area_m2": 65058.5,
+            "accretion_area_m2": 28981.5,
+            "area_ratio": 2.245,
+            "centroid_separation_m": 206.3
+          },
+          {
+            "erosion_area_m2": 4297.3,
+            "accretion_area_m2": 2798.2,
+            "area_ratio": 1.536,
+            "centroid_separation_m": 448.0
+          },
+          {
+            "erosion_area_m2": 13891.1,
+            "accretion_area_m2": 19287.7,
+            "area_ratio": 0.72,
+            "centroid_separation_m": 295.7
+          },
+          {
+            "erosion_area_m2": 14990.4,
+            "accretion_area_m2": 9094.2,
+            "area_ratio": 1.648,
+            "centroid_separation_m": 313.6
+          },
+          {
+            "erosion_area_m2": 2398.5,
+            "accretion_area_m2": 1599.0,
+            "area_ratio": 1.5,
+            "centroid_separation_m": 123.3
+          },
+          {
+            "erosion_area_m2": 899.4,
+            "accretion_area_m2": 1499.0,
+            "area_ratio": 0.6,
+            "centroid_separation_m": 293.6
+          },
+          {
+            "erosion_area_m2": 2698.3,
+            "accretion_area_m2": 5796.3,
+            "area_ratio": 0.466,
+            "centroid_separation_m": 244.7
+          }
+        ],
+        "riparian_ndvi_seasonal_shift": -0.0373,
+        "riparian_bsi_seasonal_shift": -0.0454
+      },
+      "candidate_count": 476,
+      "institutional_note": "Las geometrías detectadas son anomalías morfológicas candidatas; no constituyen por sí solas infracción ni extracción ilegal sin cruce catastral oficial y revisión humana."
+    },
+    "total_candidates": 476,
+    "by_type": {
+      "apertura_camino_acceso": 21,
+      "desmonte_ribera_acopio": 235,
+      "frente_excavacion_inundado": 220
+    },
+    "top_anomalies": [
+      {
+        "id": "RIO-0038",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.785,
+        "area_m2": 726984.8,
+        "area_ha": 72.6985,
+        "rectangularity": 0.45,
+        "elongation": 2.43,
+        "delta_mndwi_mean": 1.0553,
+        "delta_bsi_mean": 0.0235,
+        "delta_ndvi_mean": -0.749,
+        "bbox_posgar": [
+          5443784.54474088,
+          6488889.336714963,
+          5444644.2704389505,
+          6490778.600853495
+        ],
+        "centroid_posgar": [
+          5444239.68,
+          6489951.74
+        ],
+        "centroid_wgs84": [
+          -60.588375,
+          -31.729553
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        },
+        "rank_area": 1,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+1.055 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.45, elong=2.43. Pulso hidrométrico regional fuerte en el tramo (+25.1% área de agua)."
+      },
+      {
+        "id": "RIO-0424",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "confidence": 0.774,
+        "area_m2": 322571.4,
+        "area_ha": 32.2571,
+        "rectangularity": 0.414,
+        "elongation": 2.182,
+        "delta_mndwi_mean": 0.0525,
+        "delta_bsi_mean": 0.5358,
+        "delta_ndvi_mean": -1.0517,
+        "bbox_posgar": [
+          5446983.524082538,
+          6497386.027285078,
+          5447573.3358986555,
+          6498645.536710765
+        ],
+        "centroid_posgar": [
+          5447319.9,
+          6497922.16
+        ],
+        "centroid_wgs84": [
+          -60.555446,
+          -31.65782
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        },
+        "rank_area": 2,
+        "explanation": "Disparada por incremento de suelo desnudo/acopio y caída de vigor vegetal (ΔBSI_adj=+0.536 > +0.25, ΔNDVI_adj=-1.052 < -0.30, BSI_T1 > -0.02, MNDWI_T1 < +0.10). Morfología: rect=0.41, elong=2.18. Pulso hidrométrico regional fuerte en el tramo (+25.1% área de agua)."
+      },
+      {
+        "id": "RIO-0211",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.739,
+        "area_m2": 269009.36,
+        "area_ha": 26.9009,
+        "rectangularity": 0.543,
+        "elongation": 1.228,
+        "delta_mndwi_mean": 0.6927,
+        "delta_bsi_mean": 0.2499,
+        "delta_ndvi_mean": -1.363,
+        "bbox_posgar": [
+          5449052.863844172,
+          6497775.875440648,
+          5449772.634196046,
+          6498525.583432129
+        ],
+        "centroid_posgar": [
+          5449368.67,
+          6498201.4
+        ],
+        "centroid_wgs84": [
+          -60.533831,
+          -31.655393
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        },
+        "rank_area": 3,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.693 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.54, elong=1.23. Pulso hidrométrico regional fuerte en el tramo (+25.1% área de agua)."
+      },
+      {
+        "id": "RIO-0092",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.788,
+        "area_m2": 237131.95,
+        "area_ha": 23.7132,
+        "rectangularity": 0.461,
+        "elongation": 3.365,
+        "delta_mndwi_mean": 0.9655,
+        "delta_bsi_mean": -0.045,
+        "delta_ndvi_mean": -0.8107,
+        "bbox_posgar": [
+          5441495.2751495065,
+          6493647.483434227,
+          5442724.882833956,
+          6494097.308229116
+        ],
+        "centroid_posgar": [
+          5442210.67,
+          6493877.95
+        ],
+        "centroid_wgs84": [
+          -60.609552,
+          -31.694045
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        },
+        "rank_area": 4,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.966 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.46, elong=3.37. Pulso hidrométrico regional fuerte en el tramo (+25.1% área de agua)."
+      },
+      {
+        "id": "RIO-0418",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "confidence": 0.823,
+        "area_m2": 227538.75,
+        "area_ha": 22.7539,
+        "rectangularity": 0.578,
+        "elongation": 1.586,
+        "delta_mndwi_mean": 0.2701,
+        "delta_bsi_mean": 0.402,
+        "delta_ndvi_mean": -1.0481,
+        "bbox_posgar": [
+          5437586.522266419,
+          6497725.894907882,
+          5438086.362788552,
+          6498465.60679281
+        ],
+        "centroid_posgar": [
+          5437833.04,
+          6498116.97
+        ],
+        "centroid_wgs84": [
+          -60.655456,
+          -31.655588
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        },
+        "rank_area": 5,
+        "explanation": "Disparada por incremento de suelo desnudo/acopio y caída de vigor vegetal (ΔBSI_adj=+0.402 > +0.25, ΔNDVI_adj=-1.048 < -0.30, BSI_T1 > -0.02, MNDWI_T1 < +0.10). Morfología: rect=0.58, elong=1.59. Pulso hidrométrico regional fuerte en el tramo (+25.1% área de agua)."
+      },
+      {
+        "id": "RIO-0204",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.773,
+        "area_m2": 208152.49,
+        "area_ha": 20.8152,
+        "rectangularity": 0.41,
+        "elongation": 2.205,
+        "delta_mndwi_mean": 1.0158,
+        "delta_bsi_mean": 0.328,
+        "delta_ndvi_mean": -1.2719,
+        "bbox_posgar": [
+          5440815.492039404,
+          6496976.186916402,
+          5441525.265580834,
+          6497805.863760307
+        ],
+        "centroid_posgar": [
+          5441222.47,
+          6497336.84
+        ],
+        "centroid_wgs84": [
+          -60.619768,
+          -31.662802
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        },
+        "rank_area": 6,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+1.016 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.41, elong=2.21. Pulso hidrométrico regional fuerte en el tramo (+25.1% área de agua)."
+      },
+      {
+        "id": "RIO-0066",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.797,
+        "area_m2": 173876.78,
+        "area_ha": 17.3877,
+        "rectangularity": 0.695,
+        "elongation": 1.447,
+        "delta_mndwi_mean": 0.7104,
+        "delta_bsi_mean": 0.3849,
+        "delta_ndvi_mean": -1.368,
+        "bbox_posgar": [
+          5439275.983231232,
+          6492517.92339373,
+          5439865.795047349,
+          6492917.767655853
+        ],
+        "centroid_posgar": [
+          5439579.82,
+          6492714.02
+        ],
+        "centroid_wgs84": [
+          -60.637372,
+          -31.704406
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        },
+        "rank_area": 7,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.710 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.69, elong=1.45. Pulso hidrométrico regional fuerte en el tramo (+25.1% área de agua)."
+      },
+      {
+        "id": "RIO-0060",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.805,
+        "area_m2": 168080.88,
+        "area_ha": 16.8081,
+        "rectangularity": 0.518,
+        "elongation": 2.379,
+        "delta_mndwi_mean": 1.0132,
+        "delta_bsi_mean": 0.1478,
+        "delta_ndvi_mean": -0.9375,
+        "bbox_posgar": [
+          5442315.013605806,
+          6491968.137533311,
+          5442964.80628458,
+          6492637.876672367
+        ],
+        "centroid_posgar": [
+          5442686.31,
+          6492273.09
+        ],
+        "centroid_wgs84": [
+          -60.60463,
+          -31.708542
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        },
+        "rank_area": 8,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+1.013 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.52, elong=2.38. Pulso hidrométrico regional fuerte en el tramo (+25.1% área de agua)."
+      },
+      {
+        "id": "RIO-0193",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.828,
+        "area_m2": 163883.86,
+        "area_ha": 16.3884,
+        "rectangularity": 0.592,
+        "elongation": 1.618,
+        "delta_mndwi_mean": 1.0883,
+        "delta_bsi_mean": 0.4239,
+        "delta_ndvi_mean": -1.4539,
+        "bbox_posgar": [
+          5443284.704218746,
+          6496566.346547726,
+          5444004.474570619,
+          6497026.167449167
+        ],
+        "centroid_posgar": [
+          5443559.86,
+          6496773.79
+        ],
+        "centroid_wgs84": [
+          -60.595155,
+          -31.667997
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        },
+        "rank_area": 9,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+1.088 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.59, elong=1.62. Pulso hidrométrico regional fuerte en el tramo (+25.1% área de agua)."
+      },
+      {
+        "id": "RIO-0166",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.799,
+        "area_m2": 154990.16,
+        "area_ha": 15.499,
+        "rectangularity": 0.498,
+        "elongation": 1.483,
+        "delta_mndwi_mean": 0.9521,
+        "delta_bsi_mean": -0.0051,
+        "delta_ndvi_mean": -0.7882,
+        "bbox_posgar": [
+          5446473.686749961,
+          6495576.731998972,
+          5446933.540030324,
+          6496246.4711380275
+        ],
+        "centroid_posgar": [
+          5446696.28,
+          6495837.82
+        ],
+        "centroid_wgs84": [
+          -60.562135,
+          -31.676588
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        },
+        "rank_area": 10,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.952 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.50, elong=1.48. Pulso hidrométrico regional fuerte en el tramo (+25.1% área de agua)."
+      },
+      {
+        "id": "RIO-0456",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "confidence": 0.767,
+        "area_m2": 133105.67,
+        "area_ha": 13.3106,
+        "rectangularity": 0.392,
+        "elongation": 2.211,
+        "delta_mndwi_mean": 0.2476,
+        "delta_bsi_mean": 0.5541,
+        "delta_ndvi_mean": -1.2364,
+        "bbox_posgar": [
+          5446583.651664831,
+          6498595.556178,
+          5447193.457101834,
+          6499305.279743269
+        ],
+        "centroid_posgar": [
+          5446881.51,
+          6498986.76
+        ],
+        "centroid_wgs84": [
+          -60.560011,
+          -31.648198
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        },
+        "rank_area": 11,
+        "explanation": "Disparada por incremento de suelo desnudo/acopio y caída de vigor vegetal (ΔBSI_adj=+0.554 > +0.25, ΔNDVI_adj=-1.236 < -0.30, BSI_T1 > -0.02, MNDWI_T1 < +0.10). Morfología: rect=0.39, elong=2.21. Pulso hidrométrico regional fuerte en el tramo (+25.1% área de agua)."
+      },
+      {
+        "id": "RIO-0061",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.716,
+        "area_m2": 117316.86,
+        "area_ha": 11.7317,
+        "rectangularity": 0.221,
+        "elongation": 2.806,
+        "delta_mndwi_mean": 0.9193,
+        "delta_bsi_mean": 0.049,
+        "delta_ndvi_mean": -0.7823,
+        "bbox_posgar": [
+          5441555.256012162,
+          6491938.149213652,
+          5442584.927487758,
+          6492677.861098579
+        ],
+        "centroid_posgar": [
+          5441989.56,
+          6492311.18
+        ],
+        "centroid_wgs84": [
+          -60.611977,
+          -31.708163
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        },
+        "rank_area": 12,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.919 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.22, elong=2.81. Pulso hidrométrico regional fuerte en el tramo (+25.1% área de agua)."
+      },
+      {
+        "id": "RIO-0210",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.729,
+        "area_m2": 110821.46,
+        "area_ha": 11.0821,
+        "rectangularity": 0.495,
+        "elongation": 1.459,
+        "delta_mndwi_mean": 0.8593,
+        "delta_bsi_mean": 0.1853,
+        "delta_ndvi_mean": -0.887,
+        "bbox_posgar": [
+          5440995.434627372,
+          6497925.817038944,
+          5441365.316613751,
+          6498465.60679281
+        ],
+        "centroid_posgar": [
+          5441171.62,
+          6498250.04
+        ],
+        "centroid_wgs84": [
+          -60.620249,
+          -31.654564
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": true,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.6,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Contorno adyacente a píxeles de nube o sombra en máscara SCL (buffer <= 40 m).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        },
+        "rank_area": 13,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.859 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.49, elong=1.46. ATENCIÓN: borde adyacente (<=40 m) a máscara nube/sombra SCL. Pulso hidrométrico regional fuerte en el tramo (+25.1% área de agua)."
+      },
+      {
+        "id": "RIO-0149",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.823,
+        "area_m2": 104625.85,
+        "area_ha": 10.4626,
+        "rectangularity": 0.577,
+        "elongation": 4.179,
+        "delta_mndwi_mean": 0.8558,
+        "delta_bsi_mean": 0.202,
+        "delta_ndvi_mean": -0.8578,
+        "bbox_posgar": [
+          5445034.146046215,
+          6495256.856589273,
+          5445633.954672776,
+          6495836.6307693515
+        ],
+        "centroid_posgar": [
+          5445298.72,
+          6495550.63
+        ],
+        "centroid_wgs84": [
+          -60.576888,
+          -31.679112
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        },
+        "rank_area": 14,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.856 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.58, elong=4.18. Pulso hidrométrico regional fuerte en el tramo (+25.1% área de agua)."
+      },
+      {
+        "id": "RIO-0200",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.785,
+        "area_m2": 97730.74,
+        "area_ha": 9.7731,
+        "rectangularity": 0.449,
+        "elongation": 1.291,
+        "delta_mndwi_mean": 0.8697,
+        "delta_bsi_mean": 0.3853,
+        "delta_ndvi_mean": -1.312,
+        "bbox_posgar": [
+          5441745.195410573,
+          6497106.136301592,
+          5442225.042311822,
+          6497535.968883374
+        ],
+        "centroid_posgar": [
+          5441974.55,
+          6497284.25
+        ],
+        "centroid_wgs84": [
+          -60.611841,
+          -31.663315
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        },
+        "rank_area": 15,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.870 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.45, elong=1.29. Pulso hidrométrico regional fuerte en el tramo (+25.1% área de agua)."
+      },
+      {
+        "id": "RIO-0104",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.751,
+        "area_m2": 84340.23,
+        "area_ha": 8.434,
+        "rectangularity": 0.337,
+        "elongation": 1.68,
+        "delta_mndwi_mean": 0.8431,
+        "delta_bsi_mean": 0.1012,
+        "delta_ndvi_mean": -1.1125,
+        "bbox_posgar": [
+          5439136.027885034,
+          6494047.32769635,
+          5439565.890734069,
+          6494617.105769876
+        ],
+        "centroid_posgar": [
+          5439317.74,
+          6494331.11
+        ],
+        "centroid_wgs84": [
+          -60.640037,
+          -31.689809
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        },
+        "rank_area": 16,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.843 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.34, elong=1.68. Pulso hidrométrico regional fuerte en el tramo (+25.1% área de agua)."
+      },
+      {
+        "id": "RIO-0007",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.703,
+        "area_m2": 78544.34,
+        "area_ha": 7.8544,
+        "rectangularity": 0.402,
+        "elongation": 3.328,
+        "delta_mndwi_mean": 0.7014,
+        "delta_bsi_mean": 0.204,
+        "delta_ndvi_mean": -0.6795,
+        "bbox_posgar": [
+          5437396.582868007,
+          6488929.321141176,
+          5438136.346840765,
+          6489159.231591897
+        ],
+        "centroid_posgar": [
+          5437750.33,
+          6489061.46
+        ],
+        "centroid_wgs84": [
+          -60.656903,
+          -31.737247
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        },
+        "rank_area": 17,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.701 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.40, elong=3.33. Pulso hidrométrico regional fuerte en el tramo (+25.1% área de agua)."
+      },
+      {
+        "id": "RIO-0363",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "confidence": 0.729,
+        "area_m2": 77644.97,
+        "area_ha": 7.7645,
+        "rectangularity": 0.357,
+        "elongation": 2.089,
+        "delta_mndwi_mean": 0.2352,
+        "delta_bsi_mean": 0.3662,
+        "delta_ndvi_mean": -0.7713,
+        "bbox_posgar": [
+          5448273.112629644,
+          6496736.2803591285,
+          5448672.985047351,
+          6497276.070112994
+        ],
+        "centroid_posgar": [
+          5448486.48,
+          6497027.59
+        ],
+        "centroid_wgs84": [
+          -60.543194,
+          -31.66594
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        },
+        "rank_area": 18,
+        "explanation": "Disparada por incremento de suelo desnudo/acopio y caída de vigor vegetal (ΔBSI_adj=+0.366 > +0.25, ΔNDVI_adj=-0.771 < -0.30, BSI_T1 > -0.02, MNDWI_T1 < +0.10). Morfología: rect=0.36, elong=2.09. Pulso hidrométrico regional fuerte en el tramo (+25.1% área de agua)."
+      },
+      {
+        "id": "RIO-0014",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.567,
+        "area_m2": 76745.61,
+        "area_ha": 7.6746,
+        "rectangularity": 0.535,
+        "elongation": 4.353,
+        "delta_mndwi_mean": 0.446,
+        "delta_bsi_mean": 0.0675,
+        "delta_ndvi_mean": -0.2855,
+        "bbox_posgar": [
+          5437796.455285715,
+          6489429.12646883,
+          5438536.219258473,
+          6489599.060280232
+        ],
+        "centroid_posgar": [
+          5438132.79,
+          6489504.58
+        ],
+        "centroid_wgs84": [
+          -60.652839,
+          -31.733271
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        },
+        "rank_area": 19,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.446 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.54, elong=4.35. Pulso hidrométrico regional fuerte en el tramo (+25.1% área de agua)."
+      },
+      {
+        "id": "RIO-0145",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.778,
+        "area_m2": 73348.02,
+        "area_ha": 7.3348,
+        "rectangularity": 0.426,
+        "elongation": 4.038,
+        "delta_mndwi_mean": 0.8763,
+        "delta_bsi_mean": 0.3131,
+        "delta_ndvi_mean": -1.113,
+        "bbox_posgar": [
+          5439755.83013248,
+          6495246.86048272,
+          5440405.622811254,
+          6495766.658023479
+        ],
+        "centroid_posgar": [
+          5440082.54,
+          6495515.89
+        ],
+        "centroid_wgs84": [
+          -60.631898,
+          -31.679165
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        },
+        "rank_area": 20,
+        "explanation": "Disparada por incremento neto de lámina/humedad (ΔMNDWI=+0.876 > +0.40 y MNDWI_T1 > +0.20) tras descontar cinturón de crecida uniforme, dipolos de bancos y turbidez en cauce. Morfología: rect=0.43, elong=4.04. Pulso hidrométrico regional fuerte en el tramo (+25.1% área de agua)."
+      }
+    ]
+  }
+}

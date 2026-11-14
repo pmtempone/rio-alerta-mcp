@@ -461,6 +461,33 @@ def _export_stac_item_to_posgar_geotiffs(
     return vnir_path, swir_path, meta
 
 
+def _item_bbox_coverage_fraction(
+    item: Any,
+    bbox_wgs84: Tuple[float, float, float, float],
+) -> float:
+    """Calcula la fracción del AOI (`bbox_wgs84`) cubierta por el `bbox` del ítem STAC."""
+    it_bbox = getattr(item, "bbox", None)
+    if it_bbox is None and isinstance(item, dict):
+        it_bbox = item.get("bbox")
+    if not it_bbox or len(it_bbox) < 4:
+        return 1.0
+    ix0, iy0, ix1, iy1 = float(it_bbox[0]), float(it_bbox[1]), float(it_bbox[2]), float(it_bbox[3])
+    ax0, ay0, ax1, ay1 = bbox_wgs84
+    req_area = max(1e-12, (ax1 - ax0) * (ay1 - ay0))
+    inter_w = max(0.0, min(ix1, ax1) - max(ix0, ax0))
+    inter_h = max(0.0, min(iy1, ay1) - max(iy0, ay0))
+    return float((inter_w * inter_h) / req_area)
+
+
+def _item_covers_bbox(
+    item: Any,
+    bbox_wgs84: Tuple[float, float, float, float],
+    min_coverage: float = 0.98,
+) -> bool:
+    """Indica si el ítem STAC cubre prácticamente todo el AOI solicitado (evita bordes MGRS)."""
+    return _item_bbox_coverage_fraction(item, bbox_wgs84) >= min_coverage
+
+
 def query_stac_seasonal_pair_candidates(
     client: Any,
     bbox_wgs84: Tuple[float, float, float, float],
@@ -471,7 +498,8 @@ def query_stac_seasonal_pair_candidates(
 ) -> Tuple[Optional[Any], List[Any], int]:
     """Consulta STAC por ventanas anuales equivalentes para evitar truncamiento por paginación.
 
-    Primero ubica la escena limpia más reciente (`T1`) y luego consulta explícitamente cada ventana
+    Primero ubica la escena limpia más reciente (`T1`) priorizando cobertura completa del AOI
+    (evitando recortes truncados de borde MGRS) y luego consulta explícitamente cada ventana
     estacional histórica (`±window_days` en años anteriores) para construir la línea base `T0`.
     """
     eff_end = end_dt or datetime.now(timezone.utc)
@@ -507,6 +535,8 @@ def query_stac_seasonal_pair_candidates(
     recent_sorted = sorted(
         recent_items,
         key=lambda it: (
+            1 if _item_covers_bbox(it, bbox_wgs84) else 0,
+            _item_bbox_coverage_fraction(it, bbox_wgs84),
             (_extract_item_datetime(it) or datetime.min.replace(tzinfo=timezone.utc)).timestamp(),
             -_extract_item_cloud_cover(it),
         ),
@@ -538,8 +568,11 @@ def query_stac_seasonal_pair_candidates(
                 seen_ids.add(it_id)
                 hist_pool.append(it)
 
+    full_cov_hist = [it for it in hist_pool if _item_covers_bbox(it, bbox_wgs84)]
+    effective_hist = full_cov_hist if full_cov_hist else hist_pool
+
     comparable_t0 = filter_seasonally_comparable_items(
-        items=hist_pool,
+        items=effective_hist,
         reference_date_iso=t1_dt.isoformat(),
         window_days=eff_window,
         max_cloud_cover_pct=eff_cloud,
@@ -591,7 +624,7 @@ def search_and_fetch_stac_multitemporal(
     bounds_posgar, crs_epsg = bbox_wgs84_to_posgar(bbox_wgs84)
     target_dir = out_dir or settings.data_dir
 
-    t0_vnir_path, _, t0_meta = _export_stac_item_to_posgar_geotiffs(
+    t0_vnir_path, t0_swir_path, t0_meta = _export_stac_item_to_posgar_geotiffs(
         item=t0_item,
         bounds_posgar=bounds_posgar,
         crs_epsg=crs_epsg,
@@ -599,7 +632,7 @@ def search_and_fetch_stac_multitemporal(
         prefix="t0",
         sign_planetary=use_planetary,
     )
-    t1_vnir_path, _, t1_meta = _export_stac_item_to_posgar_geotiffs(
+    t1_vnir_path, t1_swir_path, t1_meta = _export_stac_item_to_posgar_geotiffs(
         item=t1_item,
         bounds_posgar=bounds_posgar,
         crs_epsg=crs_epsg,
@@ -614,6 +647,8 @@ def search_and_fetch_stac_multitemporal(
         t1_scene=t1_meta,
         t0_raster_path=str(t0_vnir_path),
         t1_raster_path=str(t1_vnir_path),
+        t0_swir_raster_path=str(t0_swir_path),
+        t1_swir_raster_path=str(t1_swir_path),
         crs_epsg=crs_epsg,
         bounds_posgar=bounds_posgar,
         resolution_m=10.0,

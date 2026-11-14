@@ -131,6 +131,12 @@ class MultitemporalScenePair(BaseModel):
     t1_scene: SceneMetadata = Field(..., description="Metadatos de la escena actual evaluada (T1).")
     t0_raster_path: str = Field(..., description="Ruta al GeoTIFF multibanda recortado de T0 en POSGAR 2007.")
     t1_raster_path: str = Field(..., description="Ruta al GeoTIFF multibanda recortado de T1 en POSGAR 2007.")
+    t0_swir_raster_path: Optional[str] = Field(
+        default=None, description="Ruta al GeoTIFF nativo 20 m (B11, B12, SCL) recortado de T0 en POSGAR 2007."
+    )
+    t1_swir_raster_path: Optional[str] = Field(
+        default=None, description="Ruta al GeoTIFF nativo 20 m (B11, B12, SCL) recortado de T1 en POSGAR 2007."
+    )
     crs_epsg: int = Field(..., description="Código EPSG métrico común (POSGAR 2007).")
     bounds_posgar: Tuple[float, float, float, float] = Field(
         ..., description="Bounding box métrico común (minx, miny, maxx, maxy)."
