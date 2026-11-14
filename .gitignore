@@ -1,0 +1,66 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# C extensions
+*.dylib
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Testing and Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# macOS / OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Environment variables & secrets
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# IDE & Editor settings
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Large geospatial datasets, raw downloads & generated outputs
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/reports/*
+!data/reports/.gitkeep
+*.gpkg
+*.tif
+*.tiff
+*.jp2
+
+# Temporary / scratch files
+scratch/
+tmp/
+*.tmp
+*.log
+
+# Local MCP client configs (contain machine-specific paths)
+opencode.json
