@@ -6,16 +6,23 @@ from fastmcp import FastMCP
 
 from src import __version__
 from src.config import POSGAR_2007_EPSG, settings
+from src.core.change_detector import (
+    compute_multitemporal_baseline_and_changes,
+    detect_extraction_anomalies,
+)
 from src.core.crs_manager import get_posgar_faja
+from src.core.parana_pilot_recon import evaluate_parana_pilot_readiness
+from src.schemas import ChangeDetectionResult, SpectralChangeResult
 
 mcp = FastMCP(
     "RioAlerta-MCP",
     instructions=(
         "Servidor especializado en vigilancia satelital multitemporal de extracción ilegal de áridos "
         "en ríos argentinos para autoridades ambientales, municipios, Prefectura Naval y organismos "
-        "de recursos hídricos. Opera sobre escenas Sentinel-2 L2A (T0 vs T1) con índices ΔMNDWI, "
-        "ΔBSI y ΔNDVI, cruce catastral de concesiones (data/permits.gpkg), validación hidrográfica "
-        "IGN/OSM, inspección multimodal VLM y actas técnicas reproducibles en POSGAR 2007 (EPSG:5343-5349)."
+        "de recursos hídricos. Opera sobre escenas Sentinel-2 L2A (T0 vs T1) respetando resoluciones "
+        "nativas (10 m VNIR / 20 m SWIR+SCL), controles de dinámica fluvial natural (crecidas, bajantes, "
+        "migración de barras y fenología ribereña), cruce catastral de concesiones (data/permits.gpkg) "
+        "y actas técnicas reproducibles en POSGAR 2007 (EPSG:5343-5349)."
     ),
 )
 
@@ -46,6 +53,9 @@ def tool_server_status() -> Dict[str, Any]:
         },
         "limits": {
             "max_cloud_cover_pct": settings.max_cloud_cover_pct,
+            "seasonal_window_days": settings.seasonal_window_days,
+            "min_valid_pixel_fraction": settings.min_valid_pixel_fraction,
+            "baseline_max_scenes": settings.baseline_max_scenes,
             "max_master_side_px": settings.max_master_side_px,
             "max_optical_chip_px": settings.max_optical_chip_px,
             "optical_buffer_m": settings.optical_buffer_m,
@@ -81,6 +91,58 @@ def tool_resolve_posgar_crs(lon: float, lat: float = -32.9) -> Dict[str, Any]:
         "x_posgar_m": round(float(x_m), 2),
         "y_posgar_m": round(float(y_m), 2),
     }
+
+
+@mcp.tool()
+def tool_compute_spectral_changes(
+    t0_path: str,
+    t1_path: str,
+    t0_swir_20m_path: str | None = None,
+    t1_swir_20m_path: str | None = None,
+) -> SpectralChangeResult:
+    """Calcula diferencias espectrales multitemporales ΔMNDWI, ΔBSI y ΔNDVI entre T0 y T1.
+
+    Respeta resoluciones nativas Sentinel-2 (10 m VNIR y 20 m SWIR/SCL), aplica máscara SCL y
+    evalúa la variación hidrométrica global del tramo en coordenadas POSGAR 2007.
+    """
+    settings.ensure_directories()
+    return compute_multitemporal_baseline_and_changes(
+        t0_vnir_paths=t0_path,
+        t1_vnir_path=t1_path,
+        out_dir=settings.processed_dir,
+        t0_swir_scl_paths=t0_swir_20m_path,
+        t1_swir_scl_path=t1_swir_20m_path,
+    )
+
+
+@mcp.tool()
+def tool_detect_extraction_anomalies(
+    t0_path: str,
+    t1_path: str,
+    t0_swir_20m_path: str | None = None,
+    t1_swir_20m_path: str | None = None,
+    min_area_m2: float = 1600.0,
+) -> ChangeDetectionResult:
+    """Detecta polígonos de anomalías morfológicas candidatas filtrando cambios fluviales naturales.
+
+    Aplica controles de crecida/bajante uniforme, dipolos de migración natural de bancos de arena,
+    fenología ribereña y máscara de nubes/sombras SCL, emitiendo métricas de incertidumbre.
+    """
+    settings.ensure_directories()
+    return detect_extraction_anomalies(
+        t0_vnir_paths=t0_path,
+        t1_vnir_path=t1_path,
+        t0_swir_scl_paths=t0_swir_20m_path,
+        t1_swir_scl_path=t1_swir_20m_path,
+        min_area_m2=min_area_m2,
+        work_dir=settings.processed_dir,
+    )
+
+
+@mcp.tool()
+def tool_evaluate_parana_pilot(offline_mode: bool = True) -> Dict[str, Any]:
+    """Evalúa factibilidad geodésica, STAC e institucional del tramo piloto Río Paraná Medio."""
+    return evaluate_parana_pilot_readiness(offline_mode=offline_mode)
 
 
 if __name__ == "__main__":

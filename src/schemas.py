@@ -12,11 +12,27 @@ ChangeAnomalyTypeLiteral = Literal[
     "complejo_extractivo",
 ]
 
+NaturalFilterStatusLiteral = Literal[
+    "CANDIDATO_RESIDUAL",
+    "DESCARTADO_PULSO_HIDROMETRICO",
+    "DESCARTADO_MIGRACION_BARRA",
+    "DESCARTADO_ESTACIONAL",
+    "DESCARTADO_NUBE_SOMBRA",
+]
+
+CadastreStatusLiteral = Literal[
+    "OFICIAL_COMPLETO",
+    "PARCIAL_LOCAL",
+    "NO_DISPONIBLE",
+]
+
 PermitClassificationLiteral = Literal[
     "EXTRACCION_AUTORIZADA",
     "EXCESO_DE_POLIGONO",
     "PERMISO_VENCIDO",
     "EXTRACCION_SIN_PERMISO",
+    "SIN_CATASTRO_OFICIAL_CARGADO",
+    "SIN_COINCIDENCIA_EN_CATASTRO_LOCAL",
 ]
 
 VLMVerdictLiteral = Literal[
@@ -33,6 +49,57 @@ InspectionPriorityLiteral = Literal[
 ]
 
 
+class UncertaintyMetadata(BaseModel):
+    """Registro explícito de incertidumbre física, nubosidad y confusores naturales por anomalía."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    effective_resolution_m: float = Field(
+        ..., gt=0.0, description="Resolución física efectiva del índice limitante (ej. 20.0 m para SWIR, 10.0 m VNIR)."
+    )
+    valid_pixel_fraction: float = Field(
+        ..., ge=0.0, le=1.0, description="Fracción de píxeles libres de nubes/sombras (SCL) dentro del polígono."
+    )
+    cloud_shadow_adjacent: bool = Field(
+        default=False, description="Indica presencia de nubes/sombras SCL a <= 40 m del contorno detectado."
+    )
+    water_stage_delta_pct: float = Field(
+        default=0.0, description="Variación porcentual global del área de lámina de agua en el tramo (T0 -> T1)."
+    )
+    natural_dynamics_confounder_score: float = Field(
+        default=0.0,
+        ge=0.0,
+        le=1.0,
+        description="Puntaje [0-1] de riesgo de confusión por dinámica fluvial natural o estacionalidad.",
+    )
+    persistence_scenes_count: int = Field(
+        default=1, ge=1, description="Cantidad de escenas de línea base histórica evaluadas."
+    )
+    limitations: List[str] = Field(
+        default_factory=list, description="Advertencias metodológicas o limitaciones detectadas en el análisis."
+    )
+
+
+class CadastreMetadata(BaseModel):
+    """Metadatos institucionales de fuente y completitud del catastro de permisos consultado."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    cadastre_status: CadastreStatusLiteral = Field(
+        ..., description="Grado de completitud del registro catastral: OFICIAL_COMPLETO, PARCIAL_LOCAL o NO_DISPONIBLE."
+    )
+    jurisdiction: str = Field(default="No especificada", description="Provincia, municipio o cuenca del padrón.")
+    authority_name: Optional[str] = Field(
+        default=None, description="Organismo emisor del registro oficial de concesiones."
+    )
+    source_reference: Optional[str] = Field(
+        default=None, description="Expediente, URL o referencia oficial del catastro cargado."
+    )
+    last_updated: Optional[str] = Field(
+        default=None, description="Fecha ISO de última actualización del padrón de permisos."
+    )
+
+
 class SceneMetadata(BaseModel):
     """Metadatos trazables de una escena satelital (Sentinel-2 L2A u otro sensor)."""
 
@@ -46,7 +113,7 @@ class SceneMetadata(BaseModel):
     resolution_m: float = Field(..., gt=0.0, description="Resolución espacial efectiva en metros.")
     bands_available: List[str] = Field(
         default_factory=list,
-        description="Lista de bandas espectrales leídas (ej. ['B02', 'B03', 'B04', 'B08', 'B11', 'B12']).",
+        description="Lista de bandas espectrales leídas (ej. ['B02', 'B03', 'B04', 'B08', 'B11', 'B12', 'SCL']).",
     )
     stac_collection: str = Field(
         default="sentinel-2-l2a",
@@ -87,18 +154,24 @@ class SpectralChangeResult(BaseModel):
     delta_bsi_path: str = Field(..., description="Ruta al GeoTIFF Float32 de ΔBSI (BSI_T1 - BSI_T0).")
     delta_ndvi_path: str = Field(..., description="Ruta al GeoTIFF Float32 de ΔNDVI (NDVI_T1 - NDVI_T0).")
     crs_epsg: int = Field(..., description="Código EPSG métrico POSGAR 2007.")
-    resolution_m: float = Field(..., gt=0.0, description="Resolución espacial en metros.")
+    resolution_m: float = Field(..., gt=0.0, description="Resolución espacial de grilla en metros.")
+    effective_resolution_swir_m: float = Field(
+        default=20.0, gt=0.0, description="Resolución física nativa de las bandas SWIR (B11/B12) en metros."
+    )
+    valid_pixel_fraction: float = Field(
+        default=1.0, ge=0.0, le=1.0, description="Fracción de píxeles válidos tras aplicar máscara SCL en T0 y T1."
+    )
     bounds_posgar: Tuple[float, float, float, float] = Field(
         ..., description="Extensión métrica (minx, miny, maxx, maxy)."
     )
     stats: Dict[str, float] = Field(
         default_factory=dict,
-        description="Estadísticas descriptivas (min, max, mean, std) por índice diferencial.",
+        description="Estadísticas descriptivas (min, max, mean, std y métricas hidrológicas) del tramo.",
     )
 
 
 class ExtractionAnomalyFeature(BaseModel):
-    """Representación tipada de una anomalía de posible extracción de áridos detectada entre T0 y T1."""
+    """Representación tipada de una anomalía morfológica candidata detectada entre T0 y T1."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -127,6 +200,16 @@ class ExtractionAnomalyFeature(BaseModel):
     geometry_geojson: Dict[str, Any] = Field(
         ..., description="Geometría GeoJSON del polígono reproyectada a EPSG:4326."
     )
+    effective_resolution_m: float = Field(
+        default=20.0, gt=0.0, description="Resolución física nativa limitante (m) de la detección."
+    )
+    natural_filter_status: NaturalFilterStatusLiteral = Field(
+        default="CANDIDATO_RESIDUAL",
+        description="Resultado de los filtros de dinámica fluvial natural y máscara SCL.",
+    )
+    uncertainty: Optional[UncertaintyMetadata] = Field(
+        default=None, description="Métricas cuantitativas de incertidumbre y limitaciones de la anomalía."
+    )
 
 
 class ChangeDetectionResult(BaseModel):
@@ -138,7 +221,7 @@ class ChangeDetectionResult(BaseModel):
     crs: Dict[str, Any] = Field(..., description="Definición del sistema de referencia espacial (CRS84).")
     metadata: Dict[str, Any] = Field(
         default_factory=dict,
-        description="Metadatos cuantitativos de la detección (escenas T0/T1, umbrales, conteos).",
+        description="Metadatos cuantitativos de la detección (escenas T0/T1, controles hidrológicos, conteos).",
     )
     features: List[Dict[str, Any]] = Field(
         default_factory=list,
@@ -162,6 +245,12 @@ class PermitMatchInfo(BaseModel):
     excess_area_m2: float = Field(..., ge=0.0, description="Superficie de anomalía fuera del polígono autorizado (m²).")
     excess_pct: float = Field(..., ge=0.0, le=100.0, description="Porcentaje del área anómala fuera del permiso.")
     distance_m: float = Field(..., ge=0.0, description="Distancia métrica mínima al polígono del permiso (0 si intersecta).")
+    permitted_activity: Optional[str] = Field(
+        default=None, description="Actividad específica habilitada (ej. 'dragado de arena', 'cantera aluvial')."
+    )
+    authorized_volume_limit_m3: Optional[float] = Field(
+        default=None, ge=0.0, description="Volumen o cupo máximo autorizado en m³ si figura en el padrón."
+    )
 
 
 class PermitValidationResult(BaseModel):
@@ -172,10 +261,7 @@ class PermitValidationResult(BaseModel):
     anomaly_id: str = Field(..., description="Identificador único del polígono de anomalía evaluado.")
     classification: PermitClassificationLiteral = Field(
         ...,
-        description=(
-            "Estado catastral: EXTRACCION_AUTORIZADA, EXCESO_DE_POLIGONO, "
-            "PERMISO_VENCIDO o EXTRACCION_SIN_PERMISO."
-        ),
+        description="Estado del cruce catastral respetando el grado de completitud del padrón cargado.",
     )
     matched_permits: List[PermitMatchInfo] = Field(
         default_factory=list,
@@ -204,17 +290,23 @@ class PermitValidationResult(BaseModel):
     observations: str = Field(
         default="", description="Resumen técnico del cruce catastral y temporal."
     )
+    cadastre_metadata: Optional[CadastreMetadata] = Field(
+        default=None, description="Metadatos de completitud y fuente oficial del catastro evaluado."
+    )
+    human_review_required: bool = Field(
+        default=True, description="Requerimiento obligatorio de verificación documental/humana antes de sanción."
+    )
 
 
 class VLMFluvialVerdict(BaseModel):
-    """Dictamen pericial multimodal de geomorfología fluvial y fiscalización ambiental."""
+    """Dictamen pericial multimodal auxiliar de geomorfología fluvial y fiscalización ambiental."""
 
     model_config = ConfigDict(extra="forbid")
 
     verdict: VLMVerdictLiteral = Field(
         ...,
         description=(
-            "Dictamen: EXTRACCION_ANTROPICA, DINAMICA_FLUVIAL_NATURAL, "
+            "Dictamen auxiliar: EXTRACCION_ANTROPICA, DINAMICA_FLUVIAL_NATURAL, "
             "ARTEFACTO_NUBES_SOMBRAS o PENDIENTE_REVISION."
         ),
     )
@@ -230,7 +322,11 @@ class VLMFluvialVerdict(BaseModel):
     field_inspection_recommended: bool = Field(
         ..., description="Indica si se recomienda inspección en campo / patrullaje fluvial / dron."
     )
-    backend: str = Field(default="unknown", description="Backend que emitió el dictamen pericial.")
+    backend: str = Field(default="unknown", description="Backend que emitió el dictamen pericial auxiliar.")
+    human_review_required: bool = Field(
+        default=True,
+        description="El dictamen VLM es auxiliar y requiere validación por un inspector humano habilitado.",
+    )
 
 
 class EnforcementReportResult(BaseModel):

@@ -39,15 +39,22 @@ def test_config_project_root_and_vsicurl_env() -> None:
     assert (PROJECT_ROOT / "src" / "config.py").is_file()
 
     assert os.environ.get("GDAL_DISABLE_READDIR_ON_OPEN") == "EMPTY_DIR"
-    assert os.environ.get("CPL_VSIL_CURL_ALLOWED_EXTENSIONS") == ".tif,.tiff,.jp2"
+    assert os.environ.get("CPL_VSIL_CURL_ALLOWED_EXTENSIONS") == ".tif,.tiff,.jp2,.vrt"
     assert os.environ.get("VSI_CACHE") == "TRUE"
     assert os.environ.get("VSI_CACHE_SIZE") == "25000000"
+    assert os.environ.get("GDAL_HTTP_MERGE_CONSECUTIVE_RANGES") == "YES"
+    assert os.environ.get("GDAL_HTTP_MULTIPLEX") == "YES"
+    assert os.environ.get("GDAL_HTTP_RETRY_MAX") == "3"
+    assert os.environ.get("GDAL_HTTP_RETRY_DELAY") == "1.0"
 
     assert len(POSGAR_2007_EPSG) == 7
     assert settings.permits_gpkg_path == PROJECT_ROOT / "data" / "permits.gpkg"
     assert settings.max_master_side_px == 4096
     assert settings.max_optical_chip_px == 512
-    assert settings.min_anomaly_area_m2 == 500.0
+    assert settings.min_anomaly_area_m2 == 1600.0
+    assert settings.seasonal_window_days == 45
+    assert settings.min_valid_pixel_fraction == 0.70
+    assert settings.baseline_max_scenes == 3
     assert settings.excess_tolerance_pct == 5.0
 
 

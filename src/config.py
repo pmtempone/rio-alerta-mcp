@@ -9,9 +9,13 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Configuración estricta GDAL/VSICURL para lecturas remotas COG por HTTP Range Request (sin descargas completas)
 os.environ.setdefault("GDAL_DISABLE_READDIR_ON_OPEN", "EMPTY_DIR")
-os.environ.setdefault("CPL_VSIL_CURL_ALLOWED_EXTENSIONS", ".tif,.tiff,.jp2")
+os.environ.setdefault("CPL_VSIL_CURL_ALLOWED_EXTENSIONS", ".tif,.tiff,.jp2,.vrt")
 os.environ.setdefault("VSI_CACHE", "TRUE")
 os.environ.setdefault("VSI_CACHE_SIZE", "25000000")
+os.environ.setdefault("GDAL_HTTP_MERGE_CONSECUTIVE_RANGES", "YES")
+os.environ.setdefault("GDAL_HTTP_MULTIPLEX", "YES")
+os.environ.setdefault("GDAL_HTTP_RETRY_MAX", "3")
+os.environ.setdefault("GDAL_HTTP_RETRY_DELAY", "1.0")
 
 # Diccionario oficial de Fajas POSGAR 2007 (Faja 1 a Faja 7) -> Código EPSG
 POSGAR_2007_EPSG: Dict[int, int] = {
@@ -111,6 +115,27 @@ class Settings(BaseSettings):
         alias="MAX_CLOUD_COVER_PCT",
         description="Cobertura nubosa máxima admitida (%) para seleccionar escenas Sentinel-2 L2A.",
     )
+    seasonal_window_days: int = Field(
+        default=45,
+        ge=5,
+        le=180,
+        alias="SEASONAL_WINDOW_DAYS",
+        description="Semiancho en días calendario alrededor del día del año de T1 para seleccionar línea base T0 comparable.",
+    )
+    min_valid_pixel_fraction: float = Field(
+        default=0.70,
+        ge=0.1,
+        le=1.0,
+        alias="MIN_VALID_PIXEL_FRACTION",
+        description="Fracción mínima de píxeles válidos según máscara SCL para aceptar una escena o parche.",
+    )
+    baseline_max_scenes: int = Field(
+        default=3,
+        ge=1,
+        le=12,
+        alias="BASELINE_MAX_SCENES",
+        description="Cantidad máxima de escenas históricas T0 promediadas por mediana para línea base multitemporal.",
+    )
     max_master_side_px: int = Field(
         default=4096,
         ge=64,
@@ -130,10 +155,10 @@ class Settings(BaseSettings):
         description="Buffer métrico alrededor del bbox POSGAR 2007 del candidato para inspección visual.",
     )
     min_anomaly_area_m2: float = Field(
-        default=500.0,
+        default=1600.0,
         gt=0.0,
         alias="MIN_ANOMALY_AREA_M2",
-        description="Área mínima en metros cuadrados para considerar una anomalía de extracción de áridos.",
+        description="Área mínima en m² (4 píxeles nativos de 20x20 m para bandas SWIR) para retener una anomalía.",
     )
     excess_tolerance_pct: float = Field(
         default=5.0,

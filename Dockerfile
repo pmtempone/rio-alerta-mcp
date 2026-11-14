@@ -41,6 +41,7 @@ COPY src/ ./src/
 COPY tests/ ./tests/
 
 RUN pip install --no-cache-dir --no-deps -e . \
-    && mkdir -p /app/data/raw /app/data/processed /app/data/reports
+    && mkdir -p /app/data/raw /app/data/processed /app/data/reports \
+    && python -c "from src.server import tool_server_status; assert tool_server_status()['status'] == 'ok'"
 
 CMD ["python", "-m", "src.server"]
