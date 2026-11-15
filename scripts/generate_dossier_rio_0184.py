@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -143,12 +144,15 @@ def main() -> None:
             {
                 "date": date_str,
                 "scene_id": scene_id,
-                "stage_m": f"{stage_val:.2f} m ({eff_src})",
+                "stage_m": f"{stage_val:.2f} m" if stage_val is not None else "N/D",
+                "stage_source": eff_src,
                 "b11_median": f"{float(np.median(bundle['B11'][mv])):.0f}",
                 "ndvi_median": f"{float(np.median(idx['ndvi'][mv])):+.3f}",
                 "bsi_median": f"{float(np.median(idx['bsi'][mv])):+.3f}",
                 "mndwi_median": f"{float(np.median(idx['mndwi'][mv])):+.3f}",
                 "scl_summary": scl_str,
+                "_stage_val": stage_val,
+                "_stage_src": eff_src,
                 "_b11_med": float(np.median(bundle["B11"][mv])),
                 "_b04_med": float(np.median(bundle["B04"][mv])),
                 "_ndvi_med": float(np.median(idx["ndvi"][mv])),
@@ -158,6 +162,20 @@ def main() -> None:
                 "_px": int(np.sum(mask)),
             }
         )
+
+    # Sincronizar exactamente los controles hidrométricos de metadata con la tabla multitemporal
+    hydro_meta = dict(meta.get("hydrological_controls") or {})
+    t0_stage_val = rows[2]["_stage_val"]
+    t1_stage_val = rows[3]["_stage_val"]
+    hydro_meta["stage_t0_m"] = t0_stage_val
+    hydro_meta["stage_t0_source"] = rows[2]["_stage_src"]
+    hydro_meta["stage_t1_m"] = t1_stage_val
+    hydro_meta["stage_t1_source"] = rows[3]["_stage_src"]
+    if t0_stage_val is not None and t1_stage_val is not None:
+        hydro_meta["stage_delta_m"] = round(float(t1_stage_val) - float(t0_stage_val), 3)
+    hydro_meta["stage_station"] = "Puerto Paraná (INA seriesId=30)"
+    hydro_meta["stage_queried_at_utc"] = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    meta["hydrological_controls"] = hydro_meta
 
     # Enriquecer props de RIO-0184 con geometría vectorial exacta y estadísticas reales
     props = dict(target_feat["properties"])

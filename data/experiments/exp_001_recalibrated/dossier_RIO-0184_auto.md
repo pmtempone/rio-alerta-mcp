@@ -16,7 +16,7 @@
 | **Superficie vectorial exacta** | **3,097.80 m²** (0.3098 ha) |
 | **Distancia al cuerpo de agua T0** | Sin dato |
 | **Estado de verificación** | `PENDIENTE_VERIFICACION_TERRENO_Y_CATASTRO` |
-| **Fecha de emisión** | 2026-11-15 00:17 UTC |
+| **Fecha de emisión** | 2026-11-15 12:59 UTC |
 
 ## 2. Resumen ejecutivo
 
@@ -40,12 +40,14 @@
 
 > **Nota metodológica:** Se distinguen explícitamente las **medianas espectrales por fecha** calculadas sobre el polígono de las **medias de diferencias por píxel (`delta_*_mean`)** ajustadas fenológicamente entre T0 y T1.
 
-| Fecha | Escena / Sensor | Altura río (m) | B11 med. (DN) | NDVI med. | BSI med. | MNDWI med. | Clases SCL |
-| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
-| 2023-11-07 | S2B_20HQK_20231107_0_L2A | 3.58 m (INA_API_A5) | 2039 | +0.726 | -0.242 | -0.435 | 4:29 |
-| 2024-11-06 | S2A_20HQK_20241106_0_L2A | 0.84 m (INA_API_A5) | 1846 | +0.646 | -0.174 | -0.411 | 4:29 |
-| 2025-11-13 | S2A_20HQK_20251113_1_L2A | 2.69 m (INA_API_A5) | 2312 | +0.379 | +0.133 | -0.505 | 4:9, 5:20 |
-| 2026-11-08 | S2A_20HQK_20261108_1_L2A | 4.76 m (INA_API_A5) | 1573 | +0.151 | +0.149 | -0.363 | 4:3, 5:16, 7:10 |
+| Fecha | Escena / Sensor | Altura río (m) | Procedencia hidrométrica | B11 med. (DN) | NDVI med. | BSI med. | MNDWI med. | Clases SCL |
+| :--- | :--- | :---: | :--- | :---: | :---: | :---: | :---: | :--- |
+| 2023-11-07 | S2B_20HQK_20231107_0_L2A | 3.58 m | `INA_API_A5` | 2039 | +0.726 | -0.242 | -0.435 | 4:29 |
+| 2024-11-06 | S2A_20HQK_20241106_0_L2A | 0.84 m | `INA_API_A5` | 1846 | +0.646 | -0.174 | -0.411 | 4:29 |
+| 2025-11-13 | S2A_20HQK_20251113_1_L2A | 2.69 m | `INA_API_A5` | 2312 | +0.379 | +0.133 | -0.505 | 4:9, 5:20 |
+| 2026-11-08 | S2A_20HQK_20261108_1_L2A | 4.76 m | `INA_API_A5` | 1573 | +0.151 | +0.149 | -0.363 | 4:3, 5:16, 7:10 |
+
+**Criterio de procedencia hidrométrica:** `INA_API_A5` (observación oficial consultada en tiempo de ejecución), `FALLBACK_EXP001` (valor histórico heredado de Exp 001 usado solo si falla la API; no es observación nueva), `FALLBACK_MANUAL` (respaldo manual) y `NO_DISPONIBLE` (sin dato).
 
 **Resumen de diferencias por píxel (T0 -> T1):** `delta_bsi_mean=0.4068`, `delta_ndvi_mean=-0.4265`, `delta_mndwi_mean=0.0349`.
 
@@ -55,7 +57,7 @@
 | :--- | :--- | :--- | :--- | :--- |
 | **H1. Extracción / acopio de áridos o desmonte operativo** | Hipótesis | Cambio localizado `desmonte_ribera_acopio` de 3,098 m² en `PLANICIE_INUNDABLE_E_ISLAS`, `ΔBSI_adj=0.407`. | Resolución SWIR 20 m insuficiente para distinguir acopio mineral de obra civil sin VHR/campo. | `A VERIFICAR EN TERRENO` |
 | **H2. Obra civil, camino rural o infraestructura ribereña** | Hipótesis | Incremento de suelo expuesto (`B11_T1=1574 DN`) y geometría con elongación `2.33`. | No se dispone de catastro parcelario ni permisos de obra cargados en el sistema. | `NO DESCARTABLE` |
-| **H3. Dinámica fluvial / humedad edáfica / crecida** | Interpretación | Contexto hidrométrico: Δagua AOI=25.15%, Δaltura=+2.07 m (2.69 m [NO_DISPONIBLE] -> 4.76 m [NO_DISPONIBLE]). | El polígono superó filtros de cinturón de crecida, migración dipolar y agua oscura (`B11_T1=1574`). | `RESIDUAL TRAS FILTROS` |
+| **H3. Dinámica fluvial / humedad edáfica / crecida** | Interpretación | Contexto hidrométrico: Δagua AOI=25.15%, Δaltura=+2.07 m (2.69 m [`INA_API_A5`] -> 4.76 m [`INA_API_A5`]). | El polígono superó filtros de cinturón de crecida, migración dipolar y agua oscura (`B11_T1=1574`). | `RESIDUAL TRAS FILTROS` |
 | **H4. Artefacto atmosférico / sombra / borde SCL=7** | Interpretación | Píxeles `SCL=7` en T1: 10; adyacencia nube/sombra: `False`. | Fracción de píxeles válidos `1.0`. | ATENCIÓN: PRESENCIA SCL=7 |
 
 ## 6. Confiabilidad por dimensión
@@ -89,7 +91,7 @@
 ## 9. Fuentes, parámetros y trazabilidad técnica
 
 - **CRS métrico de cálculo:** `EPSG:5347` (POSGAR 2007). Exportación GeoJSON: `EPSG:4326`.
-- **Procedencia hidrométrica:** T0=`NO_DISPONIBLE`, T1=`NO_DISPONIBLE`.
+- **Procedencia hidrométrica (Puerto Paraná (INA seriesId=30), unidad `m`, consulta=2026-11-15 12:59 UTC):** T0=`2.69` m (`INA_API_A5`), T1=`4.76` m (`INA_API_A5`).
 - **Resolución de grilla / SWIR nativo:** 9.996810442680092 m / 20.009770821454982 m.
 - **Área mínima de detección:** 1600.0 m².
 - **Parámetros congelados Fase 2.1:** `bsi_reg_albedo_k=800.0`, `dark_water_min_b11_dn=600.0`, `dark_water_min_b04_dn=420.0`, `dark_water_min_b08_dn=350.0`, `scl7_min_b11_dn=850.0`, `scl7_min_b04_dn=500.0`, `hydrometric_stage_rise_alert_m=0.8`.

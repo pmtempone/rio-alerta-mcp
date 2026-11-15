@@ -158,13 +158,36 @@ def generate_candidate_dossier(
         "ajustadas fenológicamente entre T0 y T1."
     )
     lines.append("")
+    stage_t0 = hydro.get("stage_t0_m")
+    stage_t1 = hydro.get("stage_t1_m")
+    stage_t0_src = hydro.get("stage_t0_source", "NO_DISPONIBLE")
+    stage_t1_src = hydro.get("stage_t1_source", "NO_DISPONIBLE")
+    stage_delta = hydro.get("stage_delta_m")
+    stage_station = hydro.get("stage_station", "Estación INA/PNA configurada")
+    stage_queried_at = hydro.get("stage_queried_at_utc")
+
+    if multitemporal_series and len(multitemporal_series) >= 2:
+        t0_row = multitemporal_series[-2]
+        t1_row = multitemporal_series[-1]
+        if stage_t0_src == "NO_DISPONIBLE" and t0_row.get("_stage_src"):
+            stage_t0 = t0_row.get("_stage_val", stage_t0)
+            stage_t0_src = str(t0_row["_stage_src"])
+        if stage_t1_src == "NO_DISPONIBLE" and t1_row.get("_stage_src"):
+            stage_t1 = t1_row.get("_stage_val", stage_t1)
+            stage_t1_src = str(t1_row["_stage_src"])
+        if stage_t0 is not None and stage_t1 is not None:
+            stage_delta = round(float(stage_t1) - float(stage_t0), 3)
+
     if multitemporal_series:
-        lines.append("| Fecha | Escena / Sensor | Altura río (m) | B11 med. (DN) | NDVI med. | BSI med. | MNDWI med. | Clases SCL |")
-        lines.append("| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :--- |")
+        lines.append("| Fecha | Escena / Sensor | Altura río (m) | Procedencia hidrométrica | B11 med. (DN) | NDVI med. | BSI med. | MNDWI med. | Clases SCL |")
+        lines.append("| :--- | :--- | :---: | :--- | :---: | :---: | :---: | :---: | :--- |")
         for row in multitemporal_series:
+            row_stage = row.get("_stage_val")
+            row_stage_txt = f"{row_stage:.2f} m" if isinstance(row_stage, (int, float)) else str(row.get("stage_m", "N/D"))
+            row_src = str(row.get("_stage_src") or row.get("stage_source") or "NO_DISPONIBLE")
             lines.append(
                 f"| {row.get('date', 'N/D')} | {row.get('scene_id', 'N/D')} | "
-                f"{row.get('stage_m', 'N/D')} | {row.get('b11_median', 'N/D')} | "
+                f"{row_stage_txt} | `{row_src}` | {row.get('b11_median', 'N/D')} | "
                 f"{row.get('ndvi_median', 'N/D')} | {row.get('bsi_median', 'N/D')} | "
                 f"{row.get('mndwi_median', 'N/D')} | {row.get('scl_summary', 'N/D')} |"
             )
@@ -181,6 +204,12 @@ def generate_candidate_dossier(
             f"{_fmt_num(stats.get('t1_ndvi_median'), 3)} | {_fmt_num(stats.get('t1_bsi_median'), 3)} | "
             f"{_fmt_num(stats.get('t1_mndwi_median'), 3)} | {_format_scl_counts(scl_counts)} |"
         )
+    lines.append("")
+    lines.append(
+        "**Criterio de procedencia hidrométrica:** `INA_API_A5` (observación oficial consultada en tiempo de ejecución), "
+        "`FALLBACK_EXP001` (valor histórico heredado de Exp 001 usado solo si falla la API; no es observación nueva), "
+        "`FALLBACK_MANUAL` (respaldo manual) y `NO_DISPONIBLE` (sin dato)."
+    )
     lines.append("")
     lines.append(
         f"**Resumen de diferencias por píxel (T0 -> T1):** "
@@ -205,15 +234,10 @@ def generate_candidate_dossier(
         f"Incremento de suelo expuesto (`B11_T1={_fmt_num(stats.get('t1_b11_median'), 0)} DN`) y geometría con elongación `{elong:.2f}`. | "
         "No se dispone de catastro parcelario ni permisos de obra cargados en el sistema. | `NO DESCARTABLE` |"
     )
-    stage_t0 = hydro.get("stage_t0_m")
-    stage_t1 = hydro.get("stage_t1_m")
-    stage_t0_src = hydro.get("stage_t0_source", "NO_DISPONIBLE")
-    stage_t1_src = hydro.get("stage_t1_source", "NO_DISPONIBLE")
-    stage_delta = hydro.get("stage_delta_m")
     hydro_txt = (
         f"Δagua AOI={hydro.get('water_stage_delta_pct', 'N/D')}%"
         + (
-            f", Δaltura={stage_delta:+.2f} m ({stage_t0} m [{stage_t0_src}] -> {stage_t1} m [{stage_t1_src}])"
+            f", Δaltura={stage_delta:+.2f} m ({stage_t0} m [`{stage_t0_src}`] -> {stage_t1} m [`{stage_t1_src}`])"
             if stage_delta is not None
             else ""
         )
@@ -275,7 +299,11 @@ def generate_candidate_dossier(
     lines.append("## 9. Fuentes, parámetros y trazabilidad técnica")
     lines.append("")
     lines.append(f"- **CRS métrico de cálculo:** `EPSG:{crs_epsg}` (POSGAR 2007). Exportación GeoJSON: `EPSG:4326`.")
-    lines.append(f"- **Procedencia hidrométrica:** T0=`{hydro.get('stage_t0_source', 'NO_DISPONIBLE')}`, T1=`{hydro.get('stage_t1_source', 'NO_DISPONIBLE')}`.")
+    queried_txt = f", consulta={stage_queried_at}" if stage_queried_at else ""
+    lines.append(
+        f"- **Procedencia hidrométrica ({stage_station}, unidad `m`{queried_txt}):** "
+        f"T0=`{stage_t0}` m (`{stage_t0_src}`), T1=`{stage_t1}` m (`{stage_t1_src}`)."
+    )
     lines.append(f"- **Resolución de grilla / SWIR nativo:** {detection_metadata.get('grid_resolution_m', 10.0)} m / {detection_metadata.get('effective_swir_resolution_m', 20.0)} m.")
     lines.append(f"- **Área mínima de detección:** {detection_metadata.get('min_anomaly_area_m2', 1600.0)} m².")
     if calib:

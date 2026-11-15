@@ -153,8 +153,57 @@ def test_t4_ina_a5_provenance_recording() -> None:
     with patch("src.core.hydrological_control.httpx.Client") as mock_client_cls:
         mock_client_cls.return_value.__enter__.return_value.get.return_value = mock_err
         val_e, src_e = fetch_ina_stage_height_with_provenance(30, "2025-11-13")
-        assert val_e is None
-        assert src_e == "NO_DISPONIBLE"
+    assert val_e is None
+    assert src_e == "NO_DISPONIBLE"
+
+
+def test_t4_hydrometric_consistency_across_sections_4_5_and_9() -> None:
+    """Verifica coherencia hidrométrica integral entre secciones 4, 5 y 9 del dossier."""
+    meta = _sample_metadata()
+    # Simular metadata sin stage_*_source pero serie multitemporal con INA_API_A5
+    meta["hydrological_controls"].pop("stage_t0_source", None)
+    meta["hydrological_controls"].pop("stage_t1_source", None)
+    series = [
+        {
+            "date": "2025-11-13",
+            "scene_id": "S2A_T0",
+            "stage_m": "2.69 m",
+            "stage_source": "INA_API_A5",
+            "_stage_val": 2.69,
+            "_stage_src": "INA_API_A5",
+            "b11_median": "2312",
+            "ndvi_median": "+0.379",
+            "bsi_median": "+0.133",
+            "mndwi_median": "-0.505",
+            "scl_summary": "4:9, 5:20",
+        },
+        {
+            "date": "2026-11-08",
+            "scene_id": "S2A_T1",
+            "stage_m": "4.76 m",
+            "stage_source": "FALLBACK_EXP001",
+            "_stage_val": 4.76,
+            "_stage_src": "FALLBACK_EXP001",
+            "b11_median": "1573",
+            "ndvi_median": "+0.151",
+            "bsi_median": "+0.149",
+            "mndwi_median": "-0.363",
+            "scl_summary": "4:3, 5:16, 7:10",
+        },
+    ]
+    md = generate_candidate_dossier(
+        feature=_sample_feature(),
+        detection_metadata=meta,
+        multitemporal_series=series,
+    )
+    sec5_start = md.index("## 5. Análisis de hipótesis alternativas")
+    sec9_start = md.index("## 9. Fuentes, parámetros y trazabilidad técnica")
+    sec5 = md[sec5_start:sec9_start]
+    sec9 = md[sec9_start:]
+
+    assert "NO_DISPONIBLE" not in sec5
+    assert "T0=`2.69` m (`INA_API_A5`), T1=`4.76` m (`FALLBACK_EXP001`)" in sec9
+    assert "no es observación nueva" in md
 
 
 def test_t4_negative_dossier_supports_zero_candidates() -> None:
