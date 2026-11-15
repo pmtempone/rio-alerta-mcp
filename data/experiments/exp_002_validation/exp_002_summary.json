@@ -1,0 +1,1159 @@
+{
+  "frozen_calibration_parameters": {
+    "bsi_reg_albedo_k": 800.0,
+    "dark_water_min_b11_dn": 600.0,
+    "dark_water_min_b04_dn": 420.0,
+    "dark_water_min_b08_dn": 350.0,
+    "scl7_min_b11_dn": 850.0,
+    "scl7_min_b04_dn": 500.0,
+    "hydrometric_stage_rise_alert_m": 0.8
+  },
+  "runs": [
+    {
+      "run": "exp_001_recalibrated",
+      "candidate_count": 13,
+      "by_type": {
+        "frente_excavacion_inundado": 12,
+        "desmonte_ribera_acopio": 1
+      },
+      "by_zone": {
+        "RIBERA_FIRME_Y_TERRAZA": 12,
+        "PLANICIE_INUNDABLE_E_ISLAS": 1
+      },
+      "hydrological_controls": {
+        "water_stage_delta_pct": 25.15,
+        "is_systemic_stage_rise": true,
+        "is_systemic_stage_drop": false,
+        "stage_t0_m": 2.69,
+        "stage_t1_m": 4.76,
+        "stage_delta_m": 2.07,
+        "bar_migration_dipoles_filtered": 22,
+        "bar_migration_details": [
+          {
+            "erosion_area_m2": 1299.2,
+            "accretion_area_m2": 3198.0,
+            "area_ratio": 0.406,
+            "centroid_separation_m": 253.7
+          },
+          {
+            "erosion_area_m2": 1099.3,
+            "accretion_area_m2": 1898.8,
+            "area_ratio": 0.579,
+            "centroid_separation_m": 380.5
+          },
+          {
+            "erosion_area_m2": 4397.2,
+            "accretion_area_m2": 6395.9,
+            "area_ratio": 0.688,
+            "centroid_separation_m": 137.6
+          },
+          {
+            "erosion_area_m2": 1199.2,
+            "accretion_area_m2": 1299.2,
+            "area_ratio": 0.923,
+            "centroid_separation_m": 430.4
+          },
+          {
+            "erosion_area_m2": 1499.0,
+            "accretion_area_m2": 2098.7,
+            "area_ratio": 0.714,
+            "centroid_separation_m": 422.3
+          },
+          {
+            "erosion_area_m2": 4697.0,
+            "accretion_area_m2": 1998.7,
+            "area_ratio": 2.35,
+            "centroid_separation_m": 445.6
+          },
+          {
+            "erosion_area_m2": 3597.7,
+            "accretion_area_m2": 1998.7,
+            "area_ratio": 1.8,
+            "centroid_separation_m": 345.4
+          },
+          {
+            "erosion_area_m2": 2198.6,
+            "accretion_area_m2": 1199.2,
+            "area_ratio": 1.833,
+            "centroid_separation_m": 441.4
+          },
+          {
+            "erosion_area_m2": 1698.9,
+            "accretion_area_m2": 999.4,
+            "area_ratio": 1.7,
+            "centroid_separation_m": 225.0
+          },
+          {
+            "erosion_area_m2": 8194.8,
+            "accretion_area_m2": 10493.3,
+            "area_ratio": 0.781,
+            "centroid_separation_m": 227.5
+          },
+          {
+            "erosion_area_m2": 3397.8,
+            "accretion_area_m2": 1399.1,
+            "area_ratio": 2.429,
+            "centroid_separation_m": 104.1
+          },
+          {
+            "erosion_area_m2": 899.4,
+            "accretion_area_m2": 1898.8,
+            "area_ratio": 0.474,
+            "centroid_separation_m": 220.0
+          },
+          {
+            "erosion_area_m2": 2198.6,
+            "accretion_area_m2": 3198.0,
+            "area_ratio": 0.688,
+            "centroid_separation_m": 299.3
+          },
+          {
+            "erosion_area_m2": 1998.7,
+            "accretion_area_m2": 2898.2,
+            "area_ratio": 0.69,
+            "centroid_separation_m": 152.6
+          },
+          {
+            "erosion_area_m2": 899.4,
+            "accretion_area_m2": 999.4,
+            "area_ratio": 0.9,
+            "centroid_separation_m": 355.7
+          },
+          {
+            "erosion_area_m2": 65058.5,
+            "accretion_area_m2": 28981.5,
+            "area_ratio": 2.245,
+            "centroid_separation_m": 206.3
+          },
+          {
+            "erosion_area_m2": 4297.3,
+            "accretion_area_m2": 2798.2,
+            "area_ratio": 1.536,
+            "centroid_separation_m": 448.0
+          },
+          {
+            "erosion_area_m2": 13891.1,
+            "accretion_area_m2": 19287.7,
+            "area_ratio": 0.72,
+            "centroid_separation_m": 295.7
+          },
+          {
+            "erosion_area_m2": 14990.4,
+            "accretion_area_m2": 9094.2,
+            "area_ratio": 1.648,
+            "centroid_separation_m": 313.6
+          },
+          {
+            "erosion_area_m2": 2398.5,
+            "accretion_area_m2": 1599.0,
+            "area_ratio": 1.5,
+            "centroid_separation_m": 123.3
+          },
+          {
+            "erosion_area_m2": 899.4,
+            "accretion_area_m2": 1499.0,
+            "area_ratio": 0.6,
+            "centroid_separation_m": 293.6
+          },
+          {
+            "erosion_area_m2": 2698.3,
+            "accretion_area_m2": 5796.3,
+            "area_ratio": 0.466,
+            "centroid_separation_m": 244.7
+          }
+        ],
+        "riparian_ndvi_seasonal_shift": -0.0373,
+        "riparian_bsi_seasonal_shift": -0.0454
+      },
+      "geomorphological_zone_fractions": {
+        "cauce_activo": 0.2558,
+        "barras_moviles": 0.0037,
+        "planicie_islas": 0.6868,
+        "ribera_firme": 0.0537
+      },
+      "top_candidates": [
+        {
+          "id": "RIO-0006",
+          "type": "frente_excavacion_inundado",
+          "zone": "RIBERA_FIRME_Y_TERRAZA",
+          "area_m2": 40970.96,
+          "confidence": 0.856,
+          "centroid_wgs84": [
+            -60.572908,
+            -31.679677
+          ],
+          "t1_b11_median": 157.0943,
+          "t1_scl_counts": {
+            "4": 1,
+            "5": 47,
+            "6": 344,
+            "7": 45
+          }
+        },
+        {
+          "id": "RIO-0007",
+          "type": "frente_excavacion_inundado",
+          "zone": "RIBERA_FIRME_Y_TERRAZA",
+          "area_m2": 28030.14,
+          "confidence": 0.79,
+          "centroid_wgs84": [
+            -60.561562,
+            -31.678069
+          ],
+          "t1_b11_median": 157.7592,
+          "t1_scl_counts": {
+            "4": 2,
+            "5": 28,
+            "6": 176,
+            "7": 69
+          }
+        },
+        {
+          "id": "RIO-0012",
+          "type": "frente_excavacion_inundado",
+          "zone": "RIBERA_FIRME_Y_TERRAZA",
+          "area_m2": 20685.34,
+          "confidence": 0.735,
+          "centroid_wgs84": [
+            -60.620989,
+            -31.653191
+          ],
+          "t1_b11_median": 135.9839,
+          "t1_scl_counts": {
+            "5": 4,
+            "6": 123,
+            "7": 81
+          }
+        },
+        {
+          "id": "RIO-0003",
+          "type": "frente_excavacion_inundado",
+          "zone": "RIBERA_FIRME_Y_TERRAZA",
+          "area_m2": 18886.62,
+          "confidence": 0.808,
+          "centroid_wgs84": [
+            -60.574633,
+            -31.681195
+          ],
+          "t1_b11_median": 262.8432,
+          "t1_scl_counts": {
+            "4": 1,
+            "5": 32,
+            "6": 62,
+            "7": 93
+          }
+        },
+        {
+          "id": "RIO-0005",
+          "type": "frente_excavacion_inundado",
+          "zone": "RIBERA_FIRME_Y_TERRAZA",
+          "area_m2": 4946.49,
+          "confidence": 0.802,
+          "centroid_wgs84": [
+            -60.575108,
+            -31.679572
+          ],
+          "t1_b11_median": 246.942,
+          "t1_scl_counts": {
+            "5": 6,
+            "6": 37,
+            "7": 10
+          }
+        },
+        {
+          "id": "RIO-0011",
+          "type": "frente_excavacion_inundado",
+          "zone": "RIBERA_FIRME_Y_TERRAZA",
+          "area_m2": 3697.38,
+          "confidence": 0.845,
+          "centroid_wgs84": [
+            -60.654528,
+            -31.65892
+          ],
+          "t1_b11_median": 48.8921,
+          "t1_scl_counts": {
+            "6": 31
+          }
+        },
+        {
+          "id": "RIO-0004",
+          "type": "frente_excavacion_inundado",
+          "zone": "RIBERA_FIRME_Y_TERRAZA",
+          "area_m2": 3347.63,
+          "confidence": 0.799,
+          "centroid_wgs84": [
+            -60.55029,
+            -31.68034
+          ],
+          "t1_b11_median": 311.3627,
+          "t1_scl_counts": {
+            "5": 10,
+            "6": 15,
+            "7": 15
+          }
+        },
+        {
+          "id": "RIO-0002",
+          "type": "frente_excavacion_inundado",
+          "zone": "RIBERA_FIRME_Y_TERRAZA",
+          "area_m2": 2798.02,
+          "confidence": 0.841,
+          "centroid_wgs84": [
+            -60.571554,
+            -31.681534
+          ],
+          "t1_b11_median": 257.2084,
+          "t1_scl_counts": {
+            "5": 5,
+            "6": 15,
+            "7": 4
+          }
+        },
+        {
+          "id": "RIO-0009",
+          "type": "frente_excavacion_inundado",
+          "zone": "RIBERA_FIRME_Y_TERRAZA",
+          "area_m2": 1948.62,
+          "confidence": 0.659,
+          "centroid_wgs84": [
+            -60.655258,
+            -31.668872
+          ],
+          "t1_b11_median": 91.11,
+          "t1_scl_counts": {
+            "6": 24
+          }
+        },
+        {
+          "id": "RIO-0010",
+          "type": "frente_excavacion_inundado",
+          "zone": "RIBERA_FIRME_Y_TERRAZA",
+          "area_m2": 1898.65,
+          "confidence": 0.754,
+          "centroid_wgs84": [
+            -60.659611,
+            -31.668582
+          ],
+          "t1_b11_median": 49.3403,
+          "t1_scl_counts": {
+            "6": 25
+          }
+        }
+      ]
+    },
+    {
+      "run": "aoi1_2024_2025",
+      "candidate_count": 56,
+      "by_type": {
+        "desmonte_ribera_acopio": 50,
+        "apertura_camino_acceso": 6
+      },
+      "by_zone": {
+        "PLANICIE_INUNDABLE_E_ISLAS": 54,
+        "RIBERA_FIRME_Y_TERRAZA": 2
+      },
+      "hydrological_controls": {
+        "water_stage_delta_pct": -0.4,
+        "is_systemic_stage_rise": true,
+        "is_systemic_stage_drop": false,
+        "stage_t0_m": 0.78,
+        "stage_t1_m": 2.69,
+        "stage_delta_m": 1.91,
+        "bar_migration_dipoles_filtered": 9,
+        "bar_migration_details": [
+          {
+            "erosion_area_m2": 4197.3,
+            "accretion_area_m2": 1698.9,
+            "area_ratio": 2.471,
+            "centroid_separation_m": 443.2
+          },
+          {
+            "erosion_area_m2": 2398.5,
+            "accretion_area_m2": 1998.7,
+            "area_ratio": 1.2,
+            "centroid_separation_m": 328.0
+          },
+          {
+            "erosion_area_m2": 36376.8,
+            "accretion_area_m2": 38475.4,
+            "area_ratio": 0.945,
+            "centroid_separation_m": 222.5
+          },
+          {
+            "erosion_area_m2": 1499.0,
+            "accretion_area_m2": 1399.1,
+            "area_ratio": 1.071,
+            "centroid_separation_m": 436.3
+          },
+          {
+            "erosion_area_m2": 1998.7,
+            "accretion_area_m2": 1499.0,
+            "area_ratio": 1.333,
+            "centroid_separation_m": 269.3
+          },
+          {
+            "erosion_area_m2": 4197.3,
+            "accretion_area_m2": 4597.1,
+            "area_ratio": 0.913,
+            "centroid_separation_m": 428.8
+          },
+          {
+            "erosion_area_m2": 8594.5,
+            "accretion_area_m2": 12092.3,
+            "area_ratio": 0.711,
+            "centroid_separation_m": 411.6
+          },
+          {
+            "erosion_area_m2": 15390.2,
+            "accretion_area_m2": 8194.8,
+            "area_ratio": 1.878,
+            "centroid_separation_m": 347.0
+          },
+          {
+            "erosion_area_m2": 1998.7,
+            "accretion_area_m2": 3198.0,
+            "area_ratio": 0.625,
+            "centroid_separation_m": 192.3
+          }
+        ],
+        "riparian_ndvi_seasonal_shift": -0.0386,
+        "riparian_bsi_seasonal_shift": 0.0282
+      },
+      "geomorphological_zone_fractions": {
+        "cauce_activo": 0.2336,
+        "barras_moviles": 0.0084,
+        "planicie_islas": 0.7084,
+        "ribera_firme": 0.0497
+      },
+      "top_candidates": [
+        {
+          "id": "RIO-0019",
+          "type": "desmonte_ribera_acopio",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 100878.51,
+          "confidence": 0.683,
+          "centroid_wgs84": [
+            -60.637053,
+            -31.686603
+          ],
+          "t1_b11_median": 2443.1943,
+          "t1_scl_counts": {
+            "4": 55,
+            "5": 969
+          }
+        },
+        {
+          "id": "RIO-0054",
+          "type": "desmonte_ribera_acopio",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 26431.27,
+          "confidence": 0.798,
+          "centroid_wgs84": [
+            -60.62293,
+            -31.646815
+          ],
+          "t1_b11_median": 2257.4224,
+          "t1_scl_counts": {
+            "4": 122,
+            "5": 142
+          }
+        },
+        {
+          "id": "RIO-0049",
+          "type": "desmonte_ribera_acopio",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 20585.41,
+          "confidence": 0.656,
+          "centroid_wgs84": [
+            -60.65222,
+            -31.658495
+          ],
+          "t1_b11_median": 2547.2676,
+          "t1_scl_counts": {
+            "4": 33,
+            "5": 171
+          }
+        },
+        {
+          "id": "RIO-0024",
+          "type": "desmonte_ribera_acopio",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 13790.23,
+          "confidence": 0.746,
+          "centroid_wgs84": [
+            -60.633425,
+            -31.679196
+          ],
+          "t1_b11_median": 2762.8015,
+          "t1_scl_counts": {
+            "4": 123,
+            "5": 18
+          }
+        },
+        {
+          "id": "RIO-0017",
+          "type": "desmonte_ribera_acopio",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 12691.01,
+          "confidence": 0.781,
+          "centroid_wgs84": [
+            -60.577923,
+            -31.689237
+          ],
+          "t1_b11_median": 3526.0962,
+          "t1_scl_counts": {
+            "4": 122,
+            "5": 6
+          }
+        },
+        {
+          "id": "RIO-0041",
+          "type": "desmonte_ribera_acopio",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 12341.25,
+          "confidence": 0.681,
+          "centroid_wgs84": [
+            -60.542803,
+            -31.66488
+          ],
+          "t1_b11_median": 2514.4033,
+          "t1_scl_counts": {
+            "4": 9,
+            "5": 101
+          }
+        },
+        {
+          "id": "RIO-0038",
+          "type": "desmonte_ribera_acopio",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 8294.12,
+          "confidence": 0.72,
+          "centroid_wgs84": [
+            -60.579203,
+            -31.667457
+          ],
+          "t1_b11_median": 3722.6455,
+          "t1_scl_counts": {
+            "4": 21,
+            "5": 70
+          }
+        },
+        {
+          "id": "RIO-0031",
+          "type": "apertura_camino_acceso",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 7344.79,
+          "confidence": 0.714,
+          "centroid_wgs84": [
+            -60.543986,
+            -31.672486
+          ],
+          "t1_b11_median": 2972.583,
+          "t1_scl_counts": {
+            "4": 27,
+            "5": 51
+          }
+        },
+        {
+          "id": "RIO-0045",
+          "type": "desmonte_ribera_acopio",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 7194.9,
+          "confidence": 0.588,
+          "centroid_wgs84": [
+            -60.548706,
+            -31.660836
+          ],
+          "t1_b11_median": 1986.1349,
+          "t1_scl_counts": {
+            "4": 27,
+            "5": 56
+          }
+        },
+        {
+          "id": "RIO-0053",
+          "type": "desmonte_ribera_acopio",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 6795.18,
+          "confidence": 0.675,
+          "centroid_wgs84": [
+            -60.619094,
+            -31.646858
+          ],
+          "t1_b11_median": 2948.7903,
+          "t1_scl_counts": {
+            "4": 4,
+            "5": 62
+          }
+        }
+      ]
+    },
+    {
+      "run": "aoi1_2023_2026",
+      "candidate_count": 83,
+      "by_type": {
+        "frente_excavacion_inundado": 17,
+        "desmonte_ribera_acopio": 57,
+        "apertura_camino_acceso": 9
+      },
+      "by_zone": {
+        "PLANICIE_INUNDABLE_E_ISLAS": 75,
+        "RIBERA_FIRME_Y_TERRAZA": 8
+      },
+      "hydrological_controls": {
+        "water_stage_delta_pct": -2.0,
+        "is_systemic_stage_rise": false,
+        "is_systemic_stage_drop": false,
+        "stage_t0_m": 2.46,
+        "stage_t1_m": 2.66,
+        "stage_delta_m": 0.2,
+        "bar_migration_dipoles_filtered": 15,
+        "bar_migration_details": [
+          {
+            "erosion_area_m2": 1299.2,
+            "accretion_area_m2": 1099.3,
+            "area_ratio": 1.182,
+            "centroid_separation_m": 433.6
+          },
+          {
+            "erosion_area_m2": 3098.0,
+            "accretion_area_m2": 1698.9,
+            "area_ratio": 1.824,
+            "centroid_separation_m": 307.8
+          },
+          {
+            "erosion_area_m2": 1099.3,
+            "accretion_area_m2": 1299.2,
+            "area_ratio": 0.846,
+            "centroid_separation_m": 424.4
+          },
+          {
+            "erosion_area_m2": 2698.3,
+            "accretion_area_m2": 4796.9,
+            "area_ratio": 0.562,
+            "centroid_separation_m": 321.0
+          },
+          {
+            "erosion_area_m2": 1898.8,
+            "accretion_area_m2": 899.4,
+            "area_ratio": 2.111,
+            "centroid_separation_m": 209.0
+          },
+          {
+            "erosion_area_m2": 2398.5,
+            "accretion_area_m2": 4497.1,
+            "area_ratio": 0.533,
+            "centroid_separation_m": 307.7
+          },
+          {
+            "erosion_area_m2": 17788.6,
+            "accretion_area_m2": 9094.2,
+            "area_ratio": 1.956,
+            "centroid_separation_m": 443.7
+          },
+          {
+            "erosion_area_m2": 1998.7,
+            "accretion_area_m2": 2798.2,
+            "area_ratio": 0.714,
+            "centroid_separation_m": 351.7
+          },
+          {
+            "erosion_area_m2": 1698.9,
+            "accretion_area_m2": 899.4,
+            "area_ratio": 1.889,
+            "centroid_separation_m": 190.1
+          },
+          {
+            "erosion_area_m2": 1399.1,
+            "accretion_area_m2": 1698.9,
+            "area_ratio": 0.824,
+            "centroid_separation_m": 296.5
+          },
+          {
+            "erosion_area_m2": 1399.1,
+            "accretion_area_m2": 2898.2,
+            "area_ratio": 0.483,
+            "centroid_separation_m": 397.7
+          },
+          {
+            "erosion_area_m2": 2098.7,
+            "accretion_area_m2": 1199.2,
+            "area_ratio": 1.75,
+            "centroid_separation_m": 399.2
+          },
+          {
+            "erosion_area_m2": 3697.6,
+            "accretion_area_m2": 7195.4,
+            "area_ratio": 0.514,
+            "centroid_separation_m": 399.9
+          },
+          {
+            "erosion_area_m2": 10093.6,
+            "accretion_area_m2": 10093.6,
+            "area_ratio": 1.0,
+            "centroid_separation_m": 234.9
+          },
+          {
+            "erosion_area_m2": 7295.3,
+            "accretion_area_m2": 2998.1,
+            "area_ratio": 2.433,
+            "centroid_separation_m": 166.9
+          }
+        ],
+        "riparian_ndvi_seasonal_shift": -0.0912,
+        "riparian_bsi_seasonal_shift": 0.1013
+      },
+      "geomorphological_zone_fractions": {
+        "cauce_activo": 0.235,
+        "barras_moviles": 0.0066,
+        "planicie_islas": 0.7041,
+        "ribera_firme": 0.0544
+      },
+      "top_candidates": [
+        {
+          "id": "RIO-0013",
+          "type": "frente_excavacion_inundado",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 406012.27,
+          "confidence": 0.896,
+          "centroid_wgs84": [
+            -60.648707,
+            -31.665981
+          ],
+          "t1_b11_median": 117.2063,
+          "t1_scl_counts": {
+            "4": 52,
+            "6": 4014
+          }
+        },
+        {
+          "id": "RIO-0012",
+          "type": "frente_excavacion_inundado",
+          "zone": "RIBERA_FIRME_Y_TERRAZA",
+          "area_m2": 166482.02,
+          "confidence": 0.914,
+          "centroid_wgs84": [
+            -60.65757,
+            -31.671054
+          ],
+          "t1_b11_median": 139.2923,
+          "t1_scl_counts": {
+            "6": 1673
+          }
+        },
+        {
+          "id": "RIO-0053",
+          "type": "apertura_camino_acceso",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 59557.79,
+          "confidence": 0.693,
+          "centroid_wgs84": [
+            -60.576818,
+            -31.679345
+          ],
+          "t1_b11_median": 2702.9807,
+          "t1_scl_counts": {
+            "4": 109,
+            "5": 476,
+            "7": 9
+          }
+        },
+        {
+          "id": "RIO-0029",
+          "type": "desmonte_ribera_acopio",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 55360.77,
+          "confidence": 0.729,
+          "centroid_wgs84": [
+            -60.654113,
+            -31.715156
+          ],
+          "t1_b11_median": 2543.2319,
+          "t1_scl_counts": {
+            "4": 13,
+            "5": 546
+          }
+        },
+        {
+          "id": "RIO-0071",
+          "type": "desmonte_ribera_acopio",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 41870.33,
+          "confidence": 0.731,
+          "centroid_wgs84": [
+            -60.61427,
+            -31.65035
+          ],
+          "t1_b11_median": 2655.3755,
+          "t1_scl_counts": {
+            "4": 55,
+            "5": 362
+          }
+        },
+        {
+          "id": "RIO-0020",
+          "type": "desmonte_ribera_acopio",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 17787.39,
+          "confidence": 0.74,
+          "centroid_wgs84": [
+            -60.580133,
+            -31.737278
+          ],
+          "t1_b11_median": 2314.0498,
+          "t1_scl_counts": {
+            "4": 44,
+            "5": 141
+          }
+        },
+        {
+          "id": "RIO-0015",
+          "type": "frente_excavacion_inundado",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 16888.03,
+          "confidence": 0.819,
+          "centroid_wgs84": [
+            -60.537112,
+            -31.654606
+          ],
+          "t1_b11_median": 131.5825,
+          "t1_scl_counts": {
+            "6": 172
+          }
+        },
+        {
+          "id": "RIO-0003",
+          "type": "frente_excavacion_inundado",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 16138.56,
+          "confidence": 0.811,
+          "centroid_wgs84": [
+            -60.65918,
+            -31.737016
+          ],
+          "t1_b11_median": 159.7551,
+          "t1_scl_counts": {
+            "6": 148
+          }
+        },
+        {
+          "id": "RIO-0028",
+          "type": "desmonte_ribera_acopio",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 13640.33,
+          "confidence": 0.564,
+          "centroid_wgs84": [
+            -60.656841,
+            -31.72074
+          ],
+          "t1_b11_median": 2337.9241,
+          "t1_scl_counts": {
+            "4": 7,
+            "5": 127
+          }
+        },
+        {
+          "id": "RIO-0049",
+          "type": "apertura_camino_acceso",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 12541.11,
+          "confidence": 0.707,
+          "centroid_wgs84": [
+            -60.572736,
+            -31.679909
+          ],
+          "t1_b11_median": 2501.2847,
+          "t1_scl_counts": {
+            "4": 3,
+            "5": 119
+          }
+        }
+      ]
+    },
+    {
+      "run": "aoi2_diamante_2023_2025",
+      "candidate_count": 61,
+      "by_type": {
+        "frente_excavacion_inundado": 23,
+        "desmonte_ribera_acopio": 36,
+        "apertura_camino_acceso": 2
+      },
+      "by_zone": {
+        "PLANICIE_INUNDABLE_E_ISLAS": 38,
+        "BARRAS_Y_BANCOS_MOVILES": 1,
+        "RIBERA_FIRME_Y_TERRAZA": 22
+      },
+      "hydrological_controls": {
+        "water_stage_delta_pct": 4.27,
+        "is_systemic_stage_rise": false,
+        "is_systemic_stage_drop": false,
+        "stage_t0_m": 1.82,
+        "stage_t1_m": 1.75,
+        "stage_delta_m": -0.07,
+        "bar_migration_dipoles_filtered": 15,
+        "bar_migration_details": [
+          {
+            "erosion_area_m2": 4299.5,
+            "accretion_area_m2": 4799.5,
+            "area_ratio": 0.896,
+            "centroid_separation_m": 297.8
+          },
+          {
+            "erosion_area_m2": 2099.8,
+            "accretion_area_m2": 899.9,
+            "area_ratio": 2.333,
+            "centroid_separation_m": 399.6
+          },
+          {
+            "erosion_area_m2": 1599.8,
+            "accretion_area_m2": 2299.7,
+            "area_ratio": 0.696,
+            "centroid_separation_m": 408.2
+          },
+          {
+            "erosion_area_m2": 11498.7,
+            "accretion_area_m2": 18098.0,
+            "area_ratio": 0.635,
+            "centroid_separation_m": 444.6
+          },
+          {
+            "erosion_area_m2": 3999.6,
+            "accretion_area_m2": 4699.5,
+            "area_ratio": 0.851,
+            "centroid_separation_m": 426.7
+          },
+          {
+            "erosion_area_m2": 1599.8,
+            "accretion_area_m2": 3799.6,
+            "area_ratio": 0.421,
+            "centroid_separation_m": 157.3
+          },
+          {
+            "erosion_area_m2": 3099.7,
+            "accretion_area_m2": 3099.7,
+            "area_ratio": 1.0,
+            "centroid_separation_m": 356.9
+          },
+          {
+            "erosion_area_m2": 1599.8,
+            "accretion_area_m2": 1999.8,
+            "area_ratio": 0.8,
+            "centroid_separation_m": 151.2
+          },
+          {
+            "erosion_area_m2": 899.9,
+            "accretion_area_m2": 999.9,
+            "area_ratio": 0.9,
+            "centroid_separation_m": 446.2
+          },
+          {
+            "erosion_area_m2": 3499.6,
+            "accretion_area_m2": 2799.7,
+            "area_ratio": 1.25,
+            "centroid_separation_m": 386.8
+          },
+          {
+            "erosion_area_m2": 5999.3,
+            "accretion_area_m2": 14998.3,
+            "area_ratio": 0.4,
+            "centroid_separation_m": 446.8
+          },
+          {
+            "erosion_area_m2": 3499.6,
+            "accretion_area_m2": 1399.8,
+            "area_ratio": 2.5,
+            "centroid_separation_m": 308.7
+          },
+          {
+            "erosion_area_m2": 2499.7,
+            "accretion_area_m2": 1099.9,
+            "area_ratio": 2.273,
+            "centroid_separation_m": 264.6
+          },
+          {
+            "erosion_area_m2": 1599.8,
+            "accretion_area_m2": 899.9,
+            "area_ratio": 1.778,
+            "centroid_separation_m": 418.2
+          },
+          {
+            "erosion_area_m2": 14298.4,
+            "accretion_area_m2": 23997.3,
+            "area_ratio": 0.596,
+            "centroid_separation_m": 90.4
+          }
+        ],
+        "riparian_ndvi_seasonal_shift": -0.1479,
+        "riparian_bsi_seasonal_shift": 0.1731
+      },
+      "geomorphological_zone_fractions": {
+        "cauce_activo": 0.1774,
+        "barras_moviles": 0.0148,
+        "planicie_islas": 0.5653,
+        "ribera_firme": 0.2424
+      },
+      "top_candidates": [
+        {
+          "id": "RIO-0001",
+          "type": "frente_excavacion_inundado",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 315001.85,
+          "confidence": 0.818,
+          "centroid_wgs84": [
+            -60.662076,
+            -32.113171
+          ],
+          "t1_b11_median": 39.7215,
+          "t1_scl_counts": {
+            "5": 4,
+            "6": 3152
+          }
+        },
+        {
+          "id": "RIO-0038",
+          "type": "desmonte_ribera_acopio",
+          "zone": "RIBERA_FIRME_Y_TERRAZA",
+          "area_m2": 261693.07,
+          "confidence": 0.8,
+          "centroid_wgs84": [
+            -60.620862,
+            -32.10438
+          ],
+          "t1_b11_median": 3553.9221,
+          "t1_scl_counts": {
+            "4": 29,
+            "5": 2576
+          }
+        },
+        {
+          "id": "RIO-0058",
+          "type": "desmonte_ribera_acopio",
+          "zone": "RIBERA_FIRME_Y_TERRAZA",
+          "area_m2": 202733.37,
+          "confidence": 0.878,
+          "centroid_wgs84": [
+            -60.614355,
+            -32.036047
+          ],
+          "t1_b11_median": 3942.9792,
+          "t1_scl_counts": {
+            "4": 12,
+            "5": 2014
+          }
+        },
+        {
+          "id": "RIO-0012",
+          "type": "frente_excavacion_inundado",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 167027.49,
+          "confidence": 0.859,
+          "centroid_wgs84": [
+            -60.686279,
+            -32.037373
+          ],
+          "t1_b11_median": 110.6752,
+          "t1_scl_counts": {
+            "4": 2,
+            "5": 84,
+            "6": 1595
+          }
+        },
+        {
+          "id": "RIO-0004",
+          "type": "frente_excavacion_inundado",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 140323.1,
+          "confidence": 0.761,
+          "centroid_wgs84": [
+            -60.668325,
+            -32.081928
+          ],
+          "t1_b11_median": 85.4728,
+          "t1_scl_counts": {
+            "5": 99,
+            "6": 1298
+          }
+        },
+        {
+          "id": "RIO-0021",
+          "type": "frente_excavacion_inundado",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 105217.32,
+          "confidence": 0.854,
+          "centroid_wgs84": [
+            -60.629553,
+            -32.026131
+          ],
+          "t1_b11_median": 94.4294,
+          "t1_scl_counts": {
+            "5": 41,
+            "6": 1011
+          }
+        },
+        {
+          "id": "RIO-0042",
+          "type": "desmonte_ribera_acopio",
+          "zone": "RIBERA_FIRME_Y_TERRAZA",
+          "area_m2": 83413.73,
+          "confidence": 0.684,
+          "centroid_wgs84": [
+            -60.612835,
+            -32.091061
+          ],
+          "t1_b11_median": 3927.2612,
+          "t1_scl_counts": {
+            "5": 833
+          }
+        },
+        {
+          "id": "RIO-0040",
+          "type": "desmonte_ribera_acopio",
+          "zone": "RIBERA_FIRME_Y_TERRAZA",
+          "area_m2": 72311.9,
+          "confidence": 0.691,
+          "centroid_wgs84": [
+            -60.626618,
+            -32.099674
+          ],
+          "t1_b11_median": 3308.4534,
+          "t1_scl_counts": {
+            "4": 30,
+            "5": 689
+          }
+        },
+        {
+          "id": "RIO-0043",
+          "type": "desmonte_ribera_acopio",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 68311.24,
+          "confidence": 0.543,
+          "centroid_wgs84": [
+            -60.736184,
+            -32.090904
+          ],
+          "t1_b11_median": 3059.3367,
+          "t1_scl_counts": {
+            "4": 1,
+            "5": 689
+          }
+        },
+        {
+          "id": "RIO-0017",
+          "type": "frente_excavacion_inundado",
+          "zone": "PLANICIE_INUNDABLE_E_ISLAS",
+          "area_m2": 65360.76,
+          "confidence": 0.866,
+          "centroid_wgs84": [
+            -60.639901,
+            -32.027847
+          ],
+          "t1_b11_median": 144.4185,
+          "t1_scl_counts": {
+            "5": 42,
+            "6": 622
+          }
+        }
+      ]
+    }
+  ]
+}

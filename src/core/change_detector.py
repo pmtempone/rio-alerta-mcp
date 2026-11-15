@@ -7,11 +7,13 @@ import cv2
 import numpy as np
 import rasterio
 from pyproj import CRS, Transformer
+from rasterio.features import rasterize
 from shapely.geometry import Polygon, mapping
 
 from src.config import settings
 from src.core.crs_manager import reproject_geometry
 from src.core.hydrological_control import (
+    classify_aoi_geomorphology,
     compute_reach_hydrological_state,
     compute_turbidity_confounder_flag,
     detect_natural_bar_migration_dipoles,
@@ -22,6 +24,8 @@ from src.schemas import (
     ChangeAnomalyTypeLiteral,
     ChangeDetectionResult,
     ExtractionAnomalyFeature,
+    GeomorphologicalZoneLiteral,
+    PolygonSpectralStats,
     SpectralChangeResult,
     UncertaintyMetadata,
 )
@@ -56,6 +60,26 @@ def compute_spectral_indices(
         "bsi": bsi.astype(np.float32),
         "ndvi": ndvi.astype(np.float32),
     }
+
+
+def compute_regularized_bsi(
+    b02: np.ndarray,
+    b04: np.ndarray,
+    b08: np.ndarray,
+    b11: np.ndarray,
+    albedo_k: Optional[float] = None,
+    valid_mask: Optional[np.ndarray] = None,
+) -> np.ndarray:
+    """Calcula BSI regularizado por albedo (`k` DN) para evitar singularidad en aguas negras."""
+    k = float(albedo_k if albedo_k is not None else settings.bsi_reg_albedo_k)
+    blue = b02.astype(np.float64)
+    red = b04.astype(np.float64)
+    nir = b08.astype(np.float64)
+    swir1 = b11.astype(np.float64)
+    bsi_reg = ((swir1 + red) - (nir + blue)) / ((swir1 + red) + (nir + blue) + max(1e-6, k))
+    if valid_mask is not None:
+        bsi_reg = np.where(valid_mask, bsi_reg, np.nan)
+    return bsi_reg.astype(np.float32)
 
 
 def _write_float32_geotiff(
@@ -94,8 +118,10 @@ def _compute_baseline_median_indices(
     ref = t0_bundles[0]
     mndwi_stack = []
     bsi_stack = []
+    bsi_reg_stack = []
     ndvi_stack = []
     b04_stack = []
+    b11_stack = []
     valid_any = np.zeros(ref["shape_hw"], dtype=bool)
     cloud_any = np.zeros(ref["shape_hw"], dtype=bool)
 
@@ -110,10 +136,19 @@ def _compute_baseline_median_indices(
             b11=bundle["B11"],
             valid_mask=bundle["valid_mask"],
         )
+        bsi_reg = compute_regularized_bsi(
+            b02=bundle["B02"],
+            b04=bundle["B04"],
+            b08=bundle["B08"],
+            b11=bundle["B11"],
+            valid_mask=bundle["valid_mask"],
+        )
         mndwi_stack.append(idx["mndwi"])
         bsi_stack.append(idx["bsi"])
+        bsi_reg_stack.append(bsi_reg)
         ndvi_stack.append(idx["ndvi"])
         b04_stack.append(bundle["B04"])
+        b11_stack.append(bundle["B11"])
         valid_any |= bundle["valid_mask"]
         cloud_any |= bundle["cloud_or_shadow_mask"]
 
@@ -121,8 +156,11 @@ def _compute_baseline_median_indices(
         return {
             "mndwi": mndwi_stack[0],
             "bsi": bsi_stack[0],
+            "bsi_reg": bsi_reg_stack[0],
             "ndvi": ndvi_stack[0],
             "b04": b04_stack[0],
+            "b11": b11_stack[0],
+            "scl": ref.get("scl"),
             "valid_mask": valid_any,
             "cloud_or_shadow_mask": cloud_any,
             "scenes_count": 1,
@@ -131,8 +169,11 @@ def _compute_baseline_median_indices(
     return {
         "mndwi": np.nanmedian(np.stack(mndwi_stack, axis=0), axis=0).astype(np.float32),
         "bsi": np.nanmedian(np.stack(bsi_stack, axis=0), axis=0).astype(np.float32),
+        "bsi_reg": np.nanmedian(np.stack(bsi_reg_stack, axis=0), axis=0).astype(np.float32),
         "ndvi": np.nanmedian(np.stack(ndvi_stack, axis=0), axis=0).astype(np.float32),
         "b04": np.nanmedian(np.stack(b04_stack, axis=0), axis=0).astype(np.float32),
+        "b11": np.nanmedian(np.stack(b11_stack, axis=0), axis=0).astype(np.float32),
+        "scl": ref.get("scl"),
         "valid_mask": valid_any,
         "cloud_or_shadow_mask": cloud_any,
         "scenes_count": len(t0_bundles),
@@ -262,6 +303,10 @@ def _polygonize_mask_components(
     min_area_m2: float,
     persistence_count: int,
     start_index: int,
+    t0_base: Optional[Dict[str, Any]] = None,
+    t1_bundle: Optional[Dict[str, Any]] = None,
+    t1_idx: Optional[Dict[str, np.ndarray]] = None,
+    geo_zones: Optional[Dict[str, Any]] = None,
 ) -> List[ExtractionAnomalyFeature]:
     """Segmenta contornos OpenCV, mide geometría métrica POSGAR 2007 y construye incertidumbre."""
     # Clausura morfológica 3x3 para consolidar frentes y evitar fragmentación de bordes 20m
@@ -272,8 +317,6 @@ def _polygonize_mask_components(
     features: List[ExtractionAnomalyFeature] = []
     idx = start_index
 
-    px_w = float(abs(transform.a))
-    px_h = float(abs(transform.e))
     h_img, w_img = binary_mask.shape
 
     for cnt in contours:
@@ -292,22 +335,29 @@ def _polygonize_mask_components(
         if poly.is_empty or poly.geom_type != "Polygon":
             continue
 
-        # Compensar la reducción de medio píxel que introduce el contorno por centros de celda
-        # usando conteo exacto de píxeles en máscara para área si fuera necesario, o polígono rasterizado
-        comp_mask = np.zeros((h_img, w_img), dtype=np.uint8)
-        cv2.drawContours(comp_mask, [cnt], -1, 1, thickness=-1)
-        comp_bool = comp_mask.astype(bool)
-        pixel_area_total = float(np.sum(comp_bool)) * px_w * px_h
-        area_m2 = max(float(poly.area), pixel_area_total)
+        # P0.1: Usar exactamente el área vectorial POSGAR 2007 (poly.area) sin sobreestimar por bordes cv2.drawContours
+        area_m2 = float(poly.area)
         if area_m2 < min_area_m2:
             continue
+
+        poly_mask = rasterize(
+            [(poly, 1)],
+            out_shape=(h_img, w_img),
+            transform=transform,
+            fill=0,
+            dtype="uint8",
+        ).astype(bool)
+        if not np.any(poly_mask):
+            comp_mask = np.zeros((h_img, w_img), dtype=np.uint8)
+            cv2.drawContours(comp_mask, [cnt], -1, 1, thickness=-1)
+            poly_mask = comp_mask.astype(bool)
 
         # Descartar si el candidato está dominado por pulso de turbidez dentro del cauce preexistente
         if anomaly_type == "frente_excavacion_inundado" and compute_turbidity_confounder_flag(
             mndwi_t0=mndwi_t0,
             b04_t0=b04_t0,
             b04_t1=b04_t1,
-            candidate_mask=comp_bool,
+            candidate_mask=poly_mask,
         ):
             continue
 
@@ -329,15 +379,61 @@ def _polygonize_mask_components(
         if anomaly_type == "desmonte_ribera_acopio" and elongation >= 4.0:
             eff_type = "apertura_camino_acceso"
 
-        dm_vals = delta_mndwi[comp_bool & np.isfinite(delta_mndwi)]
-        db_vals = delta_bsi[comp_bool & np.isfinite(delta_bsi)]
-        dn_vals = delta_ndvi[comp_bool & np.isfinite(delta_ndvi)]
+        dm_vals = delta_mndwi[poly_mask & np.isfinite(delta_mndwi)]
+        db_vals = delta_bsi[poly_mask & np.isfinite(delta_bsi)]
+        dn_vals = delta_ndvi[poly_mask & np.isfinite(delta_ndvi)]
         dm_mean = float(np.mean(dm_vals)) if dm_vals.size > 0 else 0.0
         db_mean = float(np.mean(db_vals)) if db_vals.size > 0 else 0.0
         dn_mean = float(np.mean(dn_vals)) if dn_vals.size > 0 else 0.0
 
-        valid_frac = float(np.mean(valid_mask[comp_bool])) if np.any(comp_bool) else 0.0
-        cloud_adj = bool(np.any(cloud_shadow_dilated[comp_bool]))
+        valid_frac = float(np.mean(valid_mask[poly_mask])) if np.any(poly_mask) else 0.0
+        cloud_adj = bool(np.any(cloud_shadow_dilated[poly_mask]))
+
+        # Estadísticas auditables por polígono (medianas por fecha vs medias de delta)
+        px_10m = int(np.sum(poly_mask))
+        mv = poly_mask & valid_mask
+
+        def _med(arr: Optional[np.ndarray]) -> Optional[float]:
+            if arr is None or not np.any(mv):
+                return None
+            vals = arr[mv & np.isfinite(arr)]
+            return round(float(np.median(vals)), 4) if vals.size > 0 else None
+
+        scl_counts: Dict[str, int] = {}
+        if t1_bundle is not None and t1_bundle.get("scl") is not None and np.any(poly_mask):
+            s_vals, s_cnts = np.unique(t1_bundle["scl"][poly_mask].astype(int), return_counts=True)
+            scl_counts = {str(int(k)): int(v) for k, v in zip(s_vals, s_cnts)}
+
+        spectral_stats = PolygonSpectralStats(
+            area_method="shapely_polygon_posgar_2007",
+            pixel_count_10m=px_10m,
+            effective_swir_pixels_20m=round(px_10m / 4.0, 2),
+            t0_b11_median=_med(t0_base.get("b11") if t0_base else None),
+            t1_b11_median=_med(t1_bundle.get("B11") if t1_bundle else None),
+            t1_b04_median=_med(b04_t1),
+            t0_ndvi_median=_med(t0_base.get("ndvi") if t0_base else None),
+            t1_ndvi_median=_med(t1_idx.get("ndvi") if t1_idx else None),
+            t0_bsi_median=_med(t0_base.get("bsi") if t0_base else None),
+            t1_bsi_median=_med(t1_idx.get("bsi") if t1_idx else None),
+            t1_mndwi_median=_med(t1_idx.get("mndwi") if t1_idx else None),
+            t1_scl_counts=scl_counts,
+        )
+
+        # Unidad geomorfológica dominante y distancia al cauce T0
+        assigned_zone: GeomorphologicalZoneLiteral = "NO_CLASIFICADA"
+        dist_water_m: Optional[float] = None
+        if geo_zones is not None and np.any(poly_mask):
+            zone_counts: List[Tuple[int, GeomorphologicalZoneLiteral]] = [
+                (int(np.sum(geo_zones["cauce_activo"] & poly_mask)), "CAUCE_ACTIVO_PERMANENTE"),
+                (int(np.sum(geo_zones["barras_moviles"] & poly_mask)), "BARRAS_Y_BANCOS_MOVILES"),
+                (int(np.sum(geo_zones["planicie_islas"] & poly_mask)), "PLANICIE_INUNDABLE_E_ISLAS"),
+                (int(np.sum(geo_zones["ribera_firme"] & poly_mask)), "RIBERA_FIRME_Y_TERRAZA"),
+            ]
+            zone_counts.sort(key=lambda t: t[0], reverse=True)
+            if zone_counts[0][0] > 0:
+                assigned_zone = zone_counts[0][1]
+            if geo_zones.get("dist_cauce_m") is not None:
+                dist_water_m = round(float(np.min(geo_zones["dist_cauce_m"][poly_mask])), 1)
 
         limitations: List[str] = [
             f"Resolución física limitante {effective_res_m:.0f} m (bandas SWIR B11/B12 a 20 m nativos)."
@@ -402,6 +498,9 @@ def _polygonize_mask_components(
                 geometry_geojson=geom_wgs,
                 effective_resolution_m=effective_res_m,
                 natural_filter_status="CANDIDATO_RESIDUAL",
+                geomorphological_zone=assigned_zone,
+                distance_to_water_t0_m=dist_water_m,
+                spectral_stats=spectral_stats,
                 uncertainty=uncertainty,
             )
         )
@@ -417,6 +516,8 @@ def detect_extraction_anomalies(
     t1_swir_scl_path: Optional[Union[str, Path]] = None,
     min_area_m2: Optional[float] = None,
     work_dir: Optional[Union[str, Path]] = None,
+    stage_t0_m: Optional[float] = None,
+    stage_t1_m: Optional[float] = None,
 ) -> ChangeDetectionResult:
     """Detecta anomalías morfológicas candidatas filtrando cambios fluviales naturales y nubes SCL.
 
@@ -464,8 +565,24 @@ def detect_extraction_anomalies(
 
     delta_mndwi = np.where(combined_valid, t1_idx["mndwi"] - t0_base["mndwi"], np.nan).astype(np.float32)
 
-    # 1. Control hidrométrico global (crecida/bajante uniforme)
-    hydro_state = compute_reach_hydrological_state(t0_base["mndwi"], t1_idx["mndwi"], combined_valid)
+    # 1. Control hidrométrico global (crecida/bajante uniforme + altura hidrométrica opcional)
+    hydro_state = compute_reach_hydrological_state(
+        t0_base["mndwi"],
+        t1_idx["mndwi"],
+        combined_valid,
+        stage_t0_m=stage_t0_m,
+        stage_t1_m=stage_t1_m,
+        stage_rise_alert_m=settings.hydrometric_stage_rise_alert_m,
+    )
+
+    # 1b. Clasificación geomorfológica del AOI en T0 (cauce, barras, planicie/islas, ribera firme)
+    geo_zones = classify_aoi_geomorphology(
+        mndwi_t0=t0_base["mndwi"],
+        ndvi_t0=t0_base["ndvi"],
+        valid_mask=combined_valid,
+        scl_t0=t0_base.get("scl"),
+        grid_res_m=grid_res_m,
+    )
 
     # 2. Control de migración natural de bancos de arena (dipolos erosión/acreción)
     bar_migration_mask, dipole_pairs = detect_natural_bar_migration_dipoles(
@@ -478,7 +595,7 @@ def detect_extraction_anomalies(
         min_area_m2=eff_min_area,
     )
 
-    # 3. Normalización fenológica de vegetación ribereña (ΔNDVI y ΔBSI ajustados)
+    # 3. Normalización fenológica de vegetación ribereña (ΔNDVI y ΔBSI ajustados) + BSI_reg (M7)
     riparian_norm = normalize_seasonal_riparian_indices(
         ndvi_t0=t0_base["ndvi"],
         ndvi_t1=t1_idx["ndvi"],
@@ -489,7 +606,26 @@ def detect_extraction_anomalies(
     delta_bsi_adj = riparian_norm["delta_bsi_adj"]
     delta_ndvi_adj = riparian_norm["delta_ndvi_adj"]
 
-    # 4. Máscaras candidatas residuales tras aplicar controles naturales y SCL
+    bsi_reg_t1 = compute_regularized_bsi(
+        b02=t1_bundle["B02"],
+        b04=t1_bundle["B04"],
+        b08=t1_bundle["B08"],
+        b11=t1_bundle["B11"],
+        valid_mask=t1_bundle["valid_mask"],
+    )
+    delta_bsi_reg = np.where(combined_valid, bsi_reg_t1 - t0_base["bsi_reg"], np.nan).astype(np.float32)
+
+    # 4. Máscaras candidatas residuales tras aplicar controles naturales, geomorfología y M7
+    stage_delta_val = hydro_state.get("stage_delta_m")
+    moderate_stage_rise = stage_delta_val is not None and float(stage_delta_val) >= 0.40
+    in_unprotected_flood_zone = geo_zones["cauce_activo"].copy()
+    if hydro_state["is_systemic_stage_rise"]:
+        in_unprotected_flood_zone = (
+            in_unprotected_flood_zone | geo_zones["barras_moviles"] | geo_zones["planicie_islas"]
+        )
+    elif moderate_stage_rise:
+        in_unprotected_flood_zone = in_unprotected_flood_zone | geo_zones["barras_moviles"]
+
     flooded_excavation_mask = (
         combined_valid
         & np.isfinite(delta_mndwi)
@@ -497,18 +633,48 @@ def detect_extraction_anomalies(
         & (t1_idx["mndwi"] > 0.20)
         & (~hydro_state["uniform_stage_belt_mask"])
         & (~bar_migration_mask)
+        & (~in_unprotected_flood_zone)
     )
+
+    scl_t1 = t1_bundle.get("scl")
+    if scl_t1 is not None:
+        scl_mineral_gate = (scl_t1 != 6) & (
+            (scl_t1 != 7)
+            | (
+                (t1_bundle["B11"] >= settings.scl7_min_b11_dn)
+                & (t1_bundle["B04"] >= settings.scl7_min_b04_dn)
+            )
+        )
+    else:
+        scl_mineral_gate = np.ones_like(combined_valid, dtype=bool)
+
+    dark_water_mineral_gate = (
+        (t1_bundle["B11"] >= settings.dark_water_min_b11_dn)
+        & (t1_bundle["B04"] >= settings.dark_water_min_b04_dn)
+        & (t1_bundle["B08"] >= settings.dark_water_min_b08_dn)
+        & (t1_bundle["B11"] > 0.85 * t1_bundle["B03"])
+        & scl_mineral_gate
+    )
+
+    clearing_flood_excl = geo_zones["cauce_activo"].copy()
+    if hydro_state["is_systemic_stage_rise"]:
+        clearing_flood_excl = clearing_flood_excl | geo_zones["barras_moviles"]
 
     riparian_clearing_mask = (
         combined_valid
         & np.isfinite(delta_bsi_adj)
         & np.isfinite(delta_ndvi_adj)
+        & np.isfinite(delta_bsi_reg)
         & (delta_bsi_adj > 0.25)
+        & (delta_bsi_reg > 0.18)
+        & (bsi_reg_t1 > 0.03)
         & (delta_ndvi_adj < -0.30)
         & (t1_idx["bsi"] > -0.02)
         & (t1_idx["mndwi"] < 0.10)
+        & dark_water_mineral_gate
         & (~hydro_state["uniform_stage_belt_mask"])
         & (~hydro_state["drawdown_belt_mask"])
+        & (~clearing_flood_excl)
     )
 
     # Dilatar máscara de nubes/sombras SCL en 40 m para registrar adyacencia de incertidumbre
@@ -538,6 +704,10 @@ def detect_extraction_anomalies(
         effective_res_m=swir_native_res_m,
         min_area_m2=eff_min_area,
         persistence_count=int(t0_base["scenes_count"]),
+        t0_base=t0_base,
+        t1_bundle=t1_bundle,
+        t1_idx=t1_idx,
+        geo_zones=geo_zones,
         start_index=1,
     )
 
@@ -559,6 +729,10 @@ def detect_extraction_anomalies(
         effective_res_m=swir_native_res_m,
         min_area_m2=eff_min_area,
         persistence_count=int(t0_base["scenes_count"]),
+        t0_base=t0_base,
+        t1_bundle=t1_bundle,
+        t1_idx=t1_idx,
+        geo_zones=geo_zones,
         start_index=1 + len(excavation_feats),
     )
 
@@ -575,6 +749,12 @@ def detect_extraction_anomalies(
             }
         )
 
+    valid_count = max(1, int(np.sum(combined_valid)))
+    geomorphological_zone_fractions = {
+        z_name: round(float(np.sum(geo_zones[z_name] & combined_valid) / valid_count), 4)
+        for z_name in ("cauce_activo", "barras_moviles", "planicie_islas", "ribera_firme")
+    }
+
     metadata: Dict[str, Any] = {
         "crs_metric_epsg": crs_epsg,
         "grid_resolution_m": grid_res_m,
@@ -586,10 +766,23 @@ def detect_extraction_anomalies(
             "water_stage_delta_pct": hydro_state["water_stage_delta_pct"],
             "is_systemic_stage_rise": hydro_state["is_systemic_stage_rise"],
             "is_systemic_stage_drop": hydro_state["is_systemic_stage_drop"],
+            "stage_t0_m": hydro_state.get("stage_t0_m"),
+            "stage_t1_m": hydro_state.get("stage_t1_m"),
+            "stage_delta_m": hydro_state.get("stage_delta_m"),
             "bar_migration_dipoles_filtered": len(dipole_pairs),
             "bar_migration_details": dipole_pairs,
             "riparian_ndvi_seasonal_shift": riparian_norm["riparian_ndvi_seasonal_shift"],
             "riparian_bsi_seasonal_shift": riparian_norm["riparian_bsi_seasonal_shift"],
+        },
+        "geomorphological_zone_fractions": geomorphological_zone_fractions,
+        "calibration_parameters": {
+            "bsi_reg_albedo_k": settings.bsi_reg_albedo_k,
+            "dark_water_min_b11_dn": settings.dark_water_min_b11_dn,
+            "dark_water_min_b04_dn": settings.dark_water_min_b04_dn,
+            "dark_water_min_b08_dn": settings.dark_water_min_b08_dn,
+            "scl7_min_b11_dn": settings.scl7_min_b11_dn,
+            "scl7_min_b04_dn": settings.scl7_min_b04_dn,
+            "hydrometric_stage_rise_alert_m": settings.hydrometric_stage_rise_alert_m,
         },
         "candidate_count": len(geojson_features),
         "institutional_note": (

@@ -167,6 +167,49 @@ class Settings(BaseSettings):
         alias="EXCESS_TOLERANCE_PCT",
         description="Tolerancia porcentual de superficie fuera del polígono autorizado antes de marcar EXCESO_DE_POLIGONO.",
     )
+    # Parámetros calibrables Fase 2.1 (agua oscura y controles hidrológicos/geomorfológicos)
+    bsi_reg_albedo_k: float = Field(
+        default=800.0,
+        ge=0.0,
+        alias="BSI_REG_ALBEDO_K",
+        description="Constante de regularización por albedo (DN) para BSI_reg contra singularidad en aguas negras.",
+    )
+    dark_water_min_b11_dn: float = Field(
+        default=600.0,
+        ge=0.0,
+        alias="DARK_WATER_MIN_B11_DN",
+        description="Reflectancia mínima SWIR1 (B11 en DN escala 10000) exigida para suelo/árido expuesto.",
+    )
+    dark_water_min_b04_dn: float = Field(
+        default=420.0,
+        ge=0.0,
+        alias="DARK_WATER_MIN_B04_DN",
+        description="Reflectancia mínima Rojo (B04 en DN escala 10000) para separar suelo/arena de vegetación oscura.",
+    )
+    dark_water_min_b08_dn: float = Field(
+        default=350.0,
+        ge=0.0,
+        alias="DARK_WATER_MIN_B08_DN",
+        description="Reflectancia mínima NIR (B08 en DN escala 10000) para excluir agua húmica.",
+    )
+    scl7_min_b11_dn: float = Field(
+        default=850.0,
+        ge=0.0,
+        alias="SCL7_MIN_B11_DN",
+        description="Umbral SWIR1 conservador para aceptar píxeles mixtos SCL=7 (No clasificado) como suelo mineral.",
+    )
+    scl7_min_b04_dn: float = Field(
+        default=500.0,
+        ge=0.0,
+        alias="SCL7_MIN_B04_DN",
+        description="Umbral Rojo conservador para aceptar píxeles mixtos SCL=7 (No clasificado) como suelo mineral.",
+    )
+    hydrometric_stage_rise_alert_m: float = Field(
+        default=0.80,
+        ge=0.0,
+        alias="HYDROMETRIC_STAGE_RISE_ALERT_M",
+        description="Incremento hidrométrico (m) entre T0 y T1 que activa control estricto de llanura aluvial.",
+    )
 
     def ensure_directories(self) -> None:
         """Crea las carpetas de datos si no existen."""

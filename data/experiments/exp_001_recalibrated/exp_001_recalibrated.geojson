@@ -1,0 +1,2266 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "OGC:CRS84"
+    }
+  },
+  "metadata": {
+    "crs_metric_epsg": 5347,
+    "grid_resolution_m": 9.996810442680092,
+    "effective_swir_resolution_m": 20.009770821454982,
+    "min_anomaly_area_m2": 1600.0,
+    "baseline_scenes_count": 3,
+    "valid_pixel_fraction": 0.9881,
+    "hydrological_controls": {
+      "water_stage_delta_pct": 25.15,
+      "is_systemic_stage_rise": true,
+      "is_systemic_stage_drop": false,
+      "stage_t0_m": 2.69,
+      "stage_t1_m": 4.76,
+      "stage_delta_m": 2.07,
+      "bar_migration_dipoles_filtered": 22,
+      "bar_migration_details": [
+        {
+          "erosion_area_m2": 1299.2,
+          "accretion_area_m2": 3198.0,
+          "area_ratio": 0.406,
+          "centroid_separation_m": 253.7
+        },
+        {
+          "erosion_area_m2": 1099.3,
+          "accretion_area_m2": 1898.8,
+          "area_ratio": 0.579,
+          "centroid_separation_m": 380.5
+        },
+        {
+          "erosion_area_m2": 4397.2,
+          "accretion_area_m2": 6395.9,
+          "area_ratio": 0.688,
+          "centroid_separation_m": 137.6
+        },
+        {
+          "erosion_area_m2": 1199.2,
+          "accretion_area_m2": 1299.2,
+          "area_ratio": 0.923,
+          "centroid_separation_m": 430.4
+        },
+        {
+          "erosion_area_m2": 1499.0,
+          "accretion_area_m2": 2098.7,
+          "area_ratio": 0.714,
+          "centroid_separation_m": 422.3
+        },
+        {
+          "erosion_area_m2": 4697.0,
+          "accretion_area_m2": 1998.7,
+          "area_ratio": 2.35,
+          "centroid_separation_m": 445.6
+        },
+        {
+          "erosion_area_m2": 3597.7,
+          "accretion_area_m2": 1998.7,
+          "area_ratio": 1.8,
+          "centroid_separation_m": 345.4
+        },
+        {
+          "erosion_area_m2": 2198.6,
+          "accretion_area_m2": 1199.2,
+          "area_ratio": 1.833,
+          "centroid_separation_m": 441.4
+        },
+        {
+          "erosion_area_m2": 1698.9,
+          "accretion_area_m2": 999.4,
+          "area_ratio": 1.7,
+          "centroid_separation_m": 225.0
+        },
+        {
+          "erosion_area_m2": 8194.8,
+          "accretion_area_m2": 10493.3,
+          "area_ratio": 0.781,
+          "centroid_separation_m": 227.5
+        },
+        {
+          "erosion_area_m2": 3397.8,
+          "accretion_area_m2": 1399.1,
+          "area_ratio": 2.429,
+          "centroid_separation_m": 104.1
+        },
+        {
+          "erosion_area_m2": 899.4,
+          "accretion_area_m2": 1898.8,
+          "area_ratio": 0.474,
+          "centroid_separation_m": 220.0
+        },
+        {
+          "erosion_area_m2": 2198.6,
+          "accretion_area_m2": 3198.0,
+          "area_ratio": 0.688,
+          "centroid_separation_m": 299.3
+        },
+        {
+          "erosion_area_m2": 1998.7,
+          "accretion_area_m2": 2898.2,
+          "area_ratio": 0.69,
+          "centroid_separation_m": 152.6
+        },
+        {
+          "erosion_area_m2": 899.4,
+          "accretion_area_m2": 999.4,
+          "area_ratio": 0.9,
+          "centroid_separation_m": 355.7
+        },
+        {
+          "erosion_area_m2": 65058.5,
+          "accretion_area_m2": 28981.5,
+          "area_ratio": 2.245,
+          "centroid_separation_m": 206.3
+        },
+        {
+          "erosion_area_m2": 4297.3,
+          "accretion_area_m2": 2798.2,
+          "area_ratio": 1.536,
+          "centroid_separation_m": 448.0
+        },
+        {
+          "erosion_area_m2": 13891.1,
+          "accretion_area_m2": 19287.7,
+          "area_ratio": 0.72,
+          "centroid_separation_m": 295.7
+        },
+        {
+          "erosion_area_m2": 14990.4,
+          "accretion_area_m2": 9094.2,
+          "area_ratio": 1.648,
+          "centroid_separation_m": 313.6
+        },
+        {
+          "erosion_area_m2": 2398.5,
+          "accretion_area_m2": 1599.0,
+          "area_ratio": 1.5,
+          "centroid_separation_m": 123.3
+        },
+        {
+          "erosion_area_m2": 899.4,
+          "accretion_area_m2": 1499.0,
+          "area_ratio": 0.6,
+          "centroid_separation_m": 293.6
+        },
+        {
+          "erosion_area_m2": 2698.3,
+          "accretion_area_m2": 5796.3,
+          "area_ratio": 0.466,
+          "centroid_separation_m": 244.7
+        }
+      ],
+      "riparian_ndvi_seasonal_shift": -0.0373,
+      "riparian_bsi_seasonal_shift": -0.0454
+    },
+    "geomorphological_zone_fractions": {
+      "cauce_activo": 0.2558,
+      "barras_moviles": 0.0037,
+      "planicie_islas": 0.6868,
+      "ribera_firme": 0.0537
+    },
+    "calibration_parameters": {
+      "bsi_reg_albedo_k": 800.0,
+      "dark_water_min_b11_dn": 600.0,
+      "dark_water_min_b04_dn": 420.0,
+      "dark_water_min_b08_dn": 350.0,
+      "scl7_min_b11_dn": 850.0,
+      "scl7_min_b04_dn": 500.0,
+      "hydrometric_stage_rise_alert_m": 0.8
+    },
+    "candidate_count": 13,
+    "institutional_note": "Las geometrías detectadas son anomalías morfológicas candidatas; no constituyen por sí solas infracción ni extracción ilegal sin cruce catastral oficial y revisión humana."
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "RIO-0001",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -60.55966395920159,
+              -31.681838139172108
+            ],
+            [
+              -60.55882054674253,
+              -31.681841836518295
+            ],
+            [
+              -60.558715660093064,
+              -31.681932445451245
+            ],
+            [
+              -60.55861023342051,
+              -31.681932907141988
+            ],
+            [
+              -60.55850534646303,
+              -31.682023515904255
+            ],
+            [
+              -60.55945418736757,
+              -31.682019358320833
+            ],
+            [
+              -60.55955907338645,
+              -31.681928748789048
+            ],
+            [
+              -60.55966450003722,
+              -31.681928286314243
+            ],
+            [
+              -60.55966395920159,
+              -31.681838139172108
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "RIO-0001",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.889,
+        "area_m2": 1748.76,
+        "area_ha": 0.1749,
+        "rectangularity": 0.795,
+        "elongation": 5.5,
+        "delta_mndwi_mean": 0.8272,
+        "delta_bsi_mean": 0.3936,
+        "delta_ndvi_mean": -1.0951,
+        "bbox_posgar": [
+          5446933.540030324,
+          6495236.864376167,
+          5447043.504945193,
+          6495256.856589273
+        ],
+        "centroid_posgar": [
+          5446985.05,
+          6495246.67
+        ],
+        "centroid_wgs84": [
+          -60.559121,
+          -31.681932
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "geomorphological_zone": "RIBERA_FIRME_Y_TERRAZA",
+        "distance_to_water_t0_m": 90.0,
+        "spectral_stats": {
+          "area_method": "shapely_polygon_posgar_2007",
+          "pixel_count_10m": 19,
+          "effective_swir_pixels_20m": 4.75,
+          "t0_b11_median": 2177.7527,
+          "t1_b11_median": 315.3302,
+          "t1_b04_median": 509.6146,
+          "t0_ndvi_median": 0.8482,
+          "t1_ndvi_median": -0.3338,
+          "t0_bsi_median": -0.2633,
+          "t1_bsi_median": 0.1516,
+          "t1_mndwi_median": 0.2574,
+          "t1_scl_counts": {
+            "6": 18,
+            "7": 1
+          }
+        },
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "RIO-0002",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -60.57199553209428,
+              -31.681242546707313
+            ],
+            [
+              -60.571997743065594,
+              -31.681603134532676
+            ],
+            [
+              -60.57178689094625,
+              -31.68160407977076
+            ],
+            [
+              -60.57168201732631,
+              -31.681694699217232
+            ],
+            [
+              -60.571260312640554,
+              -31.681696588306153
+            ],
+            [
+              -60.571155438399515,
+              -31.681787207325677
+            ],
+            [
+              -60.570943482369906,
+              -31.68160785723844
+            ],
+            [
+              -60.57104890845061,
+              -31.681607385359904
+            ],
+            [
+              -60.5711537825972,
+              -31.68151676642658
+            ],
+            [
+              -60.571259208571085,
+              -31.681516294375445
+            ],
+            [
+              -60.571364082409644,
+              -31.68142567527156
+            ],
+            [
+              -60.571469508276714,
+              -31.681425203047866
+            ],
+            [
+              -60.57157438180718,
+              -31.681334583773424
+            ],
+            [
+              -60.57189065908055,
+              -31.681333166323213
+            ],
+            [
+              -60.57199553209428,
+              -31.681242546707313
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "RIO-0002",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.841,
+        "area_m2": 2798.02,
+        "area_ha": 0.2798,
+        "rectangularity": 0.636,
+        "elongation": 2.588,
+        "delta_mndwi_mean": 0.8847,
+        "delta_bsi_mean": 0.3487,
+        "delta_ndvi_mean": -1.0666,
+        "bbox_posgar": [
+          5445763.91320853,
+          6495256.856589273,
+          5445863.881312957,
+          6495316.833228592
+        ],
+        "centroid_posgar": [
+          5445805.92,
+          6495284.7
+        ],
+        "centroid_wgs84": [
+          -60.571554,
+          -31.681534
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "geomorphological_zone": "RIBERA_FIRME_Y_TERRAZA",
+        "distance_to_water_t0_m": 150.0,
+        "spectral_stats": {
+          "area_method": "shapely_polygon_posgar_2007",
+          "pixel_count_10m": 24,
+          "effective_swir_pixels_20m": 6.0,
+          "t0_b11_median": 2141.1284,
+          "t1_b11_median": 257.2084,
+          "t1_b04_median": 561.2578,
+          "t0_ndvi_median": 0.8021,
+          "t1_ndvi_median": -0.3672,
+          "t0_bsi_median": -0.2177,
+          "t1_bsi_median": 0.1431,
+          "t1_mndwi_median": 0.3669,
+          "t1_scl_counts": {
+            "5": 5,
+            "6": 15,
+            "7": 4
+          }
+        },
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "RIO-0003",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -60.57588960153274,
+              -31.68014323433218
+            ],
+            [
+              -60.57589516642601,
+              -31.681044703396715
+            ],
+            [
+              -60.575789741070714,
+              -31.681045179272612
+            ],
+            [
+              -60.575580002750115,
+              -31.68122642457056
+            ],
+            [
+              -60.575474577183634,
+              -31.681226900188456
+            ],
+            [
+              -60.57526483783942,
+              -31.68140814497522
+            ],
+            [
+              -60.575265393741276,
+              -31.681498291879453
+            ],
+            [
+              -60.575055653383394,
+              -31.68167953632672
+            ],
+            [
+              -60.574423096816524,
+              -31.681682386163768
+            ],
+            [
+              -60.57431822570589,
+              -31.681773007747065
+            ],
+            [
+              -60.574107373288314,
+              -31.681773956824916
+            ],
+            [
+              -60.57400139238885,
+              -31.681684284312812
+            ],
+            [
+              -60.573579687921395,
+              -31.68168618106799
+            ],
+            [
+              -60.57347481597593,
+              -31.681776801967647
+            ],
+            [
+              -60.573368835672746,
+              -31.6816871289229
+            ],
+            [
+              -60.57336717346042,
+              -31.681416688124255
+            ],
+            [
+              -60.57347204511271,
+              -31.68132606731157
+            ],
+            [
+              -60.573471490947526,
+              -31.681235920376498
+            ],
+            [
+              -60.573576362296706,
+              -31.68114529947911
+            ],
+            [
+              -60.573575808034626,
+              -31.681055152543124
+            ],
+            [
+              -60.57368067908071,
+              -31.680964531561038
+            ],
+            [
+              -60.573891529684644,
+              -31.680963583209998
+            ],
+            [
+              -60.573996400318315,
+              -31.680872961971918
+            ],
+            [
+              -60.57494522697372,
+              -31.680868689311104
+            ],
+            [
+              -60.574945782555005,
+              -31.680958836228033
+            ],
+            [
+              -60.57505176351402,
+              -31.681048507964725
+            ],
+            [
+              -60.57526261425698,
+              -31.681047557345398
+            ],
+            [
+              -60.57557722177528,
+              -31.680775690042204
+            ],
+            [
+              -60.575576109402796,
+              -31.68059539622186
+            ],
+            [
+              -60.57547012846871,
+              -31.68050572491434
+            ],
+            [
+              -60.57546957239055,
+              -31.6804155779993
+            ],
+            [
+              -60.57567930913126,
+              -31.68023433287911
+            ],
+            [
+              -60.57578473357231,
+              -31.68023385710531
+            ],
+            [
+              -60.57588960153274,
+              -31.68014323433218
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "RIO-0003",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.808,
+        "area_m2": 18886.62,
+        "area_ha": 1.8887,
+        "rectangularity": 0.527,
+        "elongation": 2.305,
+        "delta_mndwi_mean": 0.9108,
+        "delta_bsi_mean": 0.0141,
+        "delta_ndvi_mean": -0.6773,
+        "bbox_posgar": [
+          5445394.031222152,
+          6495256.856589273,
+          5445633.954672776,
+          6495436.786507228
+        ],
+        "centroid_posgar": [
+          5445513.76,
+          6495320.77
+        ],
+        "centroid_wgs84": [
+          -60.574633,
+          -31.681195
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "geomorphological_zone": "RIBERA_FIRME_Y_TERRAZA",
+        "distance_to_water_t0_m": 117.0,
+        "spectral_stats": {
+          "area_method": "shapely_polygon_posgar_2007",
+          "pixel_count_10m": 188,
+          "effective_swir_pixels_20m": 47.0,
+          "t0_b11_median": 2239.7222,
+          "t1_b11_median": 262.8432,
+          "t1_b04_median": 506.3854,
+          "t0_ndvi_median": 0.6829,
+          "t1_ndvi_median": -0.0094,
+          "t0_bsi_median": -0.0353,
+          "t1_bsi_median": -0.0312,
+          "t1_mndwi_median": 0.3327,
+          "t1_scl_counts": {
+            "4": 1,
+            "5": 32,
+            "6": 62,
+            "7": 93
+          }
+        },
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "RIO-0004",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -60.55047960570272,
+              -31.679804660593792
+            ],
+            [
+              -60.55058556213577,
+              -31.67989435295921
+            ],
+            [
+              -60.550587690240405,
+              -31.68025494218558
+            ],
+            [
+              -60.55048279724852,
+              -31.680345544442915
+            ],
+            [
+              -60.55048386111621,
+              -31.680525839049025
+            ],
+            [
+              -60.550378435886095,
+              -31.680526293919055
+            ],
+            [
+              -60.550063754778506,
+              -31.6807980999251
+            ],
+            [
+              -60.55006481785513,
+              -31.680978394531106
+            ],
+            [
+              -60.549959392106175,
+              -31.680978849060637
+            ],
+            [
+              -60.549853435019074,
+              -31.680889156197505
+            ],
+            [
+              -60.549852372354664,
+              -31.680708861582545
+            ],
+            [
+              -60.550063223243775,
+              -31.68070795262017
+            ],
+            [
+              -60.550168117050546,
+              -31.680617350703677
+            ],
+            [
+              -60.5501665221622,
+              -31.680346908782106
+            ],
+            [
+              -60.55006056560583,
+              -31.68025721607625
+            ],
+            [
+              -60.55027035202089,
+              -31.680076012161145
+            ],
+            [
+              -60.55026982030148,
+              -31.679985864849133
+            ],
+            [
+              -60.55037471310396,
+              -31.679895262764074
+            ],
+            [
+              -60.550374181287474,
+              -31.67980511545108
+            ],
+            [
+              -60.55047960570272,
+              -31.679804660593792
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "RIO-0004",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.799,
+        "area_m2": 3347.63,
+        "area_ha": 0.3348,
+        "rectangularity": 0.498,
+        "elongation": 2.884,
+        "delta_mndwi_mean": 0.8624,
+        "delta_bsi_mean": 0.1109,
+        "delta_ndvi_mean": -0.7588,
+        "bbox_posgar": [
+          5447793.2657283945,
+          6495356.817654803,
+          5447863.243401494,
+          6495486.767039994
+        ],
+        "centroid_posgar": [
+          5447821.52,
+          6495427.49
+        ],
+        "centroid_wgs84": [
+          -60.55029,
+          -31.68034
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "geomorphological_zone": "RIBERA_FIRME_Y_TERRAZA",
+        "distance_to_water_t0_m": 396.5,
+        "spectral_stats": {
+          "area_method": "shapely_polygon_posgar_2007",
+          "pixel_count_10m": 40,
+          "effective_swir_pixels_20m": 10.0,
+          "t0_b11_median": 2225.3228,
+          "t1_b11_median": 311.3627,
+          "t1_b04_median": 504.8731,
+          "t0_ndvi_median": 0.7356,
+          "t1_ndvi_median": -0.0924,
+          "t0_bsi_median": -0.1059,
+          "t1_bsi_median": 0.0206,
+          "t1_mndwi_median": 0.2939,
+          "t1_scl_counts": {
+            "5": 10,
+            "6": 15,
+            "7": 15
+          }
+        },
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "RIO-0005",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -60.57588125466048,
+              -31.678791030494608
+            ],
+            [
+              -60.57588292399004,
+              -31.67906147128525
+            ],
+            [
+              -60.57577750087561,
+              -31.679061947124495
+            ],
+            [
+              -60.575567766927,
+              -31.67924319240565
+            ],
+            [
+              -60.575462343601394,
+              -31.679243667986885
+            ],
+            [
+              -60.5753574762172,
+              -31.679334290414427
+            ],
+            [
+              -60.57535803216358,
+              -31.67942443734657
+            ],
+            [
+              -60.575253164476294,
+              -31.679515059689425
+            ],
+            [
+              -60.575254832032336,
+              -31.679785500479205
+            ],
+            [
+              -60.575149963843266,
+              -31.67987612273816
+            ],
+            [
+              -60.5751505196009,
+              -31.679966269665886
+            ],
+            [
+              -60.57493967129758,
+              -31.67996722007104
+            ],
+            [
+              -60.57483480259673,
+              -31.680057842074394
+            ],
+            [
+              -60.57441310554283,
+              -31.68005974149758
+            ],
+            [
+              -60.5744125504957,
+              -31.679969594559488
+            ],
+            [
+              -60.575566098499145,
+              -31.678972751607738
+            ],
+            [
+              -60.5756715215167,
+              -31.67897227594437
+            ],
+            [
+              -60.57588125466048,
+              -31.678791030494608
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "RIO-0005",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.802,
+        "area_m2": 4946.49,
+        "area_ha": 0.4946,
+        "rectangularity": 0.505,
+        "elongation": 4.0,
+        "delta_mndwi_mean": 0.8343,
+        "delta_bsi_mean": 0.415,
+        "delta_ndvi_mean": -1.0815,
+        "bbox_posgar": [
+          5445394.031222152,
+          6495446.782613781,
+          5445533.986568349,
+          6495586.728105525
+        ],
+        "centroid_posgar": [
+          5445467.78,
+          6495500.53
+        ],
+        "centroid_wgs84": [
+          -60.575108,
+          -31.679572
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "geomorphological_zone": "RIBERA_FIRME_Y_TERRAZA",
+        "distance_to_water_t0_m": 254.5,
+        "spectral_stats": {
+          "area_method": "shapely_polygon_posgar_2007",
+          "pixel_count_10m": 53,
+          "effective_swir_pixels_20m": 13.25,
+          "t0_b11_median": 1571.8494,
+          "t1_b11_median": 246.942,
+          "t1_b04_median": 551.02,
+          "t0_ndvi_median": 0.8007,
+          "t1_ndvi_median": -0.4388,
+          "t0_bsi_median": -0.3076,
+          "t1_bsi_median": 0.1814,
+          "t1_mndwi_median": 0.3909,
+          "t1_scl_counts": {
+            "5": 6,
+            "6": 37,
+            "7": 10
+          }
+        },
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "RIO-0006",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -60.5749268941874,
+              -31.677893840331556
+            ],
+            [
+              -60.575244827032456,
+              -31.678162855567134
+            ],
+            [
+              -60.57535024914085,
+              -31.678162380180066
+            ],
+            [
+              -60.57535191689033,
+              -31.67843282102264
+            ],
+            [
+              -60.57514218349798,
+              -31.678614065614923
+            ],
+            [
+              -60.57514273922074,
+              -31.67870421256064
+            ],
+            [
+              -60.575037316496264,
+              -31.678704687783483
+            ],
+            [
+              -60.57493244929085,
+              -31.678795309866967
+            ],
+            [
+              -60.57482702645956,
+              -31.678795784917252
+            ],
+            [
+              -60.574617291228925,
+              -31.678977028658156
+            ],
+            [
+              -60.574511868186455,
+              -31.67897750345046
+            ],
+            [
+              -60.57409239486344,
+              -31.67933998956967
+            ],
+            [
+              -60.574092949587595,
+              -31.67943013652175
+            ],
+            [
+              -60.573987526023416,
+              -31.679430610886808
+            ],
+            [
+              -60.57367291828111,
+              -31.679702474327787
+            ],
+            [
+              -60.57356749440143,
+              -31.679702948349366
+            ],
+            [
+              -60.57325288451272,
+              -31.679974810768318
+            ],
+            [
+              -60.57314746031756,
+              -31.679975284446456
+            ],
+            [
+              -60.57304258984289,
+              -31.680065904997164
+            ],
+            [
+              -60.572937165540885,
+              -31.680066378502737
+            ],
+            [
+              -60.572412809590126,
+              -31.680519479552814
+            ],
+            [
+              -60.57230738476395,
+              -31.680519952544014
+            ],
+            [
+              -60.57220251285831,
+              -31.680610572413322
+            ],
+            [
+              -60.57209708792532,
+              -31.680611045231934
+            ],
+            [
+              -60.57199221571163,
+              -31.680701664930705
+            ],
+            [
+              -60.571886790671826,
+              -31.68070213757675
+            ],
+            [
+              -60.57167704542459,
+              -31.68088337654812
+            ],
+            [
+              -60.571571620173636,
+              -31.680883848936137
+            ],
+            [
+              -60.5714667471401,
+              -31.680974468208728
+            ],
+            [
+              -60.57136132178234,
+              -31.68097494042418
+            ],
+            [
+              -60.57115157489543,
+              -31.68115617854314
+            ],
+            [
+              -60.57094072375513,
+              -31.681157122370827
+            ],
+            [
+              -60.57073097563596,
+              -31.681338359807583
+            ],
+            [
+              -60.57062554985344,
+              -31.68133883141983
+            ],
+            [
+              -60.57052067538393,
+              -31.681429449925083
+            ],
+            [
+              -60.570204397708494,
+              -31.68143086398276
+            ],
+            [
+              -60.57020274468618,
+              -31.68116042302368
+            ],
+            [
+              -60.57030817027487,
+              -31.68115995176319
+            ],
+            [
+              -60.57104228665666,
+              -31.68052562164351
+            ],
+            [
+              -60.57114771151255,
+              -31.68052514969769
+            ],
+            [
+              -60.5715672016887,
+              -31.68016267312971
+            ],
+            [
+              -60.57156664938921,
+              -31.680072526148123
+            ],
+            [
+              -60.57167207372345,
+              -31.680072053775
+            ],
+            [
+              -60.571986688605406,
+              -31.67980019520034
+            ],
+            [
+              -60.57209211262414,
+              -31.67979972248373
+            ],
+            [
+              -60.57293107584484,
+              -31.67907476185739
+            ],
+            [
+              -60.573036499026436,
+              -31.679074288370064
+            ],
+            [
+              -60.57324623758589,
+              -31.678893047191792
+            ],
+            [
+              -60.57377335241331,
+              -31.678890677593998
+            ],
+            [
+              -60.57450742730312,
+              -31.678256327799723
+            ],
+            [
+              -60.574506872203884,
+              -31.6781661808376
+            ],
+            [
+              -60.57471660585471,
+              -31.677984937274402
+            ],
+            [
+              -60.57482202777187,
+              -31.677984462326172
+            ],
+            [
+              -60.5749268941874,
+              -31.677893840331556
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "RIO-0006",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.856,
+        "area_m2": 40970.96,
+        "area_ha": 4.0971,
+        "rectangularity": 0.688,
+        "elongation": 6.204,
+        "delta_mndwi_mean": 1.0598,
+        "delta_bsi_mean": 0.2713,
+        "delta_ndvi_mean": -1.1506,
+        "bbox_posgar": [
+          5445444.0152743645,
+          6495296.841015485,
+          5445933.858986056,
+          6495686.689171055
+        ],
+        "centroid_posgar": [
+          5445676.47,
+          6495490.0
+        ],
+        "centroid_wgs84": [
+          -60.572908,
+          -31.679677
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "geomorphological_zone": "RIBERA_FIRME_Y_TERRAZA",
+        "distance_to_water_t0_m": 184.3,
+        "spectral_stats": {
+          "area_method": "shapely_polygon_posgar_2007",
+          "pixel_count_10m": 437,
+          "effective_swir_pixels_20m": 109.25,
+          "t0_b11_median": 2530.9053,
+          "t1_b11_median": 157.0943,
+          "t1_b04_median": 509.1478,
+          "t0_ndvi_median": 0.7625,
+          "t1_ndvi_median": -0.5116,
+          "t0_bsi_median": -0.1621,
+          "t1_bsi_median": 0.1433,
+          "t1_mndwi_median": 0.5456,
+          "t1_scl_counts": {
+            "4": 1,
+            "5": 47,
+            "6": 344,
+            "7": 45
+          }
+        },
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "RIO-0007",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -60.56184805629978,
+              -31.676870314190836
+            ],
+            [
+              -60.56184914198419,
+              -31.677050608546885
+            ],
+            [
+              -60.56195510602909,
+              -31.677140291417754
+            ],
+            [
+              -60.561957277844236,
+              -31.6775008801028
+            ],
+            [
+              -60.56227517245236,
+              -31.677769928130672
+            ],
+            [
+              -60.562696860046515,
+              -31.67776806894798
+            ],
+            [
+              -60.5627033843685,
+              -31.678849834696965
+            ],
+            [
+              -60.562492538131906,
+              -31.678850764501597
+            ],
+            [
+              -60.56238765841375,
+              -31.678941376415548
+            ],
+            [
+              -60.562176811958835,
+              -31.67894230570078
+            ],
+            [
+              -60.5620708456295,
+              -31.67885262306557
+            ],
+            [
+              -60.561754576227145,
+              -31.678854016073913
+            ],
+            [
+              -60.56164861039978,
+              -31.678764333080853
+            ],
+            [
+              -60.5617534906491,
+              -31.67867372176596
+            ],
+            [
+              -60.561752405080796,
+              -31.678493427452896
+            ],
+            [
+              -60.561540474463996,
+              -31.678314061351863
+            ],
+            [
+              -60.56090793923103,
+              -31.678316843912913
+            ],
+            [
+              -60.560803058545126,
+              -31.678407454542594
+            ],
+            [
+              -60.560592213239474,
+              -31.678408381195098
+            ],
+            [
+              -60.56048733214131,
+              -31.678498991568663
+            ],
+            [
+              -60.55985479554043,
+              -31.678501768922825
+            ],
+            [
+              -60.55985425459322,
+              -31.678411621735137
+            ],
+            [
+              -60.559748291076815,
+              -31.678321937130434
+            ],
+            [
+              -60.55964286850279,
+              -31.678322399627575
+            ],
+            [
+              -60.559747750236305,
+              -31.678231789938565
+            ],
+            [
+              -60.55985317270604,
+              -31.678231327355935
+            ],
+            [
+              -60.55995805413159,
+              -31.678140717496305
+            ],
+            [
+              -60.560063476494626,
+              -31.678140254741088
+            ],
+            [
+              -60.56016835761219,
+              -31.678049644710804
+            ],
+            [
+              -60.56027377986856,
+              -31.67804918178301
+            ],
+            [
+              -60.56037866067817,
+              -31.677958571582106
+            ],
+            [
+              -60.560484082827834,
+              -31.67795810848171
+            ],
+            [
+              -60.56069384362739,
+              -31.67777688765352
+            ],
+            [
+              -60.560799265566075,
+              -31.67777642429505
+            ],
+            [
+              -60.56184805629978,
+              -31.676870314190836
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "RIO-0007",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.79,
+        "area_m2": 28030.14,
+        "area_ha": 2.803,
+        "rectangularity": 0.467,
+        "elongation": 1.196,
+        "delta_mndwi_mean": 0.9393,
+        "delta_bsi_mean": -0.0452,
+        "delta_ndvi_mean": -0.6767,
+        "bbox_posgar": [
+          5446643.632527486,
+          6495576.731998972,
+          5446933.540030324,
+          6495806.642449692
+        ],
+        "centroid_posgar": [
+          5446751.41,
+          6495673.87
+        ],
+        "centroid_wgs84": [
+          -60.561562,
+          -31.678069
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "geomorphological_zone": "RIBERA_FIRME_Y_TERRAZA",
+        "distance_to_water_t0_m": 338.3,
+        "spectral_stats": {
+          "area_method": "shapely_polygon_posgar_2007",
+          "pixel_count_10m": 275,
+          "effective_swir_pixels_20m": 68.75,
+          "t0_b11_median": 2367.2842,
+          "t1_b11_median": 157.7592,
+          "t1_b04_median": 285.43,
+          "t0_ndvi_median": 0.5625,
+          "t1_ndvi_median": -0.1463,
+          "t0_bsi_median": 0.0099,
+          "t1_bsi_median": -0.0215,
+          "t1_mndwi_median": 0.3972,
+          "t1_scl_counts": {
+            "4": 2,
+            "5": 28,
+            "6": 176,
+            "7": 69
+          }
+        },
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "RIO-0008",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -60.65888741468126,
+              -31.669013853756038
+            ],
+            [
+              -60.658888051079984,
+              -31.669103999413572
+            ],
+            [
+              -60.65899409779503,
+              -31.66919360070528
+            ],
+            [
+              -60.65899473430126,
+              -31.669283746358335
+            ],
+            [
+              -60.65910078132454,
+              -31.669373347554703
+            ],
+            [
+              -60.65910141793826,
+              -31.669463493203267
+            ],
+            [
+              -60.65899537081034,
+              -31.669373892010082
+            ],
+            [
+              -60.65888996029326,
+              -31.66937443637841
+            ],
+            [
+              -60.65878391346785,
+              -31.669284835004095
+            ],
+            [
+              -60.65867850304688,
+              -31.66928537919637
+            ],
+            [
+              -60.658572456524006,
+              -31.669195777640912
+            ],
+            [
+              -60.657939994531915,
+              -31.669199040432257
+            ],
+            [
+              -60.657833948806314,
+              -31.66910943825079
+            ],
+            [
+              -60.65878264086545,
+              -31.66910454368909
+            ],
+            [
+              -60.65888741468126,
+              -31.669013853756038
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "RIO-0008",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.577,
+        "area_m2": 1648.83,
+        "area_ha": 0.1649,
+        "rectangularity": 0.304,
+        "elongation": 2.939,
+        "delta_mndwi_mean": 0.5612,
+        "delta_bsi_mean": -0.1038,
+        "delta_ndvi_mean": -0.233,
+        "bbox_posgar": [
+          5437496.550972435,
+          6496576.3426542785,
+          5437616.512697746,
+          6496626.323187044
+        ],
+        "centroid_posgar": [
+          5437544.41,
+          6496606.23
+        ],
+        "centroid_wgs84": [
+          -60.658595,
+          -31.669197
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "geomorphological_zone": "RIBERA_FIRME_Y_TERRAZA",
+        "distance_to_water_t0_m": 10.0,
+        "spectral_stats": {
+          "area_method": "shapely_polygon_posgar_2007",
+          "pixel_count_10m": 13,
+          "effective_swir_pixels_20m": 3.25,
+          "t0_b11_median": 1413.5458,
+          "t1_b11_median": 74.1184,
+          "t1_b04_median": 98.6692,
+          "t0_ndvi_median": 0.6491,
+          "t1_ndvi_median": 0.3309,
+          "t0_bsi_median": -0.1596,
+          "t1_bsi_median": -0.2456,
+          "t1_mndwi_median": 0.247,
+          "t1_scl_counts": {
+            "6": 13
+          }
+        },
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "RIO-0009",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -60.65540571430223,
+              -31.668581040192716
+            ],
+            [
+              -60.655300304604566,
+              -31.66858158158359
+            ],
+            [
+              -60.65509075064343,
+              -31.66876295556761
+            ],
+            [
+              -60.65509138336903,
+              -31.66885310129743
+            ],
+            [
+              -60.654986605984135,
+              -31.6689437881632
+            ],
+            [
+              -60.65488119586794,
+              -31.668944329213396
+            ],
+            [
+              -60.654776418174826,
+              -31.66903501590943
+            ],
+            [
+              -60.655514289660964,
+              -31.66903122732594
+            ],
+            [
+              -60.65561906662167,
+              -31.668940540033677
+            ],
+            [
+              -60.655406980355686,
+              -31.668761331644827
+            ],
+            [
+              -60.65540571430223,
+              -31.668581040192716
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "RIO-0009",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.659,
+        "area_m2": 1948.62,
+        "area_ha": 0.1949,
+        "rectangularity": 0.506,
+        "elongation": 1.571,
+        "delta_mndwi_mean": 0.5923,
+        "delta_bsi_mean": -0.0197,
+        "delta_ndvi_mean": -0.5862,
+        "bbox_posgar": [
+          5437826.445717042,
+          6496626.323187044,
+          5437906.420200584,
+          6496676.303719809
+        ],
+        "centroid_posgar": [
+          5437860.62,
+          6496644.18
+        ],
+        "centroid_wgs84": [
+          -60.655258,
+          -31.668872
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "geomorphological_zone": "RIBERA_FIRME_Y_TERRAZA",
+        "distance_to_water_t0_m": 22.4,
+        "spectral_stats": {
+          "area_method": "shapely_polygon_posgar_2007",
+          "pixel_count_10m": 24,
+          "effective_swir_pixels_20m": 6.0,
+          "t0_b11_median": 1278.0564,
+          "t1_b11_median": 91.11,
+          "t1_b04_median": 149.8869,
+          "t0_ndvi_median": 0.4905,
+          "t1_ndvi_median": -0.1351,
+          "t0_bsi_median": -0.0427,
+          "t1_bsi_median": -0.0793,
+          "t1_mndwi_median": 0.2728,
+          "t1_scl_counts": {
+            "6": 24
+          }
+        },
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "RIO-0010",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -60.6599338668746,
+              -31.667926658469256
+            ],
+            [
+              -60.659828458011894,
+              -31.66792720359066
+            ],
+            [
+              -60.659830369862235,
+              -31.668197640554187
+            ],
+            [
+              -60.65972559787868,
+              -31.668288331248103
+            ],
+            [
+              -60.65962018860311,
+              -31.66828887620302
+            ],
+            [
+              -60.65962146278285,
+              -31.668469167510654
+            ],
+            [
+              -60.659516690293174,
+              -31.668559858036122
+            ],
+            [
+              -60.659411280706536,
+              -31.66856040282262
+            ],
+            [
+              -60.65941255449622,
+              -31.668740694130175
+            ],
+            [
+              -60.659307781500466,
+              -31.668831384487184
+            ],
+            [
+              -60.659413828297325,
+              -31.6689209854326
+            ],
+            [
+              -60.65941510210986,
+              -31.66910127672986
+            ],
+            [
+              -60.659519875297796,
+              -31.669010586285843
+            ],
+            [
+              -60.65962528539056,
+              -31.669010041402725
+            ],
+            [
+              -60.659622099876984,
+              -31.66855931316255
+            ],
+            [
+              -60.659726872262,
+              -31.668468622551913
+            ],
+            [
+              -60.65972623506891,
+              -31.668378476900653
+            ],
+            [
+              -60.6599357790303,
+              -31.66819709542707
+            ],
+            [
+              -60.6599338668746,
+              -31.667926658469256
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "RIO-0010",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.754,
+        "area_m2": 1898.65,
+        "area_ha": 0.1899,
+        "rectangularity": 0.393,
+        "elongation": 4.0,
+        "delta_mndwi_mean": 0.7804,
+        "delta_bsi_mean": 0.0563,
+        "delta_ndvi_mean": -0.7788,
+        "bbox_posgar": [
+          5437416.576488893,
+          6496616.327080491,
+          5437476.557351549,
+          6496746.276465681
+        ],
+        "centroid_posgar": [
+          5437447.62,
+          6496673.76
+        ],
+        "centroid_wgs84": [
+          -60.659611,
+          -31.668582
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "geomorphological_zone": "RIBERA_FIRME_Y_TERRAZA",
+        "distance_to_water_t0_m": 50.0,
+        "spectral_stats": {
+          "area_method": "shapely_polygon_posgar_2007",
+          "pixel_count_10m": 25,
+          "effective_swir_pixels_20m": 6.25,
+          "t0_b11_median": 2550.4297,
+          "t1_b11_median": 49.3403,
+          "t1_b04_median": 92.0527,
+          "t0_ndvi_median": 0.5973,
+          "t1_ndvi_median": -0.2624,
+          "t0_bsi_median": -0.0554,
+          "t1_bsi_median": 0.0034,
+          "t1_mndwi_median": 0.2785,
+          "t1_scl_counts": {
+            "6": 25
+          }
+        },
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "RIO-0011",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -60.65491387250365,
+              -31.65857702073226
+            ],
+            [
+              -60.65491576942255,
+              -31.658847458359592
+            ],
+            [
+              -60.65481100291467,
+              -31.658938145072664
+            ],
+            [
+              -60.65481289956237,
+              -31.659208582690265
+            ],
+            [
+              -60.65449670217013,
+              -31.659210204704713
+            ],
+            [
+              -60.65439067122197,
+              -31.659120599323302
+            ],
+            [
+              -60.65417987314413,
+              -31.659121680053232
+            ],
+            [
+              -60.65407384259727,
+              -31.659032074401868
+            ],
+            [
+              -60.654073211096424,
+              -31.658941928514793
+            ],
+            [
+              -60.65428274537276,
+              -31.658760556196075
+            ],
+            [
+              -60.65428211367689,
+              -31.65867041030893
+            ],
+            [
+              -60.65480910629248,
+              -31.6586677074435
+            ],
+            [
+              -60.65491387250365,
+              -31.65857702073226
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "RIO-0011",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.845,
+        "area_m2": 3697.38,
+        "area_ha": 0.3697,
+        "rectangularity": 0.661,
+        "elongation": 1.143,
+        "delta_mndwi_mean": 0.7947,
+        "delta_bsi_mean": 0.0947,
+        "delta_ndvi_mean": -0.9707,
+        "bbox_posgar": [
+          5437886.426579699,
+          6497715.89880133,
+          5437966.40106324,
+          6497785.871547201
+        ],
+        "centroid_posgar": [
+          5437923.22,
+          6497748.05
+        ],
+        "centroid_wgs84": [
+          -60.654528,
+          -31.65892
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "geomorphological_zone": "RIBERA_FIRME_Y_TERRAZA",
+        "distance_to_water_t0_m": 480.1,
+        "spectral_stats": {
+          "area_method": "shapely_polygon_posgar_2007",
+          "pixel_count_10m": 31,
+          "effective_swir_pixels_20m": 7.75,
+          "t0_b11_median": 2212.8142,
+          "t1_b11_median": 48.8921,
+          "t1_b04_median": 88.0715,
+          "t0_ndvi_median": 0.6612,
+          "t1_ndvi_median": -0.2988,
+          "t0_bsi_median": -0.036,
+          "t1_bsi_median": 0.0267,
+          "t1_mndwi_median": 0.2711,
+          "t1_scl_counts": {
+            "6": 31
+          }
+        },
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "RIO-0012",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -60.6214616389259,
+              -31.652614142900728
+            ],
+            [
+              -60.62146223879377,
+              -31.652704289450458
+            ],
+            [
+              -60.621568231235905,
+              -31.652793922788327
+            ],
+            [
+              -60.62188440893456,
+              -31.652792382634537
+            ],
+            [
+              -60.62188500921467,
+              -31.652882529174512
+            ],
+            [
+              -60.62199100226172,
+              -31.652972162150963
+            ],
+            [
+              -60.62209639502331,
+              -31.65297164850172
+            ],
+            [
+              -60.622096995512216,
+              -31.65306179503551
+            ],
+            [
+              -60.62199220303881,
+              -31.653152455220877
+            ],
+            [
+              -60.62199400422462,
+              -31.65342289481609
+            ],
+            [
+              -60.621889211250696,
+              -31.653513554918277
+            ],
+            [
+              -60.62189101216365,
+              -31.653783994503478
+            ],
+            [
+              -60.62157483110831,
+              -31.653785534716622
+            ],
+            [
+              -60.62126044913496,
+              -31.654057513752583
+            ],
+            [
+              -60.62115445552819,
+              -31.653967880191413
+            ],
+            [
+              -60.62115325633022,
+              -31.653787587115875
+            ],
+            [
+              -60.62094127014466,
+              -31.653608319705498
+            ],
+            [
+              -60.62062508962703,
+              -31.653609857558326
+            ],
+            [
+              -60.62030711276579,
+              -31.65334095495424
+            ],
+            [
+              -60.62020171955166,
+              -31.65334146713137
+            ],
+            [
+              -60.61998973619273,
+              -31.653162198091554
+            ],
+            [
+              -60.61988434317397,
+              -31.653162710004057
+            ],
+            [
+              -60.6197783518987,
+              -31.653073075257495
+            ],
+            [
+              -60.61967295897629,
+              -31.65307358699416
+            ],
+            [
+              -60.61956696800348,
+              -31.65298395206691
+            ],
+            [
+              -60.619461575177425,
+              -31.652984463627753
+            ],
+            [
+              -60.61935558450709,
+              -31.652894828519802
+            ],
+            [
+              -60.619250191777375,
+              -31.652895339904823
+            ],
+            [
+              -60.61924959404018,
+              -31.652805193319978
+            ],
+            [
+              -60.62051430539895,
+              -31.652799050978224
+            ],
+            [
+              -60.62061909893791,
+              -31.652708391988
+            ],
+            [
+              -60.62104066888734,
+              -31.65270634141535
+            ],
+            [
+              -60.62114546180525,
+              -31.652615681999535
+            ],
+            [
+              -60.6214616389259,
+              -31.652614142900728
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "RIO-0012",
+        "anomaly_type": "frente_excavacion_inundado",
+        "confidence": 0.735,
+        "area_m2": 20685.34,
+        "area_ha": 2.0685,
+        "rectangularity": 0.516,
+        "elongation": 1.797,
+        "delta_mndwi_mean": 0.8699,
+        "delta_bsi_mean": 0.2612,
+        "delta_ndvi_mean": -0.8927,
+        "bbox_posgar": [
+          5440995.434627372,
+          6498305.669087961,
+          5441265.348509325,
+          6498465.60679281
+        ],
+        "centroid_posgar": [
+          5441100.62,
+          6498401.86
+        ],
+        "centroid_wgs84": [
+          -60.620989,
+          -31.653191
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "geomorphological_zone": "RIBERA_FIRME_Y_TERRAZA",
+        "distance_to_water_t0_m": 1586.5,
+        "spectral_stats": {
+          "area_method": "shapely_polygon_posgar_2007",
+          "pixel_count_10m": 208,
+          "effective_swir_pixels_20m": 52.0,
+          "t0_b11_median": 1978.521,
+          "t1_b11_median": 135.9839,
+          "t1_b04_median": 217.0533,
+          "t0_ndvi_median": 0.7789,
+          "t1_ndvi_median": -0.1493,
+          "t0_bsi_median": -0.2859,
+          "t1_bsi_median": -0.0021,
+          "t1_mndwi_median": 0.3347,
+          "t1_scl_counts": {
+            "5": 4,
+            "6": 123,
+            "7": 81
+          }
+        },
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": true,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.6,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Contorno adyacente a píxeles de nube o sombra en máscara SCL (buffer <= 40 m).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "RIO-0013",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -60.56342089133042,
+              -31.727797677151205
+            ],
+            [
+              -60.56342307311474,
+              -31.72815826287751
+            ],
+            [
+              -60.563529097554834,
+              -31.728247943030983
+            ],
+            [
+              -60.56353237093192,
+              -31.7287888215644
+            ],
+            [
+              -60.56332141172842,
+              -31.72878975404648
+            ],
+            [
+              -60.56342634586453,
+              -31.728699141428432
+            ],
+            [
+              -60.56342525493817,
+              -31.728518848583256
+            ],
+            [
+              -60.56321320583418,
+              -31.728339488024197
+            ],
+            [
+              -60.56321157009022,
+              -31.728069048729314
+            ],
+            [
+              -60.56331650353362,
+              -31.72797843619966
+            ],
+            [
+              -60.56331541285054,
+              -31.727798143330673
+            ],
+            [
+              -60.56342089133042,
+              -31.727797677151205
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "RIO-0013",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "confidence": 0.663,
+        "area_m2": 1848.69,
+        "area_ha": 0.1849,
+        "rectangularity": 0.561,
+        "elongation": 3.666,
+        "delta_mndwi_mean": 0.0522,
+        "delta_bsi_mean": 0.3767,
+        "delta_ndvi_mean": -0.4842,
+        "bbox_posgar": [
+          5446593.6484752735,
+          6490048.88507512,
+          5446623.638906601,
+          6490158.842247204
+        ],
+        "centroid_posgar": [
+          5446607.16,
+          6490103.82
+        ],
+        "centroid_wgs84": [
+          -60.563387,
+          -31.728294
+        ],
+        "crs_epsg": 5347,
+        "effective_resolution_m": 20.009770821454982,
+        "natural_filter_status": "CANDIDATO_RESIDUAL",
+        "geomorphological_zone": "PLANICIE_INUNDABLE_E_ISLAS",
+        "distance_to_water_t0_m": 245.1,
+        "spectral_stats": {
+          "area_method": "shapely_polygon_posgar_2007",
+          "pixel_count_10m": 12,
+          "effective_swir_pixels_20m": 3.0,
+          "t0_b11_median": 1779.6096,
+          "t1_b11_median": 1719.4363,
+          "t1_b04_median": 953.5496,
+          "t0_ndvi_median": 0.7242,
+          "t1_ndvi_median": 0.1584,
+          "t0_bsi_median": -0.2622,
+          "t1_bsi_median": 0.1503,
+          "t1_mndwi_median": -0.3753,
+          "t1_scl_counts": {
+            "5": 12
+          }
+        },
+        "uncertainty": {
+          "effective_resolution_m": 20.009770821454982,
+          "valid_pixel_fraction": 1.0,
+          "cloud_shadow_adjacent": false,
+          "water_stage_delta_pct": 25.15,
+          "natural_dynamics_confounder_score": 0.25,
+          "persistence_scenes_count": 3,
+          "limitations": [
+            "Resolución física limitante 20 m (bandas SWIR B11/B12 a 20 m nativos).",
+            "Variación hidrométrica regional detectada en el tramo (+25.1%)."
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -33,6 +33,16 @@ PermitClassificationLiteral = Literal[
     "EXTRACCION_SIN_PERMISO",
     "SIN_CATASTRO_OFICIAL_CARGADO",
     "SIN_COINCIDENCIA_EN_CATASTRO_LOCAL",
+    "SIN_COINCIDENCIA_EN_REGISTROS_CONSULTADOS",
+    "INSPECCIONADO_SIN_PERMISO_REGISTRADO",
+]
+
+GeomorphologicalZoneLiteral = Literal[
+    "CAUCE_ACTIVO_PERMANENTE",
+    "BARRAS_Y_BANCOS_MOVILES",
+    "PLANICIE_INUNDABLE_E_ISLAS",
+    "RIBERA_FIRME_Y_TERRAZA",
+    "NO_CLASIFICADA",
 ]
 
 VLMVerdictLiteral = Literal[
@@ -176,6 +186,32 @@ class SpectralChangeResult(BaseModel):
     )
 
 
+class PolygonSpectralStats(BaseModel):
+    """Estadísticas espectrales y geométricas por polígono diferenciando medianas por fecha y medias de delta."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    area_method: str = Field(
+        default="shapely_polygon_posgar_2007",
+        description="Método exacto de cálculo de superficie (geometría vectorial POSGAR 2007).",
+    )
+    pixel_count_10m: int = Field(..., ge=0, description="Cantidad de píxeles en grilla de 10 m dentro del polígono.")
+    effective_swir_pixels_20m: float = Field(
+        ..., ge=0.0, description="Equivalente aproximado en píxeles nativos SWIR de 20 m (pixel_count_10m / 4)."
+    )
+    t0_b11_median: Optional[float] = Field(default=None, description="Mediana de B11 (DN) en T0 dentro del polígono.")
+    t1_b11_median: Optional[float] = Field(default=None, description="Mediana de B11 (DN) en T1 dentro del polígono.")
+    t1_b04_median: Optional[float] = Field(default=None, description="Mediana de B04 (DN) en T1 dentro del polígono.")
+    t0_ndvi_median: Optional[float] = Field(default=None, description="Mediana de NDVI en T0 dentro del polígono.")
+    t1_ndvi_median: Optional[float] = Field(default=None, description="Mediana de NDVI en T1 dentro del polígono.")
+    t0_bsi_median: Optional[float] = Field(default=None, description="Mediana de BSI estándar en T0 dentro del polígono.")
+    t1_bsi_median: Optional[float] = Field(default=None, description="Mediana de BSI estándar en T1 dentro del polígono.")
+    t1_mndwi_median: Optional[float] = Field(default=None, description="Mediana de MNDWI en T1 dentro del polígono.")
+    t1_scl_counts: Dict[str, int] = Field(
+        default_factory=dict, description="Distribución de clases SCL en T1 dentro del polígono."
+    )
+
+
 class ExtractionAnomalyFeature(BaseModel):
     """Representación tipada de una anomalía morfológica candidata detectada entre T0 y T1."""
 
@@ -212,6 +248,17 @@ class ExtractionAnomalyFeature(BaseModel):
     natural_filter_status: NaturalFilterStatusLiteral = Field(
         default="CANDIDATO_RESIDUAL",
         description="Resultado de los filtros de dinámica fluvial natural y máscara SCL.",
+    )
+    geomorphological_zone: GeomorphologicalZoneLiteral = Field(
+        default="NO_CLASIFICADA",
+        description="Unidad geomorfológica asignada en T0 (cauce, barra móvil, planicie/islas o ribera firme).",
+    )
+    distance_to_water_t0_m: Optional[float] = Field(
+        default=None, ge=0.0, description="Distancia métrica mínima del polígono a la lámina de agua T0 (m)."
+    )
+    spectral_stats: Optional[PolygonSpectralStats] = Field(
+        default=None,
+        description="Desglose auditable de medianas por fecha, conteo SCL y píxeles efectivos.",
     )
     uncertainty: Optional[UncertaintyMetadata] = Field(
         default=None, description="Métricas cuantitativas de incertidumbre y limitaciones de la anomalía."

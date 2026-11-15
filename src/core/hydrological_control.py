@@ -1,10 +1,38 @@
 """Controles de dinámica fluvial natural y estacionalidad para evitar falsos positivos en ríos."""
 
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import cv2
+import httpx
 import numpy as np
 from scipy.ndimage import distance_transform_edt
+
+
+def fetch_ina_stage_height(
+    series_id: int,
+    target_date_iso: str,
+    timeout_seconds: float = 10.0,
+) -> Optional[float]:
+    """Consulta la altura hidrométrica diaria oficial (m) en la API pública del INA (PNA).
+
+    Retorna `None` si no hay conexión o la serie no tiene observaciones en la fecha solicitada.
+    """
+    url = (
+        f"https://alerta.ina.gob.ar/pub/datos/datos"
+        f"&timeStart={target_date_iso}&timeEnd={target_date_iso}&seriesId={series_id}&format=json"
+    )
+    try:
+        with httpx.Client(timeout=timeout_seconds) as client:
+            resp = client.get(url)
+            if resp.status_code != 200:
+                return None
+            payload = resp.json()
+        vals = [float(obs["valor"]) for obs in payload.get("data", []) if obs.get("valor") is not None]
+        if not vals:
+            return None
+        return round(sum(vals) / len(vals), 3)
+    except Exception:
+        return None
 
 
 def compute_reach_hydrological_state(
@@ -12,6 +40,9 @@ def compute_reach_hydrological_state(
     mndwi_t1: np.ndarray,
     valid_mask: np.ndarray,
     water_threshold: float = 0.15,
+    stage_t0_m: Optional[float] = None,
+    stage_t1_m: Optional[float] = None,
+    stage_rise_alert_m: float = 0.80,
 ) -> Dict[str, Any]:
     """Evalúa el pulso hidrométrico global del tramo (crecida/bajante) entre T0 y T1.
 
@@ -54,12 +85,22 @@ def compute_reach_hydrological_state(
     dist_from_water_t0 = distance_transform_edt(~water_t0)
     dist_from_land_t0 = distance_transform_edt(water_t0)
 
+    stage_delta_m = (
+        round(float(stage_t1_m) - float(stage_t0_m), 3)
+        if stage_t0_m is not None and stage_t1_m is not None
+        else None
+    )
+
     uniform_stage_belt_mask = np.zeros(mndwi_t0.shape, dtype=bool)
-    is_systemic_stage_rise = (
-        water_stage_delta_pct >= 8.0 and shoreline_flooding_fraction >= 0.35 and int(np.sum(water_gain)) > 0
+    is_systemic_stage_rise = int(np.sum(water_gain)) > 0 and (
+        (
+            water_stage_delta_pct >= 8.0
+            and (shoreline_flooding_fraction >= 0.25 or water_stage_delta_pct >= 12.0)
+        )
+        or (stage_delta_m is not None and stage_delta_m >= stage_rise_alert_m)
     )
     is_systemic_stage_drop = (
-        water_stage_delta_pct <= -8.0 and shoreline_drawdown_fraction >= 0.35 and int(np.sum(water_loss)) > 0
+        water_stage_delta_pct <= -8.0 and shoreline_drawdown_fraction >= 0.25 and int(np.sum(water_loss)) > 0
     )
 
     if is_systemic_stage_rise:
@@ -96,6 +137,9 @@ def compute_reach_hydrological_state(
         "water_area_t0_px": area_t0_px,
         "water_area_t1_px": area_t1_px,
         "water_stage_delta_pct": round(water_stage_delta_pct, 2),
+        "stage_t0_m": stage_t0_m,
+        "stage_t1_m": stage_t1_m,
+        "stage_delta_m": stage_delta_m,
         "shoreline_flooding_fraction": round(shoreline_flooding_fraction, 3),
         "shoreline_drawdown_fraction": round(shoreline_drawdown_fraction, 3),
         "interface_mndwi_shift": round(interface_mndwi_shift, 4),
@@ -103,6 +147,81 @@ def compute_reach_hydrological_state(
         "is_systemic_stage_drop": bool(is_systemic_stage_drop),
         "uniform_stage_belt_mask": uniform_stage_belt_mask,
         "drawdown_belt_mask": drawdown_belt_mask,
+    }
+
+
+def classify_aoi_geomorphology(
+    mndwi_t0: np.ndarray,
+    ndvi_t0: np.ndarray,
+    valid_mask: np.ndarray,
+    scl_t0: Optional[np.ndarray] = None,
+    grid_res_m: float = 10.0,
+) -> Dict[str, Any]:
+    """Clasifica el AOI en 4 unidades geomorfológicas a partir de la línea base T0.
+
+    Unidades:
+    - `cauce_activo`: cuerpos de agua conexos >= 5 ha (o componente mayor) en T0.
+    - `barras_moviles`: sedimento no vegetado (`NDVI_T0 < 0.25`) dentro de 300 m del cauce activo.
+    - `planicie_islas`: lagunas internas (< 5 ha), su entorno aluvial (<= 450 m) y sectores isleños
+      encerrados entre brazos activos de agua.
+    - `ribera_firme`: márgenes continentales consolidadas fuera de las zonas anteriores.
+    """
+    scl6 = (scl_t0 == 6) if scl_t0 is not None else np.zeros(mndwi_t0.shape, dtype=bool)
+    scl5 = (scl_t0 == 5) if scl_t0 is not None else (mndwi_t0 > -0.15)
+    water_t0 = valid_mask & np.isfinite(mndwi_t0) & ((mndwi_t0 > 0.05) | scl6)
+
+    px_area_m2 = grid_res_m * grid_res_m
+    min_channel_px = max(50, int(round(50000.0 / max(1.0, px_area_m2))))
+
+    num_w, w_labels, w_stats, _ = cv2.connectedComponentsWithStats(water_t0.astype(np.uint8), connectivity=8)
+    cauce_activo = np.zeros(mndwi_t0.shape, dtype=bool)
+    internal_lagoons = np.zeros(mndwi_t0.shape, dtype=bool)
+    largest_lbl = 0
+    largest_area = 0
+    for lbl in range(1, num_w):
+        area_px = int(w_stats[lbl, cv2.CC_STAT_AREA])
+        if area_px > largest_area:
+            largest_area = area_px
+            largest_lbl = lbl
+        if area_px >= min_channel_px:
+            cauce_activo |= w_labels == lbl
+        else:
+            internal_lagoons |= w_labels == lbl
+
+    if not np.any(cauce_activo) and largest_lbl > 0:
+        cauce_activo = w_labels == largest_lbl
+        internal_lagoons &= ~cauce_activo
+
+    dist_cauce_m = distance_transform_edt(~cauce_activo) * grid_res_m
+    barras_moviles = (~water_t0) & valid_mask & scl5 & np.isfinite(ndvi_t0) & (ndvi_t0 < 0.25) & (dist_cauce_m <= 300.0)
+
+    # Detectar sectores entre brazos activos (islas aluviales) mediante barrido direccional N/S y E/O
+    has_north = np.maximum.accumulate(cauce_activo, axis=0)
+    has_south = np.maximum.accumulate(cauce_activo[::-1, :], axis=0)[::-1, :]
+    has_west = np.maximum.accumulate(cauce_activo, axis=1)
+    has_east = np.maximum.accumulate(cauce_activo[:, ::-1], axis=1)[:, ::-1]
+    between_branches = (has_north & has_south) | (has_west & has_east)
+
+    if np.any(internal_lagoons):
+        dist_lagoon_m = distance_transform_edt(~internal_lagoons) * grid_res_m
+        lagoon_belt = dist_lagoon_m <= 450.0
+    else:
+        lagoon_belt = np.zeros(mndwi_t0.shape, dtype=bool)
+
+    planicie_islas = (
+        valid_mask
+        & (~cauce_activo)
+        & (~barras_moviles)
+        & (internal_lagoons | lagoon_belt | (between_branches & (dist_cauce_m <= 2500.0)))
+    )
+    ribera_firme = valid_mask & (~cauce_activo) & (~barras_moviles) & (~planicie_islas)
+
+    return {
+        "cauce_activo": cauce_activo,
+        "barras_moviles": barras_moviles,
+        "planicie_islas": planicie_islas,
+        "ribera_firme": ribera_firme,
+        "dist_cauce_m": dist_cauce_m,
     }
 
 
@@ -252,11 +371,14 @@ def compute_turbidity_confounder_flag(
     b04_t1: np.ndarray,
     candidate_mask: np.ndarray,
 ) -> bool:
-    """Detecta si un candidato está dominado por un pulso de turbidez dentro del cauce preexistente."""
+    """Detecta si un candidato ya pertenecía al cauce/barra húmeda en T0 o está dominado por turbidez."""
     vals_mndwi0 = mndwi_t0[candidate_mask & np.isfinite(mndwi_t0)]
     if vals_mndwi0.size == 0:
         return False
-    was_open_water = float(np.nanmean(vals_mndwi0)) > 0.20
+    mean_mndwi0 = float(np.nanmean(vals_mndwi0))
+    if mean_mndwi0 > 0.05:
+        return True
+    was_open_water = mean_mndwi0 > 0.20
     red_t0 = b04_t0[candidate_mask & np.isfinite(b04_t0)]
     red_t1 = b04_t1[candidate_mask & np.isfinite(b04_t1)]
     if red_t0.size == 0 or red_t1.size == 0:
