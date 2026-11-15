@@ -210,6 +210,128 @@ class Settings(BaseSettings):
         alias="HYDROMETRIC_STAGE_RISE_ALERT_M",
         description="Incremento hidrométrico (m) entre T0 y T1 que activa control estricto de llanura aluvial.",
     )
+    dark_water_min_b11_b03_ratio: float = Field(
+        default=0.85,
+        ge=0.0,
+        alias="DARK_WATER_MIN_B11_B03_RATIO",
+        description="Cociente mínimo B11/B03 para discriminar sedimento/suelo de agua oscura.",
+    )
+    moderate_stage_rise_m: float = Field(
+        default=0.40,
+        ge=0.0,
+        alias="MODERATE_STAGE_RISE_M",
+        description="Umbral de ascenso hidrométrico moderado (m) para excluir barras móviles.",
+    )
+    water_stage_warning_pct: float = Field(
+        default=8.0,
+        ge=0.0,
+        alias="WATER_STAGE_WARNING_PCT",
+        description="Variación porcentual de lámina de agua a partir de la cual se penaliza incertidumbre.",
+    )
+    flooded_min_delta_mndwi: float = Field(
+        default=0.40,
+        alias="FLOODED_MIN_DELTA_MNDWI",
+        description="Incremento mínimo de MNDWI para candidato de excavación inundada.",
+    )
+    flooded_min_t1_mndwi: float = Field(
+        default=0.20,
+        alias="FLOODED_MIN_T1_MNDWI",
+        description="Valor mínimo de MNDWI en T1 para candidato de excavación inundada.",
+    )
+    clearing_min_delta_bsi_adj: float = Field(
+        default=0.25,
+        alias="CLEARING_MIN_DELTA_BSI_ADJ",
+        description="Incremento mínimo de BSI ajustado para desmonte/acopio.",
+    )
+    clearing_min_delta_bsi_reg: float = Field(
+        default=0.18,
+        alias="CLEARING_MIN_DELTA_BSI_REG",
+        description="Incremento mínimo de BSI regularizado para desmonte/acopio.",
+    )
+    clearing_min_t1_bsi_reg: float = Field(
+        default=0.03,
+        alias="CLEARING_MIN_T1_BSI_REG",
+        description="Valor mínimo de BSI regularizado en T1 para desmonte/acopio.",
+    )
+    clearing_max_delta_ndvi_adj: float = Field(
+        default=-0.30,
+        alias="CLEARING_MAX_DELTA_NDVI_ADJ",
+        description="Caída máxima (negativa) de NDVI ajustado para desmonte/acopio.",
+    )
+    clearing_min_t1_bsi: float = Field(
+        default=-0.02,
+        alias="CLEARING_MIN_T1_BSI",
+        description="Valor mínimo de BSI estándar en T1 para desmonte/acopio.",
+    )
+    clearing_max_t1_mndwi: float = Field(
+        default=0.10,
+        alias="CLEARING_MAX_T1_MNDWI",
+        description="Valor máximo de MNDWI en T1 para desmonte/acopio en tierra emergida.",
+    )
+    road_min_elongation: float = Field(
+        default=4.0,
+        ge=1.0,
+        alias="ROAD_MIN_ELONGATION",
+        description="Elongación mínima para reclasificar desmonte como apertura de camino de acceso.",
+    )
+    cloud_shadow_buffer_m: float = Field(
+        default=40.0,
+        ge=0.0,
+        alias="CLOUD_SHADOW_BUFFER_M",
+        description="Buffer métrico (m) de dilatación de nubes/sombras SCL para alerta de adyacencia.",
+    )
+    turbidity_open_water_mndwi: float = Field(
+        default=0.20,
+        alias="TURBIDITY_OPEN_WATER_MNDWI",
+        description="Umbral de MNDWI en T0 por encima del cual el píxel ya era agua abierta.",
+    )
+    turbidity_wet_bar_mndwi: float = Field(
+        default=0.05,
+        alias="TURBIDITY_WET_BAR_MNDWI",
+        description="Umbral de MNDWI en T0 para zona de transición barra húmeda / agua somera.",
+    )
+    turbidity_red_shift_dn: float = Field(
+        default=150.0,
+        ge=0.0,
+        alias="TURBIDITY_RED_SHIFT_DN",
+        description="Cambio absoluto mínimo en B04 (DN) indicativo de pulso de turbidez o sumersión de barra.",
+    )
+    turbidity_bright_bar_b04_dn: float = Field(
+        default=750.0,
+        ge=0.0,
+        alias="TURBIDITY_BRIGHT_BAR_B04_DN",
+        description="Reflectancia roja B04 (DN) en T0 indicativa de banco de arena somero brillante.",
+    )
+
+    def get_calibration_parameters(self) -> Dict[str, float]:
+        """Devuelve el diccionario completo de umbrales de detección y calibración para trazabilidad."""
+        return {
+            "min_anomaly_area_m2": self.min_anomaly_area_m2,
+            "bsi_reg_albedo_k": self.bsi_reg_albedo_k,
+            "dark_water_min_b11_dn": self.dark_water_min_b11_dn,
+            "dark_water_min_b04_dn": self.dark_water_min_b04_dn,
+            "dark_water_min_b08_dn": self.dark_water_min_b08_dn,
+            "dark_water_min_b11_b03_ratio": self.dark_water_min_b11_b03_ratio,
+            "scl7_min_b11_dn": self.scl7_min_b11_dn,
+            "scl7_min_b04_dn": self.scl7_min_b04_dn,
+            "hydrometric_stage_rise_alert_m": self.hydrometric_stage_rise_alert_m,
+            "moderate_stage_rise_m": self.moderate_stage_rise_m,
+            "water_stage_warning_pct": self.water_stage_warning_pct,
+            "flooded_min_delta_mndwi": self.flooded_min_delta_mndwi,
+            "flooded_min_t1_mndwi": self.flooded_min_t1_mndwi,
+            "clearing_min_delta_bsi_adj": self.clearing_min_delta_bsi_adj,
+            "clearing_min_delta_bsi_reg": self.clearing_min_delta_bsi_reg,
+            "clearing_min_t1_bsi_reg": self.clearing_min_t1_bsi_reg,
+            "clearing_max_delta_ndvi_adj": self.clearing_max_delta_ndvi_adj,
+            "clearing_min_t1_bsi": self.clearing_min_t1_bsi,
+            "clearing_max_t1_mndwi": self.clearing_max_t1_mndwi,
+            "road_min_elongation": self.road_min_elongation,
+            "cloud_shadow_buffer_m": self.cloud_shadow_buffer_m,
+            "turbidity_open_water_mndwi": self.turbidity_open_water_mndwi,
+            "turbidity_wet_bar_mndwi": self.turbidity_wet_bar_mndwi,
+            "turbidity_red_shift_dn": self.turbidity_red_shift_dn,
+            "turbidity_bright_bar_b04_dn": self.turbidity_bright_bar_b04_dn,
+        }
 
     def ensure_directories(self) -> None:
         """Crea las carpetas de datos si no existen."""

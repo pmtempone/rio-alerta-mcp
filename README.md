@@ -68,6 +68,7 @@ Entre la línea base histórica $T_0$ (escena única o mediana libre de nubes de
 rio-alerta-mcp/
 ├── pyproject.toml                  # Dependencias, ruff, mypy y configuración pytest
 ├── Dockerfile                      # Contenedor reproducible con GDAL/rasterio
+├── LICENSE                         # Licencia MIT
 ├── .env.example                    # Variables de entorno (STAC, límites de RAM, CRS)
 ├── src/
 │   ├── config.py                   # Configuración CWD-safe (PROJECT_ROOT) y fajas POSGAR 2007
@@ -78,16 +79,21 @@ rio-alerta-mcp/
 │       ├── optical_providers.py    # Cliente STAC, filtro de cobertura MGRS, ingesta COG 10m/20m y SCL
 │       ├── change_detector.py      # Índices ΔMNDWI/ΔBSI/ΔNDVI, segmentación y metadatos de incertidumbre
 │       ├── hydrological_control.py # Control de crecidas/bajantes, dipolos de barras y fenología
+│       ├── dossier_generator.py    # Generador de Dossiers de Investigación Territorial (9 secciones)
 │       └── parana_pilot_recon.py   # Diagnóstico geodésico/STAC del tramo piloto Paraná Medio
 ├── scripts/
-│   └── run_exp_001_parana_medio.py # Pipeline reproducible del Experimento 001 (Paraná Medio)
+│   ├── run_exp_001_parana_medio.py # Pipeline reproducible del Experimento 001 (Paraná Medio)
+│   ├── run_exp_002_validation.py   # Validación Fase 2.1 (estiaje Paraná Medio + AOI2 Diamante)
+│   └── generate_dossier_rio_0184.py# Generación del Dossier técnico auditable RIO-0184 + figuras
 ├── data/
 │   └── experiments/
-│       └── exp_001_parana_medio/   # Informe técnico, JSON resumen, GeoJSONs y 8 láminas PNG
+│       ├── exp_001_parana_medio/   # Informe técnico, JSON resumen, GeoJSONs y 8 láminas PNG
+│       ├── exp_001_recalibrated/   # Recalibración Fase 2.1 sobre Paraná Medio
+│       └── exp_002_validation/     # Validación cruzada (Paraná Medio estiaje + Diamante)
 ├── skills/
 │   └── rio-alerta/
 │       └── SKILL.md                # Skill portable para Antigravity, OpenCode y Claude
-└── tests/                          # Suite unitaria e integración (21 tests)
+└── tests/                          # Suite unitaria e integración (33 tests)
 ```
 
 ---
@@ -100,6 +106,7 @@ rio-alerta-mcp/
 | --- | --- | --- | --- |
 | `tool_server_status` | *(ninguno)* | `Dict[str, Any]` | Verifica estado del servidor, versión, rutas (`data/`, `processed/`, `reports/`), fajas POSGAR 2007, existencia de `permits.gpkg` y topes de procesamiento. |
 | `tool_resolve_posgar_crs` | `lon: float`, `lat: float = -32.9` | `Dict[str, Any]` | Resuelve automáticamente la faja oficial POSGAR 2007 (`EPSG:5343–5349`) para cualquier coordenada de Argentina y proyecta `(lon, lat)` a `(x_posgar_m, y_posgar_m)`. |
+| `tool_search_multitemporal_pair` | `min_lon: float`, `min_lat: float`, `max_lon: float`, `max_lat: float`, `t1_end_date: str \| None`, `lookback_years: int = 3` | `MultitemporalScenePair` | Busca en STAC y recorta por HTTP Range Request un par comparable Sentinel-2 L2A (10m VNIR + 20m SWIR/SCL) en POSGAR 2007 listo para detección. |
 | `tool_compute_spectral_changes` | `t0_path: str`, `t1_path: str`, `t0_swir_20m_path: str \| None`, `t1_swir_20m_path: str \| None` | `SpectralChangeResult` | Calcula GeoTIFFs Float32 de $\Delta\text{MNDWI}$, $\Delta\text{BSI}$ y $\Delta\text{NDVI}$ en POSGAR 2007 respetando 10m/20m nativos y reporta `water_stage_delta_pct`. |
 | `tool_detect_extraction_anomalies` | `t0_path: str`, `t1_path: str`, `t0_swir_20m_path: str \| None`, `t1_swir_20m_path: str \| None`, `min_area_m2: float = 1600.0` | `ChangeDetectionResult` | Ejecuta el motor completo: controles hidrológicos, dipolos de barras, normalización fenológica, segmentación morfológica y emisión de `FeatureCollection` GeoJSON con `UncertaintyMetadata`. |
 | `tool_evaluate_parana_pilot` | `offline_mode: bool = True` | `Dict[str, Any]` | Evalúa factibilidad geodésica (`EPSG:5347`), disponibilidad STAC e institucional del corredor piloto Santa Fe – Paraná. |
@@ -110,6 +117,7 @@ rio-alerta-mcp/
 - **Ingesta Óptica (`optical_providers.py`):** `decode_scl_masks(scl)`, `load_native_s2_scene_bundle(...)`, `filter_seasonally_comparable_items(...)`, `query_stac_seasonal_pair_candidates(...)`, `search_and_fetch_stac_multitemporal(...)`, `fetch_xyz_rgb_chip(...)`.
 - **Detección Multitemporal (`change_detector.py`):** `compute_spectral_indices(...)`, `compute_multitemporal_baseline_and_changes(...)`, `detect_extraction_anomalies(...)`.
 - **Dinámica Fluvial (`hydrological_control.py`):** `compute_reach_hydrological_state(...)`, `detect_natural_bar_migration_dipoles(...)`, `normalize_seasonal_riparian_indices(...)`, `compute_turbidity_confounder_flag(...)`.
+- **Dossiers de Investigación Territorial (`dossier_generator.py`):** `generate_candidate_dossier(...)`, `generate_negative_or_area_dossier(...)`.
 
 ---
 

@@ -326,8 +326,20 @@ def _read_stac_asset_window_posgar(
 ) -> Tuple[np.ndarray, Any, Tuple[int, int]]:
     """Lee por HTTP Range Request únicamente el recorte necesario y lo reproyecta a POSGAR 2007."""
     minx, miny, maxx, maxy = bounds_posgar
-    width = max(1, min(settings.max_master_side_px, int(round((maxx - minx) / dst_res_m))))
-    height = max(1, min(settings.max_master_side_px, int(round((maxy - miny) / dst_res_m))))
+    req_width = max(1, int(round((maxx - minx) / dst_res_m)))
+    req_height = max(1, int(round((maxy - miny) / dst_res_m)))
+    width = min(settings.max_master_side_px, req_width)
+    height = min(settings.max_master_side_px, req_height)
+    if width < req_width or height < req_height:
+        eff_res_x = (maxx - minx) / width
+        eff_res_y = (maxy - miny) / height
+        logger.warning(
+            "Recorte POSGAR excede max_master_side_px (%d px): degradando resolución solicitada %.1f m a %.2f x %.2f m.",
+            settings.max_master_side_px,
+            dst_res_m,
+            eff_res_x,
+            eff_res_y,
+        )
     dst_transform = from_origin(minx, maxy, (maxx - minx) / width, (maxy - miny) / height)
     dst_crs = rasterio.crs.CRS.from_epsg(dst_crs_epsg)
 

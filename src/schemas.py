@@ -212,16 +212,45 @@ class PolygonSpectralStats(BaseModel):
     )
 
 
+class DiscardedAnomalyRecord(BaseModel):
+    """Registro trazable de un candidato preliminar descartado por controles naturales o de máscara."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    candidate_uid: str = Field(..., description="Identificador determinista del componente descartado.")
+    anomaly_type: ChangeAnomalyTypeLiteral = Field(..., description="Tipología preliminar evaluada.")
+    filter_status: NaturalFilterStatusLiteral = Field(..., description="Motivo tipado del descarte.")
+    area_m2: float = Field(..., gt=0.0, description="Superficie métrica aproximada en POSGAR 2007 (m²).")
+    centroid_posgar: Tuple[float, float] = Field(..., description="Centroide (X, Y) en POSGAR 2007.")
+    centroid_wgs84: Tuple[float, float] = Field(..., description="Centroide (lon, lat) en WGS84.")
+    reason_detail: str = Field(..., description="Explicación auditable de la regla que descartó el polígono.")
+
+
 class ExtractionAnomalyFeature(BaseModel):
     """Representación tipada de una anomalía morfológica candidata detectada entre T0 y T1."""
 
     model_config = ConfigDict(extra="forbid")
 
     id: str = Field(..., description="Identificador único del polígono de anomalía (ej. 'RIO-0001').")
+    candidate_uid: Optional[str] = Field(
+        default=None,
+        description="Identificador determinista estable entre corridas derivado de CRS, centroide POSGAR redondeado a 10 m y tipo.",
+    )
     anomaly_type: ChangeAnomalyTypeLiteral = Field(
         ..., description="Tipología espectral/morfológica de la alteración fluvial o ribereña."
     )
-    confidence: float = Field(..., ge=0.0, le=1.0, description="Nivel de confianza algorítmica [0.0 - 1.0].")
+    confidence: float = Field(
+        ...,
+        ge=0.0,
+        le=1.0,
+        description="Puntaje compuesto de señal morfo-espectral [0.0 - 1.0] (no calibrado como probabilidad estadística; preservado por compatibilidad).",
+    )
+    signal_score: Optional[float] = Field(
+        default=None,
+        ge=0.0,
+        le=1.0,
+        description="Puntaje compuesto de señal morfo-espectral [0.0 - 1.0] (no calibrado como probabilidad estadística; alias semántico de confidence).",
+    )
     area_m2: float = Field(..., gt=0.0, description="Superficie plana en metros cuadrados medida en POSGAR 2007.")
     area_ha: float = Field(..., gt=0.0, description="Superficie plana en hectáreas medida en POSGAR 2007.")
     rectangularity: float = Field(..., ge=0.0, le=1.0, description="Índice de rectangularidad de la geometría.")

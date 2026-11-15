@@ -7,6 +7,8 @@ import httpx
 import numpy as np
 from scipy.ndimage import distance_transform_edt
 
+from src.config import settings
+
 
 def fetch_ina_stage_height_with_provenance(
     series_id: int,
@@ -387,17 +389,30 @@ def compute_turbidity_confounder_flag(
     b04_t1: np.ndarray,
     candidate_mask: np.ndarray,
 ) -> bool:
-    """Detecta si un candidato ya pertenecía al cauce/barra húmeda en T0 o está dominado por turbidez."""
+    """Detecta si un candidato ya pertenecía al cauce/barra húmeda en T0 o está dominado por turbidez.
+
+    Reglas físicas:
+    1. Si `mean_mndwi0 > settings.turbidity_open_water_mndwi` (0.20), ya era agua abierta en T0 -> True.
+    2. Si `mean_mndwi0 <= settings.turbidity_wet_bar_mndwi` (0.05), era tierra emergida/vegetación/barra seca -> False.
+    3. En la franja de transición húmeda (`0.05 < mean_mndwi0 <= 0.20`), se marca como confusor si
+       hay variación intensa en el rojo (`|ΔB04| > 150 DN` por pulso de turbidez o sumersión de banco)
+       o si `B04_T0 > 750 DN` (banco somero brillante en T0).
+    """
     vals_mndwi0 = mndwi_t0[candidate_mask & np.isfinite(mndwi_t0)]
     if vals_mndwi0.size == 0:
         return False
     mean_mndwi0 = float(np.nanmean(vals_mndwi0))
-    if mean_mndwi0 > 0.05:
+    if mean_mndwi0 > settings.turbidity_open_water_mndwi:
         return True
-    was_open_water = mean_mndwi0 > 0.20
+    if mean_mndwi0 <= settings.turbidity_wet_bar_mndwi:
+        return False
+
     red_t0 = b04_t0[candidate_mask & np.isfinite(b04_t0)]
     red_t1 = b04_t1[candidate_mask & np.isfinite(b04_t1)]
     if red_t0.size == 0 or red_t1.size == 0:
-        return was_open_water
-    red_increase = float(np.nanmean(red_t1) - np.nanmean(red_t0)) > 150.0
-    return bool(was_open_water and red_increase)
+        return True
+    mean_r0 = float(np.nanmean(red_t0))
+    mean_r1 = float(np.nanmean(red_t1))
+    red_shift = abs(mean_r1 - mean_r0) > settings.turbidity_red_shift_dn
+    bright_bar_t0 = mean_r0 > settings.turbidity_bright_bar_b04_dn
+    return bool(red_shift or bright_bar_t0)
