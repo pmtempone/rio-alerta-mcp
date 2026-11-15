@@ -16,7 +16,7 @@
 | **Superficie vectorial exacta** | **3,097.80 m²** (0.3098 ha) |
 | **Distancia al cuerpo de agua T0** | Sin dato |
 | **Estado de verificación** | `PENDIENTE_VERIFICACION_TERRENO_Y_CATASTRO` |
-| **Fecha de emisión** | 2026-11-15 12:59 UTC |
+| **Fecha de emisión** | 2026-11-15 13:03 UTC |
 
 ## 2. Resumen ejecutivo
 
@@ -32,9 +32,21 @@
 - **Muestreo en grilla:** 29 píxeles a 10 m (~7.25 píxeles nativos SWIR de 20 m).
 - **Morfología:** Rectangularidad `0.369`, elongación `2.333`.
 - **Contexto geomorfológico estimado (heurística satelital T0):** `PLANICIE_INUNDABLE_E_ISLAS`, distancia al agua T0 `Sin dato`.
-- **Productos cartográficos asociados:**
-  - `data/experiments/exp_001_recalibrated/mapa_candidato_RIO-0184.png`
+- **Productos cartográficos y figuras asociadas:**
+  - `mapa_candidato_RIO-0184.png`
+  - `figura_2_serie_temporal_RIO-0184.png`
   - `data/experiments/exp_001_parana_medio/06_anomalias_detectadas.geojson`
+
+### Figura 1 — Comparación RGB Sentinel-2 (10 m) entre T0 (2025-11-13) y T1 (2026-11-08) con contorno vectorial POSGAR de RIO-0184 (3,097.80 m²).
+
+![Figura 1 — RIO-0184](mapa_candidato_RIO-0184.png)
+
+*Figura 1. Comparación RGB Sentinel-2 (10 m) entre T0 (2025-11-13) y T1 (2026-11-08) con contorno vectorial POSGAR de RIO-0184 (3,097.80 m²).*
+### Figura 2 — Serie visual RGB 2023–2026 sobre RIO-0184 y evolución conjunta de NDVI mediano, BSI mediano y altura hidrométrica INA (Puerto Paraná).
+
+![Figura 2 — RIO-0184](figura_2_serie_temporal_RIO-0184.png)
+
+*Figura 2. Serie visual RGB 2023–2026 sobre RIO-0184 y evolución conjunta de NDVI mediano, BSI mediano y altura hidrométrica INA (Puerto Paraná).*
 
 ## 4. Evolución multitemporal
 
@@ -91,7 +103,7 @@
 ## 9. Fuentes, parámetros y trazabilidad técnica
 
 - **CRS métrico de cálculo:** `EPSG:5347` (POSGAR 2007). Exportación GeoJSON: `EPSG:4326`.
-- **Procedencia hidrométrica (Puerto Paraná (INA seriesId=30), unidad `m`, consulta=2026-11-15 12:59 UTC):** T0=`2.69` m (`INA_API_A5`), T1=`4.76` m (`INA_API_A5`).
+- **Procedencia hidrométrica (Puerto Paraná (INA seriesId=30), unidad `m`, consulta=2026-11-15 13:03 UTC):** T0=`2.69` m (`INA_API_A5`), T1=`4.76` m (`INA_API_A5`).
 - **Resolución de grilla / SWIR nativo:** 9.996810442680092 m / 20.009770821454982 m.
 - **Área mínima de detección:** 1600.0 m².
 - **Parámetros congelados Fase 2.1:** `bsi_reg_albedo_k=800.0`, `dark_water_min_b11_dn=600.0`, `dark_water_min_b04_dn=420.0`, `dark_water_min_b08_dn=350.0`, `scl7_min_b11_dn=850.0`, `scl7_min_b04_dn=500.0`, `hydrometric_stage_rise_alert_m=0.8`.

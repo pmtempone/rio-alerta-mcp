@@ -41,7 +41,9 @@ def generate_candidate_dossier(
     period_label: str = "T0 -> T1",
     multitemporal_series: Optional[Sequence[Dict[str, Any]]] = None,
     map_artifacts: Optional[Sequence[str]] = None,
+    figure_captions: Optional[Dict[str, str]] = None,
     cadastre_note: Optional[str] = None,
+    strict_hydrometric_consistency: bool = False,
 ) -> str:
     """Genera un Dossier de Investigación Territorial de 9 secciones para un candidato.
 
@@ -142,9 +144,19 @@ def generate_candidate_dossier(
     lines.append(f"- **Morfología:** Rectangularidad `{rect:.3f}`, elongación `{elong:.3f}`.")
     lines.append(f"- **Contexto geomorfológico estimado (heurística satelital T0):** `{zone}`, distancia al agua T0 `{_fmt_num(dist_water_m, 1, ' m')}`.")
     if map_artifacts:
-        lines.append("- **Productos cartográficos asociados:**")
+        lines.append("- **Productos cartográficos y figuras asociadas:**")
+        fig_num = 1
+        img_exts = {".png", ".jpg", ".jpeg", ".webp"}
+        embedded_figs: List[str] = []
         for m_path in map_artifacts:
             lines.append(f"  - `{m_path}`")
+            if Path(m_path).suffix.lower() in img_exts:
+                caption = (figure_captions or {}).get(m_path) or f"Evidencia satelital y contexto espacial del candidato `{fid}` (`{Path(m_path).name}`)."
+                embedded_figs.append(f"### Figura {fig_num} — {caption}\n\n![Figura {fig_num} — {fid}]({m_path})\n\n*Figura {fig_num}. {caption}*")
+                fig_num += 1
+        if embedded_figs:
+            lines.append("")
+            lines.extend(embedded_figs)
     else:
         lines.append("- **Productos cartográficos asociados:** Geometría exportada en GeoJSON (`EPSG:4326`) derivada de procesamiento métrico `EPSG:{}`.".format(crs_epsg))
     lines.append("")
@@ -166,15 +178,42 @@ def generate_candidate_dossier(
     stage_station = hydro.get("stage_station", "Estación INA/PNA configurada")
     stage_queried_at = hydro.get("stage_queried_at_utc")
 
+    hydrometric_discrepancy_warning: Optional[str] = None
     if multitemporal_series and len(multitemporal_series) >= 2:
         t0_row = multitemporal_series[-2]
         t1_row = multitemporal_series[-1]
-        if stage_t0_src == "NO_DISPONIBLE" and t0_row.get("_stage_src"):
-            stage_t0 = t0_row.get("_stage_val", stage_t0)
-            stage_t0_src = str(t0_row["_stage_src"])
-        if stage_t1_src == "NO_DISPONIBLE" and t1_row.get("_stage_src"):
-            stage_t1 = t1_row.get("_stage_val", stage_t1)
-            stage_t1_src = str(t1_row["_stage_src"])
+        s0_val = t0_row.get("_stage_val")
+        s1_val = t1_row.get("_stage_val")
+        s0_src = t0_row.get("_stage_src") or t0_row.get("stage_source")
+        s1_src = t1_row.get("_stage_src") or t1_row.get("stage_source")
+
+        conflicts: List[str] = []
+        if s0_val is not None and stage_t0 is not None and abs(float(s0_val) - float(stage_t0)) > 1e-3:
+            conflicts.append(f"T0 altura metadata={stage_t0} vs serie={s0_val}")
+        if s1_val is not None and stage_t1 is not None and abs(float(s1_val) - float(stage_t1)) > 1e-3:
+            conflicts.append(f"T1 altura metadata={stage_t1} vs serie={s1_val}")
+        if s0_src and stage_t0_src != "NO_DISPONIBLE" and str(s0_src) != str(stage_t0_src):
+            conflicts.append(f"T0 fuente metadata={stage_t0_src} vs serie={s0_src}")
+        if s1_src and stage_t1_src != "NO_DISPONIBLE" and str(s1_src) != str(stage_t1_src):
+            conflicts.append(f"T1 fuente metadata={stage_t1_src} vs serie={s1_src}")
+
+        if conflicts:
+            msg = (
+                "Discrepancia detectada entre metadatos globales y serie multitemporal "
+                f"({'; '.join(conflicts)}). Se impuso la serie multitemporal como fuente única de verdad."
+            )
+            if strict_hydrometric_consistency:
+                raise ValueError(msg)
+            hydrometric_discrepancy_warning = f"ADVERTENCIA DE CONSISTENCIA HIDROMÉTRICA: {msg}"
+
+        if s0_val is not None:
+            stage_t0 = s0_val
+        if s0_src:
+            stage_t0_src = str(s0_src)
+        if s1_val is not None:
+            stage_t1 = s1_val
+        if s1_src:
+            stage_t1_src = str(s1_src)
         if stage_t0 is not None and stage_t1 is not None:
             stage_delta = round(float(stage_t1) - float(stage_t0), 3)
 
@@ -276,6 +315,8 @@ def generate_candidate_dossier(
     lines.append("## 7. Limitaciones y datos faltantes")
     lines.append("")
     lims = list(unc.get("limitations") or [])
+    if hydrometric_discrepancy_warning:
+        lims.insert(0, hydrometric_discrepancy_warning)
     lims.append(f"Cruce administrativo/catastral: {cadastre_text}")
     if px_10m > 0 and px_10m < 40:
         lims.append(

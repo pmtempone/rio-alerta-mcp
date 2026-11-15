@@ -29,6 +29,7 @@ RECAL_GEOJSON = PROJECT_ROOT / "data" / "experiments" / "exp_001_recalibrated" /
 EXP1_RASTERS = PROJECT_ROOT / "data" / "experiments" / "exp_001_parana_medio" / "rasters"
 OUT_DOSSIER = PROJECT_ROOT / "data" / "experiments" / "exp_001_recalibrated" / "dossier_RIO-0184_auto.md"
 OUT_MAP = PROJECT_ROOT / "data" / "experiments" / "exp_001_recalibrated" / "mapa_candidato_RIO-0184.png"
+OUT_FIG2 = PROJECT_ROOT / "data" / "experiments" / "exp_001_recalibrated" / "figura_2_serie_temporal_RIO-0184.png"
 
 SCENES = [
     ("2023-11-07", "S2B_20HQK_20231107_0_L2A", 3.51, "t0_S2B_20HQK_20231107_0_L2A_vnir10m.tif", "t0_S2B_20HQK_20231107_0_L2A_swir_scl20m.tif"),
@@ -91,6 +92,65 @@ def _generate_candidate_map(
 
     fig.suptitle("Evidencia espacial específica — Candidato RIO-0184 (POSGAR EPSG:5347)", fontsize=11)
     fig.tight_layout()
+    out_png.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out_png, bbox_inches="tight")
+    plt.close(fig)
+    return out_png
+
+
+def _generate_multitemporal_figure(
+    poly: Any,
+    bundles: List[Dict[str, Any]],
+    rows: List[Dict[str, Any]],
+    out_png: Path,
+) -> Path:
+    inv = ~bundles[-1]["transform"]
+    cx, cy = poly.centroid.x, poly.centroid.y
+    col_c, row_c = [int(round(v)) for v in (inv * (cx, cy))]
+    half = 35
+    h, w = bundles[-1]["shape_hw"]
+    r0, r1 = max(0, row_c - half), min(h, row_c + half)
+    c0, c1 = max(0, col_c - half), min(w, col_c + half)
+
+    xs, ys = poly.exterior.xy
+    px_cols, px_rows = [], []
+    for x_val, y_val in zip(xs, ys):
+        col_f, row_f = inv * (x_val, y_val)
+        px_cols.append(col_f - c0)
+        px_rows.append(row_f - r0)
+
+    fig = plt.figure(figsize=(12, 6.5), dpi=150)
+    gs = fig.add_gridspec(2, 4, height_ratios=[1.1, 1.0], hspace=0.35, wspace=0.15)
+    for i, (bundle, row) in enumerate(zip(bundles, rows)):
+        ax = fig.add_subplot(gs[0, i])
+        ax.imshow(_rgb_patch(bundle, r0, r1, c0, c1))
+        ax.plot(px_cols, px_rows, color="cyan" if i < 3 else "red", linewidth=1.4)
+        ax.set_title(f"{row['date']}\n({row['_stage_val']:.2f} m)", fontsize=9)
+        ax.axis("off")
+
+    ax_ts = fig.add_subplot(gs[1, :])
+    dates = [r["date"] for r in rows]
+    ndvis = [r["_ndvi_med"] for r in rows]
+    bsis = [r["_bsi_med"] for r in rows]
+    stages = [r["_stage_val"] for r in rows]
+
+    ax_ts.plot(dates, ndvis, marker="o", color="#2e7d32", linewidth=2, label="NDVI mediano")
+    ax_ts.plot(dates, bsis, marker="s", color="#d84315", linewidth=2, label="BSI mediano")
+    ax_ts.axhline(0.0, color="gray", linestyle="--", linewidth=0.8)
+    ax_ts.set_ylabel("Índice espectral (mediana polígono)")
+    ax_ts.set_ylim(-0.6, 0.9)
+    ax_ts.grid(alpha=0.25)
+
+    ax_h = ax_ts.twinx()
+    ax_h.plot(dates, stages, marker="^", linestyle=":", color="#1565c0", linewidth=1.8, label="Altura Puerto Paraná (m)")
+    ax_h.set_ylabel("Altura hidrométrica INA (m)", color="#1565c0")
+    ax_h.tick_params(axis="y", labelcolor="#1565c0")
+
+    lines1, labels1 = ax_ts.get_legend_handles_labels()
+    lines2, labels2 = ax_h.get_legend_handles_labels()
+    ax_ts.legend(lines1 + lines2, labels1 + labels2, loc="upper right", fontsize=8)
+    ax_ts.set_title("Trayectoria espectral e hidrométrica 2023–2026 sobre RIO-0184", fontsize=10)
+
     out_png.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_png, bbox_inches="tight")
     plt.close(fig)
@@ -206,6 +266,7 @@ def main() -> None:
     enriched_feat["properties"] = props
 
     map_png = _generate_candidate_map(poly, bundles[2], bundles[3], OUT_MAP)
+    fig2_png = _generate_multitemporal_figure(poly, bundles, rows, OUT_FIG2)
     md = generate_candidate_dossier(
         feature=enriched_feat,
         detection_metadata=meta,
@@ -213,9 +274,14 @@ def main() -> None:
         period_label="2023-11-07 .. 2025-11-13 (T0) -> 2026-11-08 (T1)",
         multitemporal_series=rows,
         map_artifacts=[
-            str(map_png.relative_to(PROJECT_ROOT)),
+            map_png.name,
+            fig2_png.name,
             str(EXP1_GEOJSON.relative_to(PROJECT_ROOT)),
         ],
+        figure_captions={
+            map_png.name: "Comparación RGB Sentinel-2 (10 m) entre T0 (2025-11-13) y T1 (2026-11-08) con contorno vectorial POSGAR de RIO-0184 (3,097.80 m²).",
+            fig2_png.name: "Serie visual RGB 2023–2026 sobre RIO-0184 y evolución conjunta de NDVI mediano, BSI mediano y altura hidrométrica INA (Puerto Paraná).",
+        },
     )
     out = write_dossier_markdown(md, OUT_DOSSIER)
     print(f"Dossier exacto generado: {out} | id={TARGET_ID} | area_m2={exact_area_m2} | map={map_png.name}")

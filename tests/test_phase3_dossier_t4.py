@@ -5,6 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from src.core.dossier_generator import (
     generate_candidate_dossier,
     generate_negative_or_area_dossier,
@@ -204,6 +206,61 @@ def test_t4_hydrometric_consistency_across_sections_4_5_and_9() -> None:
     assert "NO_DISPONIBLE" not in sec5
     assert "T0=`2.69` m (`INA_API_A5`), T1=`4.76` m (`FALLBACK_EXP001`)" in sec9
     assert "no es observación nueva" in md
+
+
+def test_t4_conflicting_metadata_vs_series_synchronizes_or_raises() -> None:
+    """Detecta discrepancia deliberada entre metadata y serie multitemporal y evita contradicciones."""
+    meta = _sample_metadata()
+    # Metadatos deliberadamente contradictorios con la serie
+    meta["hydrological_controls"]["stage_t0_m"] = 1.99
+    meta["hydrological_controls"]["stage_t0_source"] = "FALLBACK_MANUAL"
+    meta["hydrological_controls"]["stage_t1_m"] = 5.50
+    meta["hydrological_controls"]["stage_t1_source"] = "FALLBACK_MANUAL"
+
+    series = [
+        {
+            "date": "2025-11-13",
+            "scene_id": "S2A_T0",
+            "_stage_val": 2.69,
+            "_stage_src": "INA_API_A5",
+            "b11_median": "2312",
+            "ndvi_median": "+0.379",
+            "bsi_median": "+0.133",
+            "mndwi_median": "-0.505",
+            "scl_summary": "4:9, 5:20",
+        },
+        {
+            "date": "2026-11-08",
+            "scene_id": "S2A_T1",
+            "_stage_val": 4.76,
+            "_stage_src": "INA_API_A5",
+            "b11_median": "1573",
+            "ndvi_median": "+0.151",
+            "bsi_median": "+0.149",
+            "mndwi_median": "-0.363",
+            "scl_summary": "4:3, 5:16, 7:10",
+        },
+    ]
+
+    md = generate_candidate_dossier(
+        feature=_sample_feature(),
+        detection_metadata=meta,
+        multitemporal_series=series,
+        map_artifacts=["mapa_candidato_RIO-0184.png"],
+        figure_captions={"mapa_candidato_RIO-0184.png": "Comparación T0/T1."},
+    )
+    assert "ADVERTENCIA DE CONSISTENCIA HIDROMÉTRICA" in md
+    assert "T0=`2.69` m (`INA_API_A5`), T1=`4.76` m (`INA_API_A5`)" in md
+    assert "1.99 m [`FALLBACK_MANUAL`]" not in md
+    assert "![Figura 1 — RIO-0184](mapa_candidato_RIO-0184.png)" in md
+
+    with pytest.raises(ValueError, match="Discrepancia detectada"):
+        generate_candidate_dossier(
+            feature=_sample_feature(),
+            detection_metadata=meta,
+            multitemporal_series=series,
+            strict_hydrometric_consistency=True,
+        )
 
 
 def test_t4_negative_dossier_supports_zero_candidates() -> None:
