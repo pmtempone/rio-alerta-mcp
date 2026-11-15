@@ -132,7 +132,15 @@ def generate_candidate_dossier(
     if permit_validation is not None:
         lines.append(f"| **Clasificación catastral (Fase 3)** | `{permit_validation.classification}` (`{permit_validation.priority}`) |")
     if vlm_verdict is not None:
-        lines.append(f"| **Dictamen auxiliar VLM/morfología** | `{vlm_verdict.verdict}` ({vlm_verdict.certainty_pct}%, `{vlm_verdict.backend}`) |")
+        mode_labels = {
+            "HEURISTIC_SCREENING": "Cribado heurístico tabular (NO VLM / NO pericial)",
+            "EXTERNAL_VLM": "Evaluación VLM externo (NO pericial)",
+            "HUMAN_EXPERT": "Evaluación de especialista humano",
+        }
+        mode_desc = mode_labels.get(vlm_verdict.evaluation_mode, vlm_verdict.evaluation_mode)
+        lines.append(
+            f"| **{mode_desc}** | `{vlm_verdict.verdict}` ({vlm_verdict.certainty_pct}%, `{vlm_verdict.backend}`) |"
+        )
     lines.append(f"| **Estado de verificación** | `{case_status_label}` |")
     lines.append(f"| **Fecha de emisión** | {generated_at} |")
     lines.append("")
@@ -357,8 +365,17 @@ def generate_candidate_dossier(
     lines.append("## 8. Recomendación de actuación (Nivel: Verificación)")
     lines.append("")
     if vlm_verdict is not None:
+        eval_prefix = (
+            "Cribado heurístico tabular"
+            if vlm_verdict.evaluation_mode == "HEURISTIC_SCREENING"
+            else (
+                "Evaluación auxiliar VLM externo"
+                if vlm_verdict.evaluation_mode == "EXTERNAL_VLM"
+                else "Evaluación de especialista humano"
+            )
+        )
         lines.append(
-            f"- **Síntesis pericial auxiliar (`{vlm_verdict.verdict}`, certeza={vlm_verdict.certainty_pct}%):** "
+            f"- **{eval_prefix} (`{vlm_verdict.verdict}`, índice={vlm_verdict.certainty_pct}%, modalidad=`{vlm_verdict.evaluation_mode}`):** "
             f"{vlm_verdict.extraction_evidence} {vlm_verdict.fluvial_dynamics_assessment}"
         )
     if case_record is not None:
@@ -390,6 +407,19 @@ def generate_candidate_dossier(
     if calib:
         calib_str = ", ".join(f"`{k}={v}`" for k, v in calib.items())
         lines.append(f"- **Parámetros congelados Fase 2.1 ({len(calib)}):** {calib_str}.")
+    if detection_metadata.get("report_generation_id"):
+        lines.append(
+            f"- **Trazabilidad de generación del expediente:** `report_generation_id={detection_metadata['report_generation_id']}`, "
+            f"`software_commit_sha={detection_metadata.get('software_commit_sha', 'unknown')}`."
+        )
+    if vlm_verdict is not None:
+        lines.append(
+            f"- **Procedencia de evaluación auxiliar:** modalidad=`{vlm_verdict.evaluation_mode}`, "
+            f"backend=`{vlm_verdict.backend}`, modelo=`{vlm_verdict.model_id or 'N/A'}`, "
+            f"prompt_version=`{vlm_verdict.prompt_version or 'N/A'}`, "
+            f"probabilidad_estadística=`{vlm_verdict.is_statistical_probability}`, "
+            f"constatación_pericial=`{vlm_verdict.is_forensic_certification}`."
+        )
     lines.append(f"- **Nota institucional del motor:** {detection_metadata.get('institutional_note', '')}")
     lines.append("")
 

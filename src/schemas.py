@@ -30,15 +30,35 @@ CadastreStatusLiteral = Literal[
     "NO_DISPONIBLE",
 ]
 
+PermitValidityStatusLiteral = Literal[
+    "VIGENTE_CONFIRMADO",
+    "VENCIDO",
+    "NO_VIGENTE_AUN",
+    "VIGENCIA_DESCONOCIDA",
+]
+
+PermitActivityStatusLiteral = Literal[
+    "COMPATIBLE",
+    "INCOMPATIBLE",
+    "SIN_ACTIVIDAD_DECLARADA",
+]
+
 PermitClassificationLiteral = Literal[
     "EXTRACCION_AUTORIZADA",
     "EXCESO_DE_POLIGONO",
     "PERMISO_VENCIDO",
+    "PERMISO_NO_VERIFICABLE_O_INCOMPATIBLE",
     "EXTRACCION_SIN_PERMISO",
     "SIN_CATASTRO_OFICIAL_CARGADO",
     "SIN_COINCIDENCIA_EN_CATASTRO_LOCAL",
     "SIN_COINCIDENCIA_EN_REGISTROS_CONSULTADOS",
     "INSPECCIONADO_SIN_PERMISO_REGISTRADO",
+]
+
+EvaluationModeLiteral = Literal[
+    "HEURISTIC_SCREENING",
+    "EXTERNAL_VLM",
+    "HUMAN_EXPERT",
 ]
 
 GeomorphologicalZoneLiteral = Literal[
@@ -327,9 +347,20 @@ class PermitMatchInfo(BaseModel):
     permit_id: str = Field(..., description="Identificador catastral del permiso o concesión.")
     titular: str = Field(..., description="Titular o razón social del permiso de extracción.")
     expediente: Optional[str] = Field(default=None, description="Número de expediente administrativo.")
-    fecha_desde: str = Field(..., description="Fecha de inicio de vigencia (YYYY-MM-DD).")
-    fecha_hasta: str = Field(..., description="Fecha de vencimiento de vigencia (YYYY-MM-DD).")
-    vigente_en_t1: bool = Field(..., description="Indica si el permiso estaba vigente en la fecha de T1.")
+    fecha_desde: Optional[str] = Field(default=None, description="Fecha de inicio de vigencia (YYYY-MM-DD).")
+    fecha_hasta: Optional[str] = Field(default=None, description="Fecha de vencimiento de vigencia (YYYY-MM-DD).")
+    vigente_en_t1: bool = Field(
+        default=False,
+        description="Indica si el permiso tenía vigencia confirmada e inequívoca en la fecha T1.",
+    )
+    validity_status: PermitValidityStatusLiteral = Field(
+        default="VIGENCIA_DESCONOCIDA",
+        description="Estado de vigencia temporal: VIGENTE_CONFIRMADO, VENCIDO, NO_VIGENTE_AUN o VIGENCIA_DESCONOCIDA.",
+    )
+    activity_status: PermitActivityStatusLiteral = Field(
+        default="SIN_ACTIVIDAD_DECLARADA",
+        description="Estado de compatibilidad de actividad: COMPATIBLE, INCOMPATIBLE o SIN_ACTIVIDAD_DECLARADA.",
+    )
     overlap_area_m2: float = Field(..., ge=0.0, description="Superficie superpuesta con el polígono de permiso (m²).")
     overlap_pct: float = Field(..., ge=0.0, le=100.0, description="Porcentaje del área anómala dentro del permiso.")
     excess_area_m2: float = Field(..., ge=0.0, description="Superficie de anomalía fuera del polígono autorizado (m²).")
@@ -412,10 +443,43 @@ class VLMFluvialVerdict(BaseModel):
     field_inspection_recommended: bool = Field(
         ..., description="Indica si se recomienda inspección en campo / patrullaje fluvial / dron."
     )
-    backend: str = Field(default="unknown", description="Backend que emitió el dictamen pericial auxiliar.")
+    backend: str = Field(default="unknown", description="Backend que emitió la evaluación.")
+    evaluation_mode: EvaluationModeLiteral = Field(
+        default="HEURISTIC_SCREENING",
+        description="Modalidad explícita: HEURISTIC_SCREENING, EXTERNAL_VLM o HUMAN_EXPERT.",
+    )
+    model_id: Optional[str] = Field(
+        default=None, description="Identificador del modelo multimodal (requerido en EXTERNAL_VLM)."
+    )
+    model_version: Optional[str] = Field(
+        default=None, description="Versión o snapshot del modelo multimodal."
+    )
+    prompt_version: Optional[str] = Field(
+        default="rio-alerta-fluvial-v1.0", description="Versión del prompt estructurado utilizado."
+    )
+    image_refs: List[str] = Field(
+        default_factory=list, description="Rutas o URIs de las imágenes efectivamente evaluadas."
+    )
+    image_hashes: Dict[str, str] = Field(
+        default_factory=dict, description="Hashes SHA-256 de las imágenes locales evaluadas."
+    )
+    evaluated_at_utc: Optional[str] = Field(
+        default=None, description="Marca temporal ISO-8601 UTC de ejecución de la evaluación."
+    )
+    evaluator_id: Optional[str] = Field(
+        default=None, description="Identificador o matrícula del especialista humano (HUMAN_EXPERT)."
+    )
+    is_statistical_probability: bool = Field(
+        default=False,
+        description="Indica si certainty_pct constituye probabilidad estadística calibrada (False en cribado heurístico/VLM).",
+    )
+    is_forensic_certification: bool = Field(
+        default=False,
+        description="Ninguna evaluación automatizada (HEURISTIC_SCREENING o EXTERNAL_VLM) equivale a constatación pericial.",
+    )
     human_review_required: bool = Field(
         default=True,
-        description="El dictamen VLM es auxiliar y requiere validación por un inspector humano habilitado.",
+        description="El resultado es auxiliar y requiere validación por un inspector humano habilitado.",
     )
 
 
@@ -428,6 +492,24 @@ class EnforcementReportResult(BaseModel):
     anomaly_id: str = Field(..., description="Identificador único del hallazgo reportado.")
     report_md_path: str = Field(..., description="Ruta al acta técnica en Markdown.")
     report_json_path: str = Field(..., description="Ruta al expediente estructurado en JSON.")
+    report_generation_id: Optional[str] = Field(
+        default=None, description="Identificador único e inmutable de la generación del expediente."
+    )
+    generation_dir_path: Optional[str] = Field(
+        default=None, description="Ruta al directorio inmutable de la generación publicada."
+    )
+    manifest_json_path: Optional[str] = Field(
+        default=None, description="Ruta al manifiesto criptográfico manifest.json de la generación."
+    )
+    markdown_sha256: Optional[str] = Field(
+        default=None, description="Digest SHA-256 del artefacto report.md."
+    )
+    report_json_sha256: Optional[str] = Field(
+        default=None, description="Digest SHA-256 del artefacto report.json."
+    )
+    software_commit_sha: Optional[str] = Field(
+        default=None, description="SHA del commit git de RíoAlerta con el cual se emitió el informe."
+    )
     classification: PermitClassificationLiteral = Field(..., description="Clasificación catastral definitiva.")
     priority: InspectionPriorityLiteral = Field(..., description="Prioridad de fiscalización asignada.")
     area_m2: float = Field(..., gt=0.0, description="Superficie afectada en metros cuadrados.")
@@ -485,6 +567,15 @@ class CaseEventRecord(BaseModel):
     summary: str = Field(..., description="Descripción técnica o nota institucional auditable del evento.")
     metadata: Dict[str, Any] = Field(
         default_factory=dict, description="Metadatos estructurados adicionales del evento."
+    )
+    idempotency_key: Optional[str] = Field(
+        default=None, description="Clave opcional de idempotencia para evitar duplicación de eventos."
+    )
+    prev_event_hash: Optional[str] = Field(
+        default=None, description="Hash SHA-256 del evento inmediato anterior en la bitácora."
+    )
+    event_hash: Optional[str] = Field(
+        default=None, description="Hash SHA-256 encadenado del registro canónico del evento."
     )
     human_review_required: bool = Field(
         default=True,

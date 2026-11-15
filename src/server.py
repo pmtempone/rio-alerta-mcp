@@ -1,13 +1,16 @@
 """Servidor FastMCP principal para RíoAlerta (`rio-alerta-mcp`)."""
 
+import getpass
+import os
+import tempfile
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, cast
+from typing import Any, Dict, List, Tuple, cast
 
 from fastmcp import FastMCP
 
 from src import __version__
-from src.config import POSGAR_2007_EPSG, settings
+from src.config import POSGAR_2007_EPSG, PROJECT_ROOT, settings
 from src.core.case_workflow import CaseWorkflowManager
 from src.core.change_detector import (
     compute_multitemporal_baseline_and_changes,
@@ -18,13 +21,18 @@ from src.core.optical_providers import search_and_fetch_stac_multitemporal
 from src.core.parana_pilot_recon import evaluate_parana_pilot_readiness
 from src.core.permits_validator import validate_anomaly_permits
 from src.core.report_generator import generate_enforcement_report
-from src.core.vlm_judge import build_vlm_fluvial_prompt, evaluate_candidate_vlm_verdict
+from src.core.vlm_judge import (
+    DEFAULT_PROMPT_VERSION,
+    build_vlm_fluvial_prompt,
+    evaluate_candidate_vlm_verdict,
+)
 from src.schemas import (
     CadastreMetadata,
     CadastreStatusLiteral,
     CaseActionTypeLiteral,
     CaseStatusLiteral,
     ChangeDetectionResult,
+    EvaluationModeLiteral,
     InspectionPriorityLiteral,
     MultitemporalScenePair,
     PermitClassificationLiteral,
@@ -112,13 +120,168 @@ def tool_resolve_posgar_crs(lon: float, lat: float = -32.9) -> Dict[str, Any]:
     }
 
 
-def _validate_raster_paths(*paths: str | None) -> None:
-    """Verifica que las rutas raster no nulas existan antes de invocar el motor geoespacial."""
+_REMOTE_URI_PREFIXES: Tuple[str, ...] = ("http://", "https://", "stac://", "s3://", "gs://")
+_RASTER_SUFFIXES: Tuple[str, ...] = (".tif", ".tiff", ".vrt")
+_CADASTRE_SUFFIXES: Tuple[str, ...] = (".gpkg", ".geojson", ".json")
+_IMAGE_SUFFIXES: Tuple[str, ...] = (".png", ".jpg", ".jpeg", ".webp", ".tif", ".tiff")
+
+
+def _pytest_session_temp_root() -> Path | None:
+    """Retorna la subcarpeta de usuario para pytest únicamente cuando PYTEST_CURRENT_TEST está activa."""
+    if not os.environ.get("PYTEST_CURRENT_TEST"):
+        return None
+    return Path(tempfile.gettempdir()).resolve() / f"pytest-of-{getpass.getuser()}"
+
+
+def _configured_temp_root() -> Path | None:
+    raw = os.environ.get("RIO_ALERTA_TEMP_DIR", "").strip()
+    if not raw:
+        return None
+    candidate = Path(raw).resolve()
+    global_tmp = Path(tempfile.gettempdir()).resolve()
+    if candidate in {Path("/"), PROJECT_ROOT.resolve(), global_tmp}:
+        return None
+    return candidate
+
+
+def _get_allowed_read_roots() -> List[Path]:
+    """Raíces autorizadas para operaciones de lectura desde herramientas MCP."""
+    roots = [
+        settings.data_dir.resolve(),
+        settings.processed_dir.resolve(),
+        settings.reports_dir.resolve(),
+        (PROJECT_ROOT / "data").resolve(),
+    ]
+    for extra in (_configured_temp_root(), _pytest_session_temp_root()):
+        if extra is not None and extra not in roots:
+            roots.append(extra)
+    return roots
+
+
+def _get_allowed_write_roots() -> List[Path]:
+    """Raíces autorizadas para operaciones de escritura desde herramientas MCP."""
+    roots = [
+        settings.processed_dir.resolve(),
+        settings.reports_dir.resolve(),
+    ]
+    for extra in (_configured_temp_root(), _pytest_session_temp_root()):
+        if extra is not None and extra not in roots:
+            roots.append(extra)
+    return roots
+
+
+def _forbidden_write_roots() -> Tuple[Path, ...]:
+    """Subárboles explícitamente vedados a escritura incluso ante variables de entorno mal configuradas."""
+    return (
+        (PROJECT_ROOT / "src").resolve(),
+        (PROJECT_ROOT / "tests").resolve(),
+        (PROJECT_ROOT / "scripts").resolve(),
+        (PROJECT_ROOT / "docs").resolve(),
+        (PROJECT_ROOT / ".git").resolve(),
+        (PROJECT_ROOT / "data" / "experiments").resolve(),
+        (PROJECT_ROOT / "data" / "raw").resolve(),
+    )
+
+
+def _validate_safe_path(
+    raw_path: str,
+    *,
+    allowed_roots: List[Path],
+    must_exist: bool,
+    expect_dir: bool,
+    allowed_suffixes: Tuple[str, ...] | None = None,
+    is_write: bool = False,
+    missing_prefix: str = "No existe la ruta requerida",
+) -> Path:
+    """Valida confinamiento estricto en raíces permitidas, rechaza symlinks y verifica tipo de nodo."""
+    cleaned = str(raw_path).strip()
+    if not cleaned:
+        raise ValueError("La ruta proporcionada no puede estar vacía.")
+    if cleaned.lower().startswith(_REMOTE_URI_PREFIXES):
+        raise ValueError(f"Se esperaba una ruta local del sistema de archivos, no URI remota: '{raw_path}'.")
+
+    raw_p = Path(cleaned)
+    if ".." in raw_p.parts:
+        raise PermissionError(f"Navegación relativa '..' rechazada en ruta MCP: '{raw_path}'.")
+    if raw_p.parts and raw_p.parts[0].startswith("~"):
+        raise PermissionError(f"Expansión de directorio home '~' no permitida en ruta MCP: '{raw_path}'.")
+
+    candidate = raw_p if raw_p.is_absolute() else (PROJECT_ROOT / raw_p)
+    resolved = candidate.resolve()
+
+    matched_root: Path | None = None
+    for root in allowed_roots:
+        if resolved == root or resolved.is_relative_to(root):
+            matched_root = root
+            break
+    if matched_root is None:
+        raise PermissionError(
+            f"Ruta fuera de las raíces permitidas por el servidor MCP: '{raw_path}'."
+        )
+
+    if is_write:
+        if resolved == PROJECT_ROOT.resolve():
+            raise PermissionError(f"Escritura prohibida en la raíz del proyecto: '{raw_path}'.")
+        for forbidden in _forbidden_write_roots():
+            if resolved == forbidden or resolved.is_relative_to(forbidden):
+                raise PermissionError(
+                    f"Escritura prohibida en subárbol protegido '{forbidden}': '{raw_path}'."
+                )
+
+    # Rechazar symlinks desde el objetivo hacia arriba hasta alcanzar la raíz autorizada
+    curr = candidate
+    while True:
+        if curr.is_symlink():
+            raise PermissionError(f"Symlink no permitido en ruta MCP: '{curr}'.")
+        if curr == matched_root:
+            break
+        try:
+            if curr.exists() and curr.resolve() == matched_root:
+                break
+        except OSError:
+            pass
+        if curr.parent == curr:
+            break
+        curr = curr.parent
+
+    if not expect_dir and allowed_suffixes is not None:
+        if resolved.suffix.lower() not in allowed_suffixes:
+            raise ValueError(
+                f"Extensión de archivo no permitida ('{resolved.suffix}') para '{raw_path}'. "
+                f"Permitidas: {allowed_suffixes}."
+            )
+
+    if must_exist and not resolved.exists():
+        raise FileNotFoundError(f"{missing_prefix}: '{raw_path}'")
+
+    if resolved.exists():
+        if expect_dir and not resolved.is_dir():
+            raise ValueError(f"Se esperaba un directorio pero la ruta apunta a un archivo: '{raw_path}'.")
+        if not expect_dir and not resolved.is_file():
+            raise ValueError(f"Se esperaba un archivo regular pero la ruta apunta a un directorio: '{raw_path}'.")
+
+    return resolved
+
+
+def _validate_raster_paths(*paths: str | None) -> List[str | None]:
+    """Valida seguridad, extensión y existencia de rutas raster antes de invocar el motor geoespacial."""
+    read_roots = _get_allowed_read_roots()
+    validated: List[str | None] = []
     for p in paths:
         if p is None:
+            validated.append(None)
             continue
-        if not Path(p).exists():
-            raise FileNotFoundError(f"No existe el archivo raster requerido: '{p}'")
+        safe = _validate_safe_path(
+            p,
+            allowed_roots=read_roots,
+            must_exist=True,
+            expect_dir=False,
+            allowed_suffixes=_RASTER_SUFFIXES,
+            is_write=False,
+            missing_prefix="No existe el archivo raster requerido",
+        )
+        validated.append(str(safe))
+    return validated
 
 
 @mcp.tool()
@@ -169,14 +332,17 @@ def tool_compute_spectral_changes(
     Respeta resoluciones nativas Sentinel-2 (10 m VNIR y 20 m SWIR/SCL), aplica máscara SCL y
     evalúa la variación hidrométrica global del tramo en coordenadas POSGAR 2007.
     """
-    _validate_raster_paths(t0_path, t1_path, t0_swir_20m_path, t1_swir_20m_path)
+    safe_t0, safe_t1, safe_t0_swir, safe_t1_swir = _validate_raster_paths(
+        t0_path, t1_path, t0_swir_20m_path, t1_swir_20m_path
+    )
+    assert safe_t0 is not None and safe_t1 is not None
     settings.ensure_directories()
     return compute_multitemporal_baseline_and_changes(
-        t0_vnir_paths=t0_path,
-        t1_vnir_path=t1_path,
+        t0_vnir_paths=safe_t0,
+        t1_vnir_path=safe_t1,
         out_dir=settings.processed_dir,
-        t0_swir_scl_paths=t0_swir_20m_path,
-        t1_swir_scl_path=t1_swir_20m_path,
+        t0_swir_scl_paths=safe_t0_swir,
+        t1_swir_scl_path=safe_t1_swir,
     )
 
 
@@ -203,13 +369,16 @@ def tool_detect_extraction_anomalies(
         raise ValueError("min_clearing_area_m2 debe ser mayor que 0.")
     if max_discarded_records is not None and max_discarded_records < 1:
         raise ValueError("max_discarded_records debe ser mayor o igual a 1.")
-    _validate_raster_paths(t0_path, t1_path, t0_swir_20m_path, t1_swir_20m_path)
+    safe_t0, safe_t1, safe_t0_swir, safe_t1_swir = _validate_raster_paths(
+        t0_path, t1_path, t0_swir_20m_path, t1_swir_20m_path
+    )
+    assert safe_t0 is not None and safe_t1 is not None
     settings.ensure_directories()
     return detect_extraction_anomalies(
-        t0_vnir_paths=t0_path,
-        t1_vnir_path=t1_path,
-        t0_swir_scl_paths=t0_swir_20m_path,
-        t1_swir_scl_path=t1_swir_20m_path,
+        t0_vnir_paths=safe_t0,
+        t1_vnir_path=safe_t1,
+        t0_swir_scl_paths=safe_t0_swir,
+        t1_swir_scl_path=safe_t1_swir,
         min_area_m2=min_area_m2,
         min_clearing_area_m2=min_clearing_area_m2,
         work_dir=settings.processed_dir,
@@ -226,6 +395,7 @@ def tool_evaluate_parana_pilot(offline_mode: bool = True) -> Dict[str, Any]:
 
 
 _VALID_CADASTRE_STATUSES = {"OFICIAL_COMPLETO", "PARCIAL_LOCAL", "NO_DISPONIBLE"}
+_VALID_EVALUATION_MODES = {"HEURISTIC_SCREENING", "EXTERNAL_VLM", "HUMAN_EXPERT"}
 _VALID_VLM_VERDICTS = {
     "EXTRACCION_ANTROPICA",
     "DINAMICA_FLUVIAL_NATURAL",
@@ -267,6 +437,7 @@ _PERMIT_CLASS_TO_CASE_STATUS: Dict[PermitClassificationLiteral, CaseStatusLitera
     "EXTRACCION_AUTORIZADA": "EXTRACCION_AUTORIZADA",
     "EXCESO_DE_POLIGONO": "EXCESO_DE_POLIGONO_EN_VERIFICACION",
     "PERMISO_VENCIDO": "PENDIENTE_VERIFICACION_TERRENO_Y_CATASTRO",
+    "PERMISO_NO_VERIFICABLE_O_INCOMPATIBLE": "PENDIENTE_VERIFICACION_TERRENO_Y_CATASTRO",
     "EXTRACCION_SIN_PERMISO": "PENDIENTE_VERIFICACION_TERRENO_Y_CATASTRO",
     "INSPECCIONADO_SIN_PERMISO_REGISTRADO": "INSPECCIONADO_SIN_PERMISO_REGISTRADO",
 }
@@ -291,6 +462,8 @@ def tool_validate_permits(
     authority_name: str | None = None,
     excess_tolerance_pct: float | None = None,
     query_remote_hydrography: bool = False,
+    source_reference: str | None = None,
+    last_updated: str | None = None,
 ) -> Dict[str, Any]:
     """Cruza espacial y temporalmente un candidato contra el catastro de permisos e hidrografía."""
     _validate_iso_date(t1_date, "t1_date")
@@ -300,17 +473,36 @@ def tool_validate_permits(
         )
     if excess_tolerance_pct is not None and excess_tolerance_pct < 0.0:
         raise ValueError("excess_tolerance_pct debe ser >= 0.")
+    if last_updated is not None:
+        _validate_iso_date(last_updated, "last_updated")
+
+    validated_permits: Path | None = None
+    if permits_gpkg_path is not None:
+        validated_permits = _validate_safe_path(
+            permits_gpkg_path,
+            allowed_roots=_get_allowed_read_roots(),
+            must_exist=False,
+            expect_dir=False,
+            allowed_suffixes=_CADASTRE_SUFFIXES,
+            is_write=False,
+        )
+    elif settings.permits_gpkg_path.is_symlink():
+        raise PermissionError(
+            f"Symlink no permitido en ruta de catastro por defecto: '{settings.permits_gpkg_path}'."
+        )
 
     meta = CadastreMetadata(
         cadastre_status=cast(CadastreStatusLiteral, cadastre_status),
         jurisdiction=jurisdiction,
         authority_name=authority_name,
-        source_reference=permits_gpkg_path or str(settings.permits_gpkg_path),
+        source_reference=source_reference
+        or (str(validated_permits) if validated_permits is not None else str(settings.permits_gpkg_path)),
+        last_updated=last_updated,
     )
     result = validate_anomaly_permits(
         anomaly=anomaly_dict,
         t1_date=t1_date,
-        permits_path=permits_gpkg_path,
+        permits_path=validated_permits,
         cadastre_metadata=meta,
         excess_tolerance_pct=excess_tolerance_pct,
         query_remote_hydrography=query_remote_hydrography,
@@ -325,11 +517,25 @@ def tool_evaluate_vlm_verdict(
     certainty_pct: float | None = None,
     extraction_evidence: str | None = None,
     fluvial_dynamics_assessment: str | None = None,
-    backend: str = "heuristic_spectral_morphology_v1",
+    backend: str | None = None,
     t0_date: str | None = None,
     t1_date: str | None = None,
+    evaluation_mode: str | None = None,
+    model_id: str | None = None,
+    model_version: str | None = None,
+    prompt_version: str = DEFAULT_PROMPT_VERSION,
+    image_refs: List[str] | None = None,
+    evaluator_id: str | None = None,
 ) -> Dict[str, Any]:
-    """Emite o registra un dictamen auxiliar multimodal/heurístico de geomorfología fluvial."""
+    """Emite o registra un dictamen auxiliar multimodal/heurístico/experto con separación de modalidades."""
+    typed_mode: EvaluationModeLiteral | None = None
+    if evaluation_mode is not None:
+        if evaluation_mode not in _VALID_EVALUATION_MODES:
+            raise ValueError(
+                f"evaluation_mode inválido '{evaluation_mode}'. Válidos: {sorted(_VALID_EVALUATION_MODES)}."
+            )
+        typed_mode = cast(EvaluationModeLiteral, evaluation_mode)
+
     typed_verdict: VLMVerdictLiteral | None = None
     if verdict is not None:
         if verdict not in _VALID_VLM_VERDICTS:
@@ -338,7 +544,30 @@ def tool_evaluate_vlm_verdict(
     if certainty_pct is not None and not (0.0 <= certainty_pct <= 100.0):
         raise ValueError("certainty_pct debe estar entre 0 y 100.")
 
+    safe_image_refs: List[str] | None = None
+    if image_refs is not None:
+        read_roots = _get_allowed_read_roots()
+        safe_image_refs = []
+        for raw_ref in image_refs:
+            ref = str(raw_ref).strip()
+            if not ref:
+                continue
+            if ref.lower().startswith(_REMOTE_URI_PREFIXES):
+                safe_image_refs.append(ref)
+            else:
+                safe_img = _validate_safe_path(
+                    ref,
+                    allowed_roots=read_roots,
+                    must_exist=True,
+                    expect_dir=False,
+                    allowed_suffixes=_IMAGE_SUFFIXES,
+                    is_write=False,
+                    missing_prefix="La imagen de evaluación referenciada no existe en disco",
+                )
+                safe_image_refs.append(str(safe_img))
+
     feat = coerce_anomaly_feature(anomaly_dict)
+    resolved_prompt_ver = prompt_version or DEFAULT_PROMPT_VERSION
     vlm_res = evaluate_candidate_vlm_verdict(
         anomaly=feat,
         verdict=typed_verdict,
@@ -346,11 +575,18 @@ def tool_evaluate_vlm_verdict(
         extraction_evidence=extraction_evidence,
         fluvial_dynamics_assessment=fluvial_dynamics_assessment,
         backend=backend,
+        evaluation_mode=typed_mode,
+        model_id=model_id,
+        model_version=model_version,
+        prompt_version=resolved_prompt_ver,
+        image_refs=safe_image_refs,
+        evaluator_id=evaluator_id,
     )
     suggested_prompt = build_vlm_fluvial_prompt(
         anomaly=feat,
         t0_date=t0_date or "T0",
         t1_date=t1_date or "T1",
+        prompt_version=resolved_prompt_ver,
     )
     out = vlm_res.model_dump()
     out["suggested_prompt"] = suggested_prompt
@@ -372,8 +608,11 @@ def tool_generate_enforcement_report(
     output_dir: str | None = None,
     open_case_workflow: bool = True,
     case_storage_dir: str | None = None,
+    authority_name: str | None = None,
+    source_reference: str | None = None,
+    strict_hydrometric_validation: bool = False,
 ) -> Dict[str, Any]:
-    """Genera el dossier Markdown de 9 secciones y el expediente JSON reproducible de Fase 3."""
+    """Genera el dossier Markdown de 9 secciones y el expediente JSON reproducible en generación atómica."""
     _validate_iso_date(t0_date, "t0_date")
     _validate_iso_date(t1_date, "t1_date")
     if cadastre_status not in _VALID_CADASTRE_STATUSES:
@@ -381,24 +620,67 @@ def tool_generate_enforcement_report(
             f"cadastre_status inválido '{cadastre_status}'. Válidos: {sorted(_VALID_CADASTRE_STATUSES)}."
         )
 
+    validated_permits: Path | None = None
+    if permits_gpkg_path is not None:
+        validated_permits = _validate_safe_path(
+            permits_gpkg_path,
+            allowed_roots=_get_allowed_read_roots(),
+            must_exist=False,
+            expect_dir=False,
+            allowed_suffixes=_CADASTRE_SUFFIXES,
+            is_write=False,
+        )
+    elif settings.permits_gpkg_path.is_symlink():
+        raise PermissionError(
+            f"Symlink no permitido en ruta de catastro por defecto: '{settings.permits_gpkg_path}'."
+        )
+
+    write_roots = _get_allowed_write_roots()
+    validated_output_dir: Path | None = (
+        _validate_safe_path(
+            output_dir,
+            allowed_roots=write_roots,
+            must_exist=False,
+            expect_dir=True,
+            allowed_suffixes=None,
+            is_write=True,
+        )
+        if output_dir is not None
+        else None
+    )
+    validated_case_storage_dir: Path | None = (
+        _validate_safe_path(
+            case_storage_dir,
+            allowed_roots=write_roots,
+            must_exist=False,
+            expect_dir=True,
+            allowed_suffixes=None,
+            is_write=True,
+        )
+        if case_storage_dir is not None
+        else None
+    )
+
     settings.ensure_directories()
     feat = coerce_anomaly_feature(anomaly_dict)
     meta = CadastreMetadata(
         cadastre_status=cast(CadastreStatusLiteral, cadastre_status),
         jurisdiction=jurisdiction,
-        source_reference=permits_gpkg_path or str(settings.permits_gpkg_path),
+        authority_name=authority_name,
+        source_reference=source_reference
+        or (str(validated_permits) if validated_permits is not None else str(settings.permits_gpkg_path)),
     )
     permit_res = validate_anomaly_permits(
         anomaly=feat,
         t1_date=t1_date,
-        permits_path=permits_gpkg_path,
+        permits_path=validated_permits,
         cadastre_metadata=meta,
     )
     vlm_res = evaluate_candidate_vlm_verdict(anomaly=feat, permit_result=permit_res)
 
     case_rec = None
     if open_case_workflow:
-        manager = CaseWorkflowManager(storage_dir=case_storage_dir)
+        manager = CaseWorkflowManager(storage_dir=validated_case_storage_dir)
         initial_status = _PERMIT_CLASS_TO_CASE_STATUS[permit_res.classification]
         case_rec = manager.open_or_get_case(
             anomaly=feat,
@@ -424,7 +706,10 @@ def tool_generate_enforcement_report(
         case_record=case_rec,
         multitemporal_series=multitemporal_series,
         study_area_name=study_area_name,
-        output_dir=output_dir,
+        output_dir=validated_output_dir,
+        strict_hydrometric_validation=strict_hydrometric_validation,
+        permits_path=validated_permits,
+        cadastre_metadata=meta,
     )
     return report.model_dump()
 
@@ -442,10 +727,23 @@ def tool_manage_case_workflow(
     metadata: Dict[str, Any] | None = None,
     status_filter: str | None = None,
     storage_dir: str | None = None,
+    idempotency_key: str | None = None,
 ) -> Dict[str, Any]:
-    """Gestiona expedientes de investigación territorial con bitácora JSONL append-only y SQLite."""
+    """Gestiona expedientes de investigación territorial con SQLite transaccional y bitácora JSONL."""
+    validated_storage_dir: Path | None = (
+        _validate_safe_path(
+            storage_dir,
+            allowed_roots=_get_allowed_write_roots(),
+            must_exist=False,
+            expect_dir=True,
+            allowed_suffixes=None,
+            is_write=True,
+        )
+        if storage_dir is not None
+        else None
+    )
     settings.ensure_directories()
-    manager = CaseWorkflowManager(storage_dir=storage_dir)
+    manager = CaseWorkflowManager(storage_dir=validated_storage_dir)
 
     if action == "open":
         if anomaly_dict is None:
@@ -493,6 +791,7 @@ def tool_manage_case_workflow(
             new_status=typed_new_status,
             priority=typed_new_priority,
             metadata=metadata,
+            idempotency_key=idempotency_key,
         )
         return rec.model_dump()
 

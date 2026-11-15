@@ -79,11 +79,11 @@ rio-alerta-mcp/
 │       ├── optical_providers.py    # Cliente STAC, filtro de cobertura MGRS, ingesta COG 10m/20m y SCL
 │       ├── change_detector.py      # Índices ΔMNDWI/ΔBSI/ΔNDVI, segmentación y metadatos de incertidumbre
 │       ├── hydrological_control.py # Control de crecidas/bajantes, dipolos de barras y fenología
-│       ├── permits_validator.py    # Validación espacial/temporal contra catastro e hidrografía
-│       ├── vlm_judge.py            # Dictamen auxiliar multimodal/heurístico y prompts T0 vs T1
-│       ├── case_workflow.py        # Bitácora auditable de casos (JSONL append-only + SQLite)
+│       ├── permits_validator.py    # Validación espacial/temporal catastral estricta y unión geométrica
+│       ├── vlm_judge.py            # Dictamen auxiliar separado por modalidad (Heurística/VLM/Experto)
+│       ├── case_workflow.py        # Fuente SQLite transaccional (WAL+flock) + exportación JSONL encadenada
 │       ├── dossier_generator.py    # Generador de Dossiers de Investigación Territorial (9 secciones)
-│       ├── report_generator.py     # Emisión de expedientes reproducibles Markdown + JSON (Fase 3)
+│       ├── report_generator.py     # Emisión atómica reproducible (`generations/<gen_id>/`) Markdown+JSON+Manifest
 │       └── parana_pilot_recon.py   # Diagnóstico geodésico/STAC del tramo piloto Paraná Medio
 ├── scripts/
 │   ├── run_exp_001_parana_medio.py # Pipeline reproducible del Experimento 001 (Paraná Medio)
@@ -97,7 +97,7 @@ rio-alerta-mcp/
 ├── skills/
 │   └── rio-alerta/
 │       └── SKILL.md                # Skill portable para Antigravity, OpenCode y Claude
-└── tests/                          # Suite unitaria e integración (39 tests)
+└── tests/                          # Suite unitaria e integración (56 tests)
 ```
 
 ---
@@ -196,3 +196,4 @@ Ejemplo de configuración en clientes MCP (`mcp_config.json` / `claude_desktop_c
 - **Fase 2 (Completada):** Proveedor STAC Sentinel-2 L2A (10m/20m nativos + SCL), motor multitemporal y controles de dinámica fluvial.
 - **Fase 2.1 (Completada):** Corrección de agua oscura ($\text{BSI}_{\text{reg}}$ + umbrales minerales), zonificación geomorfológica en 4 zonas, hidratación de hidrómetros INA, umbral diferenciado de desmonte ribereño (`800 m²`) y reconstrucción de huella de píxel completo (`4/4` recuperación en Paraná Medio y validación cruzada en Diamante).
 - **Fase 3 (Completada):** Validación catastral e hidrográfica (`permits_validator.py`), dictamen auxiliar VLM/morfología (`vlm_judge.py`), flujo auditable de casos JSONL+SQLite (`case_workflow.py`), generador de expedientes reproducibles Markdown+JSON (`dossier_generator.py`, `report_generator.py`) y 10 herramientas MCP operativas en `src/server.py`.
+- **Fase 3.1 — Auditoría y robustecimiento (Completada):** Seguridad semántica catastral (`PERMISO_NO_VERIFICABLE_O_INCOMPATIBLE`, unión geométrica sin doble conteo y degradación de `OFICIAL_COMPLETO` sin procedencia), workflow SQLite transaccional (`WAL` + `flock` + triggers append-only + cadena SHA-256 + idempotencia + reconstrucción desde JSONL), separación explícita `HEURISTIC_SCREENING`/`EXTERNAL_VLM`/`HUMAN_EXPERT`, publicación atómica de reportes (`generations/<gen_id>/{report.md,report.json,manifest.json}` + `current_generation.json`) y confinamiento estricto de rutas MCP sin symlinks ni escritura fuera de raíces autorizadas.
