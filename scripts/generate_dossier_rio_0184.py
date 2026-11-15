@@ -125,14 +125,16 @@ def _generate_multitemporal_figure(
         ax = fig.add_subplot(gs[0, i])
         ax.imshow(_rgb_patch(bundle, r0, r1, c0, c1))
         ax.plot(px_cols, px_rows, color="cyan" if i < 3 else "red", linewidth=1.4)
-        ax.set_title(f"{row['date']}\n({row['_stage_val']:.2f} m)", fontsize=9)
+        st_lbl = f"{row['_stage_val']:.2f} m" if row["_stage_val"] is not None else "N/D"
+        ax.set_title(f"{row['date']}\n{st_lbl} [{row['_stage_src']}]", fontsize=8)
         ax.axis("off")
 
     ax_ts = fig.add_subplot(gs[1, :])
     dates = [r["date"] for r in rows]
     ndvis = [r["_ndvi_med"] for r in rows]
     bsis = [r["_bsi_med"] for r in rows]
-    stages = [r["_stage_val"] for r in rows]
+    stages = [r["_stage_val"] if r["_stage_val"] is not None else np.nan for r in rows]
+    srcs = [r["_stage_src"] for r in rows]
 
     ax_ts.plot(dates, ndvis, marker="o", color="#2e7d32", linewidth=2, label="NDVI mediano")
     ax_ts.plot(dates, bsis, marker="s", color="#d84315", linewidth=2, label="BSI mediano")
@@ -142,8 +144,44 @@ def _generate_multitemporal_figure(
     ax_ts.grid(alpha=0.25)
 
     ax_h = ax_ts.twinx()
-    ax_h.plot(dates, stages, marker="^", linestyle=":", color="#1565c0", linewidth=1.8, label="Altura Puerto Paraná (m)")
-    ax_h.set_ylabel("Altura hidrométrica INA (m)", color="#1565c0")
+    ax_h.plot(dates, stages, linestyle=":", color="#1565c0", linewidth=1.5, alpha=0.7)
+    ina_idx = [i for i, s in enumerate(srcs) if s == "INA_API_A5" and np.isfinite(stages[i])]
+    fb_idx = [i for i, s in enumerate(srcs) if s != "INA_API_A5" and np.isfinite(stages[i])]
+    if ina_idx:
+        ax_h.scatter(
+            [dates[i] for i in ina_idx],
+            [stages[i] for i in ina_idx],
+            marker="^",
+            s=65,
+            color="#1565c0",
+            zorder=5,
+            label="Altura INA_API_A5 (oficial)",
+        )
+    if fb_idx:
+        ax_h.scatter(
+            [dates[i] for i in fb_idx],
+            [stages[i] for i in fb_idx],
+            marker="D",
+            s=65,
+            facecolors="white",
+            edgecolors="#e65100",
+            linewidths=1.8,
+            zorder=6,
+            label="Respaldo histórico/manual (no oficial)",
+        )
+    for i, (d_str, st_v, src_str) in enumerate(zip(dates, stages, srcs)):
+        if np.isfinite(st_v):
+            tag = "INA" if src_str == "INA_API_A5" else "FALLBACK"
+            ax_h.annotate(
+                f"{st_v:.2f}m ({tag})",
+                (d_str, st_v),
+                textcoords="offset points",
+                xytext=(0, 7),
+                ha="center",
+                fontsize=7,
+                color="#1565c0" if tag == "INA" else "#e65100",
+            )
+    ax_h.set_ylabel("Altura hidrométrica (m)", color="#1565c0")
     ax_h.tick_params(axis="y", labelcolor="#1565c0")
 
     lines1, labels1 = ax_ts.get_legend_handles_labels()

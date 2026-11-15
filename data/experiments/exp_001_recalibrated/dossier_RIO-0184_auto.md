@@ -16,7 +16,7 @@
 | **Superficie vectorial exacta** | **3,097.80 m²** (0.3098 ha) |
 | **Distancia al cuerpo de agua T0** | Sin dato |
 | **Estado de verificación** | `PENDIENTE_VERIFICACION_TERRENO_Y_CATASTRO` |
-| **Fecha de emisión** | 2026-11-15 13:03 UTC |
+| **Fecha de emisión** | 2026-11-15 13:06 UTC |
 
 ## 2. Resumen ejecutivo
 
@@ -103,7 +103,7 @@
 ## 9. Fuentes, parámetros y trazabilidad técnica
 
 - **CRS métrico de cálculo:** `EPSG:5347` (POSGAR 2007). Exportación GeoJSON: `EPSG:4326`.
-- **Procedencia hidrométrica (Puerto Paraná (INA seriesId=30), unidad `m`, consulta=2026-11-15 13:03 UTC):** T0=`2.69` m (`INA_API_A5`), T1=`4.76` m (`INA_API_A5`).
+- **Procedencia hidrométrica (Puerto Paraná (INA seriesId=30), unidad `m`, consulta=2026-11-15 13:06 UTC):** T0=`2.69` m (`INA_API_A5`), T1=`4.76` m (`INA_API_A5`).
 - **Resolución de grilla / SWIR nativo:** 9.996810442680092 m / 20.009770821454982 m.
 - **Área mínima de detección:** 1600.0 m².
 - **Parámetros congelados Fase 2.1:** `bsi_reg_albedo_k=800.0`, `dark_water_min_b11_dn=600.0`, `dark_water_min_b04_dn=420.0`, `dark_water_min_b08_dn=350.0`, `scl7_min_b11_dn=850.0`, `scl7_min_b04_dn=500.0`, `hydrometric_stage_rise_alert_m=0.8`.
