@@ -93,7 +93,7 @@ rio-alerta-mcp/
 ├── skills/
 │   └── rio-alerta/
 │       └── SKILL.md                # Skill portable para Antigravity, OpenCode y Claude
-└── tests/                          # Suite unitaria e integración (33 tests)
+└── tests/                          # Suite unitaria e integración (34 tests)
 ```
 
 ---

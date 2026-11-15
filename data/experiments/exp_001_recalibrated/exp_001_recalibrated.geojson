@@ -167,15 +167,3054 @@
       "ribera_firme": 0.0537
     },
     "calibration_parameters": {
+      "min_anomaly_area_m2": 1600.0,
       "bsi_reg_albedo_k": 800.0,
       "dark_water_min_b11_dn": 600.0,
       "dark_water_min_b04_dn": 420.0,
       "dark_water_min_b08_dn": 350.0,
+      "dark_water_min_b11_b03_ratio": 0.85,
       "scl7_min_b11_dn": 850.0,
       "scl7_min_b04_dn": 500.0,
-      "hydrometric_stage_rise_alert_m": 0.8
+      "hydrometric_stage_rise_alert_m": 0.8,
+      "moderate_stage_rise_m": 0.4,
+      "water_stage_warning_pct": 8.0,
+      "reach_water_mndwi_threshold": 0.15,
+      "systemic_stage_strong_pct": 12.0,
+      "shoreline_change_min_fraction": 0.25,
+      "flooded_min_delta_mndwi": 0.4,
+      "flooded_min_t1_mndwi": 0.2,
+      "clearing_min_delta_bsi_adj": 0.25,
+      "clearing_min_delta_bsi_reg": 0.18,
+      "clearing_min_t1_bsi_reg": 0.03,
+      "clearing_max_delta_ndvi_adj": -0.3,
+      "clearing_min_t1_bsi": -0.02,
+      "clearing_max_t1_mndwi": 0.1,
+      "road_min_elongation": 4.0,
+      "cloud_shadow_buffer_m": 40.0,
+      "turbidity_open_water_mndwi": 0.2,
+      "turbidity_wet_bar_mndwi": 0.05,
+      "turbidity_red_shift_dn": 150.0,
+      "turbidity_bright_bar_b04_dn": 750.0,
+      "geomorph_water_mndwi_min": 0.05,
+      "geomorph_min_channel_area_m2": 50000.0,
+      "geomorph_bar_max_ndvi": 0.25,
+      "geomorph_bar_max_dist_m": 300.0,
+      "geomorph_lagoon_buffer_m": 450.0,
+      "geomorph_island_max_dist_m": 2500.0,
+      "dipole_min_abs_delta_mndwi": 0.35,
+      "dipole_max_erosion_ndvi": 0.35,
+      "dipole_min_accretion_mndwi_t0": 0.05,
+      "dipole_min_area_ratio": 0.4,
+      "dipole_max_area_ratio": 2.5,
+      "dipole_max_span_m": 450.0,
+      "riparian_veg_min_ndvi_t0": 0.45
     },
     "candidate_count": 13,
+    "discarded_count": 954,
+    "discarded_truncated": true,
+    "discarded_log_path": "/Users/pablotempone/rio-alerta-mcp/data/experiments/exp_001_recalibrated/work/discarded_candidates_log.json",
+    "discarded_candidates": [
+      {
+        "candidate_uid": "RIO-5347-5443940-6493010-02F64D6D",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 1486651.19,
+        "centroid_posgar": [
+          5443941.04,
+          6493014.73
+        ],
+        "centroid_wgs84": [
+          -60.591351,
+          -31.701916
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5443090-6494510-FA63909C",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 1270489.15,
+        "centroid_posgar": [
+          5443091.78,
+          6494511.54
+        ],
+        "centroid_wgs84": [
+          -60.600222,
+          -31.688375
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5444240-6489950-110E336F",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_MIGRACION_BARRA",
+        "area_m2": 719340.9,
+        "centroid_posgar": [
+          5444239.58,
+          6489945.38
+        ],
+        "centroid_wgs84": [
+          -60.588377,
+          -31.72961
+        ],
+        "reason_detail": "Par dipolar de erosión/acreción natural de banco de arena."
+      },
+      {
+        "candidate_uid": "RIO-5347-5440520-6494670-6D068AC4",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 429425.93,
+        "centroid_posgar": [
+          5440520.25,
+          6494670.05
+        ],
+        "centroid_wgs84": [
+          -60.627334,
+          -31.686815
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5447320-6497930-FD42C604",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 253638.12,
+        "centroid_posgar": [
+          5447316.65,
+          6497929.24
+        ],
+        "centroid_wgs84": [
+          -60.55548,
+          -31.657756
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5449380-6498210-FC9C0D34",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 229453.56,
+        "centroid_posgar": [
+          5449377.75,
+          6498207.05
+        ],
+        "centroid_wgs84": [
+          -60.533735,
+          -31.655343
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5442200-6493870-F5AD0B64",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 229053.81,
+        "centroid_posgar": [
+          5442200.78,
+          6493874.98
+        ],
+        "centroid_wgs84": [
+          -60.609657,
+          -31.694071
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5441220-6497340-205FD097",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 204769.31,
+        "centroid_posgar": [
+          5441224.12,
+          6497340.52
+        ],
+        "centroid_wgs84": [
+          -60.61975,
+          -31.662769
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5449330-6498160-CAE4F195",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 200072.31,
+        "centroid_posgar": [
+          5449326.11,
+          6498158.94
+        ],
+        "centroid_wgs84": [
+          -60.534282,
+          -31.655775
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5444880-6492730-886D8FF0",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 180684.68,
+        "centroid_posgar": [
+          5444879.02,
+          6492729.77
+        ],
+        "centroid_wgs84": [
+          -60.581473,
+          -31.704531
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5445780-6499220-D253EAC2",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 174188.83,
+        "centroid_posgar": [
+          5445779.67,
+          6499219.21
+        ],
+        "centroid_wgs84": [
+          -60.571614,
+          -31.646051
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5437930-6495730-8D46005F",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 170391.25,
+        "centroid_posgar": [
+          5437927.22,
+          6495727.17
+        ],
+        "centroid_wgs84": [
+          -60.654614,
+          -31.677145
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5442680-6492270-DD5BD933",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 164295.14,
+        "centroid_posgar": [
+          5442681.91,
+          6492268.64
+        ],
+        "centroid_wgs84": [
+          -60.604676,
+          -31.708582
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5442300-6499230-4117CE0F",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 161696.8,
+        "centroid_posgar": [
+          5442297.03,
+          6499227.34
+        ],
+        "centroid_wgs84": [
+          -60.608327,
+          -31.645808
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5443560-6496780-33030800",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 156999.8,
+        "centroid_posgar": [
+          5443561.5,
+          6496775.13
+        ],
+        "centroid_wgs84": [
+          -60.595138,
+          -31.667985
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439590-6492710-2E243C43",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 148305.35,
+        "centroid_posgar": [
+          5439589.88,
+          6492706.78
+        ],
+        "centroid_wgs84": [
+          -60.637267,
+          -31.704472
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5437830-6498150-B3EB9F55",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 146806.31,
+        "centroid_posgar": [
+          5437828.29,
+          6498150.5
+        ],
+        "centroid_wgs84": [
+          -60.655504,
+          -31.655286
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439140-6491250-305F907E",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 146306.62,
+        "centroid_posgar": [
+          5439141.48,
+          6491250.92
+        ],
+        "centroid_wgs84": [
+          -60.642087,
+          -31.717577
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5445380-6499100-B07D8B11",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 130316.83,
+        "centroid_posgar": [
+          5445384.49,
+          6499104.87
+        ],
+        "centroid_wgs84": [
+          -60.575786,
+          -31.647063
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5446890-6498980-6B25DF2C",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 117824.8,
+        "centroid_posgar": [
+          5446894.12,
+          6498979.67
+        ],
+        "centroid_wgs84": [
+          -60.559878,
+          -31.648263
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5446680-6495890-614603C3",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 105832.46,
+        "centroid_posgar": [
+          5446684.91,
+          6495894.93
+        ],
+        "centroid_wgs84": [
+          -60.562251,
+          -31.676072
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5438960-6496570-00254364",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 105832.46,
+        "centroid_posgar": [
+          5438958.68,
+          6496571.85
+        ],
+        "centroid_wgs84": [
+          -60.643684,
+          -31.669583
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5441660-6493410-729B6612",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_MIGRACION_BARRA",
+        "area_m2": 97038.07,
+        "centroid_posgar": [
+          5441658.09,
+          6493405.35
+        ],
+        "centroid_wgs84": [
+          -60.615409,
+          -31.698279
+        ],
+        "reason_detail": "Par dipolar de erosión/acreción natural de banco de arena."
+      },
+      {
+        "candidate_uid": "RIO-5347-5441970-6497280-E2C3E3D1",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 88043.81,
+        "centroid_posgar": [
+          5441973.17,
+          6497276.25
+        ],
+        "centroid_wgs84": [
+          -60.611856,
+          -31.663387
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439590-6498220-199268F4",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 87644.06,
+        "centroid_posgar": [
+          5439587.4,
+          6498220.64
+        ],
+        "centroid_wgs84": [
+          -60.636953,
+          -31.654747
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5448580-6499430-1508384A",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 84346.17,
+        "centroid_posgar": [
+          5448579.27,
+          6499426.87
+        ],
+        "centroid_wgs84": [
+          -60.54209,
+          -31.644307
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5447270-6495810-7627BFD5",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 83246.87,
+        "centroid_posgar": [
+          5447271.8,
+          6495813.04
+        ],
+        "centroid_wgs84": [
+          -60.556067,
+          -31.676838
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5441190-6498190-D7715C72",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 77750.38,
+        "centroid_posgar": [
+          5441189.42,
+          6498194.07
+        ],
+        "centroid_wgs84": [
+          -60.620065,
+          -31.65507
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5437750-6489060-F0BD1FEE",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 77150.76,
+        "centroid_posgar": [
+          5437746.67,
+          6489061.92
+        ],
+        "centroid_wgs84": [
+          -60.656942,
+          -31.737242
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5442900-6498420-588AAC44",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 71154.59,
+        "centroid_posgar": [
+          5442904.53,
+          6498419.47
+        ],
+        "centroid_wgs84": [
+          -60.60197,
+          -31.653124
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5440090-6495530-3BE926EA",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 67257.08,
+        "centroid_posgar": [
+          5440093.05,
+          6495531.27
+        ],
+        "centroid_wgs84": [
+          -60.631787,
+          -31.679027
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5441630-6493000-AD3A1A61",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 65258.35,
+        "centroid_posgar": [
+          5441631.31,
+          6493002.71
+        ],
+        "centroid_wgs84": [
+          -60.615715,
+          -31.701909
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5442400-6493610-FE890383",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_MIGRACION_BARRA",
+        "area_m2": 65058.48,
+        "centroid_posgar": [
+          5442397.91,
+          6493610.66
+        ],
+        "centroid_wgs84": [
+          -60.607593,
+          -31.696465
+        ],
+        "reason_detail": "Par dipolar de erosión/acreción natural de banco de arena."
+      },
+      {
+        "candidate_uid": "RIO-5347-5438990-6490090-6ABDFDE1",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 63859.24,
+        "centroid_posgar": [
+          5438987.23,
+          6490092.0
+        ],
+        "centroid_wgs84": [
+          -60.643787,
+          -31.72802
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5441790-6492170-7ECA4E94",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 60661.28,
+        "centroid_posgar": [
+          5441786.25,
+          6492169.36
+        ],
+        "centroid_wgs84": [
+          -60.61413,
+          -31.709432
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5445230-6495610-92B97FEE",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 59861.8,
+        "centroid_posgar": [
+          5445232.11,
+          6495612.04
+        ],
+        "centroid_wgs84": [
+          -60.577587,
+          -31.678555
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439280-6494350-634404E2",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 59561.99,
+        "centroid_posgar": [
+          5439284.19,
+          6494354.39
+        ],
+        "centroid_wgs84": [
+          -60.640389,
+          -31.689597
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5442010-6496810-2EEFB2E9",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 58262.82,
+        "centroid_posgar": [
+          5442014.68,
+          6496811.21
+        ],
+        "centroid_wgs84": [
+          -60.611446,
+          -31.667583
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5448600-6498370-4F3DA7C4",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 57463.33,
+        "centroid_posgar": [
+          5448599.04,
+          6498370.93
+        ],
+        "centroid_wgs84": [
+          -60.541936,
+          -31.65383
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5438060-6489510-BCEB4D2A",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 55364.67,
+        "centroid_posgar": [
+          5438055.99,
+          6489512.88
+        ],
+        "centroid_wgs84": [
+          -60.653649,
+          -31.733192
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439950-6496840-C24371EB",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 52866.26,
+        "centroid_posgar": [
+          5439953.22,
+          6496838.13
+        ],
+        "centroid_wgs84": [
+          -60.633181,
+          -31.667234
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439990-6491510-F702A8D7",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 51667.03,
+        "centroid_posgar": [
+          5439993.49,
+          6491511.62
+        ],
+        "centroid_wgs84": [
+          -60.633083,
+          -31.715271
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5445600-6498430-CCFA2886",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 51267.28,
+        "centroid_posgar": [
+          5445595.84,
+          6498432.46
+        ],
+        "centroid_wgs84": [
+          -60.573595,
+          -31.653137
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5442240-6492490-33006F51",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 50967.47,
+        "centroid_posgar": [
+          5442236.8,
+          6492489.66
+        ],
+        "centroid_wgs84": [
+          -60.609359,
+          -31.706566
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5442390-6496530-48C9C757",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 50367.85,
+        "centroid_posgar": [
+          5442392.03,
+          6496533.2
+        ],
+        "centroid_wgs84": [
+          -60.607484,
+          -31.670109
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5444910-6489620-10006C20",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 50167.98,
+        "centroid_posgar": [
+          5444914.94,
+          6489617.22
+        ],
+        "centroid_wgs84": [
+          -60.581269,
+          -31.732602
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5443830-6496480-20D260B7",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 49768.24,
+        "centroid_posgar": [
+          5443829.35,
+          6496476.1
+        ],
+        "centroid_wgs84": [
+          -60.592331,
+          -31.670695
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5437750-6495090-60D8D5F9",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 49268.56,
+        "centroid_posgar": [
+          5437752.13,
+          6495085.6
+        ],
+        "centroid_wgs84": [
+          -60.656501,
+          -31.682921
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5444720-6498550-644371C7",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 48569.0,
+        "centroid_posgar": [
+          5444715.32,
+          6498553.49
+        ],
+        "centroid_wgs84": [
+          -60.582872,
+          -31.652004
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5448740-6497650-78D61D74",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 48569.0,
+        "centroid_posgar": [
+          5448743.93,
+          6497652.73
+        ],
+        "centroid_wgs84": [
+          -60.540446,
+          -31.660314
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439560-6494620-011DD226",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 47969.39,
+        "centroid_posgar": [
+          5439563.06,
+          6494622.23
+        ],
+        "centroid_wgs84": [
+          -60.637432,
+          -31.687197
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5442890-6493700-5C628746",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 45770.79,
+        "centroid_posgar": [
+          5442892.65,
+          6493698.58
+        ],
+        "centroid_wgs84": [
+          -60.60237,
+          -31.695697
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5448460-6497020-A0B51CBF",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 44171.81,
+        "centroid_posgar": [
+          5448463.57,
+          6497016.4
+        ],
+        "centroid_wgs84": [
+          -60.543436,
+          -31.66604
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5438840-6492240-6E122496",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 43872.0,
+        "centroid_posgar": [
+          5438836.15,
+          6492244.95
+        ],
+        "centroid_wgs84": [
+          -60.645246,
+          -31.708596
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5438960-6493360-95CE6492",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 42273.02,
+        "centroid_posgar": [
+          5438964.43,
+          6493357.29
+        ],
+        "centroid_wgs84": [
+          -60.643824,
+          -31.698572
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5444580-6498270-46C31AFF",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 41073.79,
+        "centroid_posgar": [
+          5444575.12,
+          6498273.52
+        ],
+        "centroid_wgs84": [
+          -60.584365,
+          -31.654522
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439200-6498230-F78A964A",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 40274.3,
+        "centroid_posgar": [
+          5439200.62,
+          6498232.32
+        ],
+        "centroid_wgs84": [
+          -60.64103,
+          -31.654621
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5438090-6491540-0C729833",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 39874.55,
+        "centroid_posgar": [
+          5438085.94,
+          6491541.99
+        ],
+        "centroid_wgs84": [
+          -60.653205,
+          -31.714896
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5444610-6495230-02B56475",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_MIGRACION_BARRA",
+        "area_m2": 39175.0,
+        "centroid_posgar": [
+          5444611.63,
+          6495230.54
+        ],
+        "centroid_wgs84": [
+          -60.584152,
+          -31.681966
+        ],
+        "reason_detail": "Par dipolar de erosión/acreción natural de banco de arena."
+      },
+      {
+        "candidate_uid": "RIO-5347-5438490-6494150-4E74BE5A",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_MIGRACION_BARRA",
+        "area_m2": 38775.25,
+        "centroid_posgar": [
+          5438491.47,
+          6494148.86
+        ],
+        "centroid_wgs84": [
+          -60.648763,
+          -31.691408
+        ],
+        "reason_detail": "Par dipolar de erosión/acreción natural de banco de arena."
+      },
+      {
+        "candidate_uid": "RIO-5347-5444950-6499790-CC3150AF",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 38475.44,
+        "centroid_posgar": [
+          5444953.78,
+          6499788.36
+        ],
+        "centroid_wgs84": [
+          -60.580288,
+          -31.640879
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5437790-6490940-2687B72F",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 37775.89,
+        "centroid_posgar": [
+          5437792.88,
+          6490942.32
+        ],
+        "centroid_wgs84": [
+          -60.656334,
+          -31.720287
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5448520-6496170-6E16EFD6",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 36576.66,
+        "centroid_posgar": [
+          5448518.5,
+          6496165.85
+        ],
+        "centroid_wgs84": [
+          -60.542901,
+          -31.673713
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5443140-6496430-FD4955E1",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 34877.74,
+        "centroid_posgar": [
+          5443143.4,
+          6496425.03
+        ],
+        "centroid_wgs84": [
+          -60.599567,
+          -31.671122
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5447100-6499810-EE62BE72",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 34877.74,
+        "centroid_posgar": [
+          5447096.5,
+          6499809.44
+        ],
+        "centroid_wgs84": [
+          -60.5577,
+          -31.640789
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5448860-6496740-177C9644",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 34677.87,
+        "centroid_posgar": [
+          5448860.53,
+          6496744.14
+        ],
+        "centroid_wgs84": [
+          -60.539264,
+          -31.668513
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5438890-6489550-543D5BE1",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 34577.93,
+        "centroid_posgar": [
+          5438885.99,
+          6489553.56
+        ],
+        "centroid_wgs84": [
+          -60.644889,
+          -31.73287
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439230-6492830-CCBA9F2C",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 34378.06,
+        "centroid_posgar": [
+          5439225.21,
+          6492830.04
+        ],
+        "centroid_wgs84": [
+          -60.641106,
+          -31.703341
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5449550-6499460-5DF0875A",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 33978.31,
+        "centroid_posgar": [
+          5449550.09,
+          6499458.66
+        ],
+        "centroid_wgs84": [
+          -60.531854,
+          -31.644063
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5444140-6498340-5B1EE2E3",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 33778.44,
+        "centroid_posgar": [
+          5444143.81,
+          6498337.73
+        ],
+        "centroid_wgs84": [
+          -60.588909,
+          -31.653922
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5444140-6495670-21DBD6BC",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 33678.51,
+        "centroid_posgar": [
+          5444135.92,
+          6495673.34
+        ],
+        "centroid_wgs84": [
+          -60.589144,
+          -31.677949
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5437460-6494220-CD0E625A",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 33678.51,
+        "centroid_posgar": [
+          5437459.0,
+          6494219.6
+        ],
+        "centroid_wgs84": [
+          -60.659648,
+          -31.690715
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5441460-6491350-A4D2EA30",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 33578.57,
+        "centroid_posgar": [
+          5441461.51,
+          6491348.2
+        ],
+        "centroid_wgs84": [
+          -60.617605,
+          -31.716821
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5448890-6496770-94617359",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 33178.82,
+        "centroid_posgar": [
+          5448893.37,
+          6496773.8
+        ],
+        "centroid_wgs84": [
+          -60.538917,
+          -31.668247
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5440630-6495520-98ED1519",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 32879.02,
+        "centroid_posgar": [
+          5440630.9,
+          6495522.68
+        ],
+        "centroid_wgs84": [
+          -60.626115,
+          -31.679132
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5437460-6492700-D0D625C3",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_MIGRACION_BARRA",
+        "area_m2": 32679.14,
+        "centroid_posgar": [
+          5437461.33,
+          6492697.98
+        ],
+        "centroid_wgs84": [
+          -60.65972,
+          -31.704437
+        ],
+        "reason_detail": "Par dipolar de erosión/acreción natural de banco de arena."
+      },
+      {
+        "candidate_uid": "RIO-5347-5440400-6496470-95143CED",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 32379.33,
+        "centroid_posgar": [
+          5440397.79,
+          6496467.28
+        ],
+        "centroid_wgs84": [
+          -60.628516,
+          -31.670601
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5447580-6499050-32C47F0C",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 32279.4,
+        "centroid_posgar": [
+          5447580.49,
+          6499053.46
+        ],
+        "centroid_wgs84": [
+          -60.552639,
+          -31.647629
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5449690-6499610-3A23D3D9",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 32079.53,
+        "centroid_posgar": [
+          5449690.39,
+          6499608.15
+        ],
+        "centroid_wgs84": [
+          -60.530367,
+          -31.642721
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5444770-6490000-478F9855",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 31779.72,
+        "centroid_posgar": [
+          5444769.1,
+          6489997.33
+        ],
+        "centroid_wgs84": [
+          -60.582787,
+          -31.729167
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439780-6493630-FB12CDAF",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 31579.85,
+        "centroid_posgar": [
+          5439782.88,
+          6493630.91
+        ],
+        "centroid_wgs84": [
+          -60.635174,
+          -31.696148
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5444950-6499450-A5811BBD",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 31180.1,
+        "centroid_posgar": [
+          5444953.37,
+          6499453.3
+        ],
+        "centroid_wgs84": [
+          -60.580312,
+          -31.6439
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5445460-6497120-07EF9253",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 31180.1,
+        "centroid_posgar": [
+          5445464.27,
+          6497121.32
+        ],
+        "centroid_wgs84": [
+          -60.575055,
+          -31.664955
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5438040-6493880-8C77B637",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 31180.1,
+        "centroid_posgar": [
+          5438036.96,
+          6493881.33
+        ],
+        "centroid_wgs84": [
+          -60.653573,
+          -31.693797
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5440730-6496820-B91BE84F",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 29980.87,
+        "centroid_posgar": [
+          5440730.69,
+          6496823.71
+        ],
+        "centroid_wgs84": [
+          -60.624984,
+          -31.667404
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439770-6493540-7B8D8C32",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 29581.12,
+        "centroid_posgar": [
+          5439765.05,
+          6493541.27
+        ],
+        "centroid_wgs84": [
+          -60.635368,
+          -31.696955
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5443350-6492280-427EFE25",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_MIGRACION_BARRA",
+        "area_m2": 29481.18,
+        "centroid_posgar": [
+          5443349.4,
+          6492276.19
+        ],
+        "centroid_wgs84": [
+          -60.597635,
+          -31.708547
+        ],
+        "reason_detail": "Par dipolar de erosión/acreción natural de banco de arena."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439330-6497920-82D396BE",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 29481.18,
+        "centroid_posgar": [
+          5439325.29,
+          6497922.73
+        ],
+        "centroid_wgs84": [
+          -60.639735,
+          -31.65742
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5441080-6492130-7EA4A4BF",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 29281.31,
+        "centroid_posgar": [
+          5441076.67,
+          6492126.88
+        ],
+        "centroid_wgs84": [
+          -60.621618,
+          -31.709779
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5446330-6495960-A882F8D4",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_MIGRACION_BARRA",
+        "area_m2": 29181.38,
+        "centroid_posgar": [
+          5446329.14,
+          6495960.86
+        ],
+        "centroid_wgs84": [
+          -60.565999,
+          -31.675461
+        ],
+        "reason_detail": "Par dipolar de erosión/acreción natural de banco de arena."
+      },
+      {
+        "candidate_uid": "RIO-5347-5449120-6495630-5E56FDEF",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 29081.44,
+        "centroid_posgar": [
+          5449121.81,
+          6495632.21
+        ],
+        "centroid_wgs84": [
+          -60.536567,
+          -31.678552
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5440500-6497130-BFA90062",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 28981.5,
+        "centroid_posgar": [
+          5440496.63,
+          6497131.37
+        ],
+        "centroid_wgs84": [
+          -60.627434,
+          -31.664618
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5445590-6496720-0F16A3C0",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_MIGRACION_BARRA",
+        "area_m2": 28981.5,
+        "centroid_posgar": [
+          5445594.48,
+          6496720.84
+        ],
+        "centroid_wgs84": [
+          -60.573704,
+          -31.668573
+        ],
+        "reason_detail": "Par dipolar de erosión/acreción natural de banco de arena."
+      },
+      {
+        "candidate_uid": "RIO-5347-5441770-6496470-521195AD",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 28681.69,
+        "centroid_posgar": [
+          5441771.32,
+          6496465.31
+        ],
+        "centroid_wgs84": [
+          -60.614033,
+          -31.67069
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5448650-6496320-FAAB95DC",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 27882.21,
+        "centroid_posgar": [
+          5448646.29,
+          6496321.64
+        ],
+        "centroid_wgs84": [
+          -60.541545,
+          -31.672314
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5447170-6496790-CC5C6828",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 27782.27,
+        "centroid_posgar": [
+          5447173.54,
+          6496794.89
+        ],
+        "centroid_wgs84": [
+          -60.55705,
+          -31.667979
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439330-6492510-BE580992",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 27782.27,
+        "centroid_posgar": [
+          5439331.86,
+          6492513.14
+        ],
+        "centroid_wgs84": [
+          -60.64,
+          -31.706204
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5443760-6497180-389526A5",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 27582.4,
+        "centroid_posgar": [
+          5443755.71,
+          6497181.22
+        ],
+        "centroid_wgs84": [
+          -60.593067,
+          -31.664332
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5441490-6496920-167E0D92",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 27282.59,
+        "centroid_posgar": [
+          5441490.66,
+          6496922.25
+        ],
+        "centroid_wgs84": [
+          -60.616965,
+          -31.666555
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5446050-6499690-9F280B00",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 26383.16,
+        "centroid_posgar": [
+          5446051.28,
+          6499686.31
+        ],
+        "centroid_wgs84": [
+          -60.568725,
+          -31.641851
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5443470-6492840-8686D581",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 25983.42,
+        "centroid_posgar": [
+          5443466.92,
+          6492841.07
+        ],
+        "centroid_wgs84": [
+          -60.596362,
+          -31.703458
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5438930-6498040-7508361D",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 25983.42,
+        "centroid_posgar": [
+          5438931.17,
+          6498042.19
+        ],
+        "centroid_wgs84": [
+          -60.643883,
+          -31.656322
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5442660-6494170-76255880",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 25683.61,
+        "centroid_posgar": [
+          5442664.51,
+          6494171.72
+        ],
+        "centroid_wgs84": [
+          -60.604748,
+          -31.691419
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5445040-6489090-A6D4EB45",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 25683.61,
+        "centroid_posgar": [
+          5445040.95,
+          6489091.67
+        ],
+        "centroid_wgs84": [
+          -60.579969,
+          -31.737348
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5447800-6499480-6A397530",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 25683.61,
+        "centroid_posgar": [
+          5447802.52,
+          6499479.34
+        ],
+        "centroid_wgs84": [
+          -60.550275,
+          -31.643799
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5438420-6493690-B3A96865",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 25483.74,
+        "centroid_posgar": [
+          5438424.22,
+          6493685.74
+        ],
+        "centroid_wgs84": [
+          -60.649501,
+          -31.695581
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5445750-6497920-9DBF1A31",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 25183.93,
+        "centroid_posgar": [
+          5445747.37,
+          6497920.94
+        ],
+        "centroid_wgs84": [
+          -60.572026,
+          -31.657757
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5437540-6495350-95606F3E",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 24984.05,
+        "centroid_posgar": [
+          5437536.58,
+          6495353.78
+        ],
+        "centroid_wgs84": [
+          -60.658757,
+          -31.680491
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5444120-6493190-C2754894",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 24784.18,
+        "centroid_posgar": [
+          5444122.66,
+          6493191.61
+        ],
+        "centroid_wgs84": [
+          -60.589425,
+          -31.700329
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439870-6491010-E4BFD655",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 24784.18,
+        "centroid_posgar": [
+          5439871.2,
+          6491005.85
+        ],
+        "centroid_wgs84": [
+          -60.634404,
+          -31.719826
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5445490-6496550-0740E72A",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 24684.25,
+        "centroid_posgar": [
+          5445487.73,
+          6496550.73
+        ],
+        "centroid_wgs84": [
+          -60.57484,
+          -31.670102
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5448140-6496810-B9BD958B",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 24184.57,
+        "centroid_posgar": [
+          5448137.78,
+          6496813.48
+        ],
+        "centroid_wgs84": [
+          -60.546882,
+          -31.667855
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5441580-6498040-737F6B50",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 23884.76,
+        "centroid_posgar": [
+          5441579.98,
+          6498042.72
+        ],
+        "centroid_wgs84": [
+          -60.615957,
+          -31.656455
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5445550-6497940-F4200826",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 23884.76,
+        "centroid_posgar": [
+          5445554.86,
+          6497938.36
+        ],
+        "centroid_wgs84": [
+          -60.574055,
+          -31.657591
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5446820-6499760-36AB79D4",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 23085.27,
+        "centroid_posgar": [
+          5446821.45,
+          6499759.3
+        ],
+        "centroid_wgs84": [
+          -60.560602,
+          -31.641229
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5448850-6499600-4FC4E6B9",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 22285.78,
+        "centroid_posgar": [
+          5448848.58,
+          6499598.44
+        ],
+        "centroid_wgs84": [
+          -60.539242,
+          -31.642772
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5446970-6489090-9EF8FD29",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 21985.97,
+        "centroid_posgar": [
+          5446968.94,
+          6489089.71
+        ],
+        "centroid_wgs84": [
+          -60.559625,
+          -31.737456
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5445120-6489290-F4968B86",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 21886.03,
+        "centroid_posgar": [
+          5445116.36,
+          6489286.9
+        ],
+        "centroid_wgs84": [
+          -60.579162,
+          -31.735591
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5447940-6498470-492CC25F",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 21786.1,
+        "centroid_posgar": [
+          5447941.34,
+          6498466.62
+        ],
+        "centroid_wgs84": [
+          -60.548865,
+          -31.652938
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439070-6491570-A1593457",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 21586.22,
+        "centroid_posgar": [
+          5439073.5,
+          6491573.62
+        ],
+        "centroid_wgs84": [
+          -60.642784,
+          -31.714663
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5444520-6490960-23E29B32",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 21386.35,
+        "centroid_posgar": [
+          5444515.15,
+          6490959.89
+        ],
+        "centroid_wgs84": [
+          -60.585412,
+          -31.720474
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5443730-6490170-DD019EB8",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 21286.41,
+        "centroid_posgar": [
+          5443728.46,
+          6490166.44
+        ],
+        "centroid_wgs84": [
+          -60.593757,
+          -31.727591
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5440010-6497500-E1622875",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 21286.41,
+        "centroid_posgar": [
+          5440008.94,
+          6497495.37
+        ],
+        "centroid_wgs84": [
+          -60.632553,
+          -31.66131
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5437480-6491800-364E9313",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 20986.61,
+        "centroid_posgar": [
+          5437475.08,
+          6491797.06
+        ],
+        "centroid_wgs84": [
+          -60.659633,
+          -31.712562
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5444830-6499220-F99B8E7D",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 20786.73,
+        "centroid_posgar": [
+          5444833.87,
+          6499218.01
+        ],
+        "centroid_wgs84": [
+          -60.581584,
+          -31.646017
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5442600-6498930-2814A8AF",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 20786.73,
+        "centroid_posgar": [
+          5442600.84,
+          6498927.25
+        ],
+        "centroid_wgs84": [
+          -60.605142,
+          -31.648529
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5447850-6497320-C4CDBA89",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 20786.73,
+        "centroid_posgar": [
+          5447845.56,
+          6497316.97
+        ],
+        "centroid_wgs84": [
+          -60.549936,
+          -31.663301
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5444530-6495960-9A42CA80",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 20686.8,
+        "centroid_posgar": [
+          5444527.35,
+          6495957.4
+        ],
+        "centroid_wgs84": [
+          -60.585,
+          -31.675407
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5441740-6492880-ACBCFBEE",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 20686.8,
+        "centroid_posgar": [
+          5441736.31,
+          6492884.64
+        ],
+        "centroid_wgs84": [
+          -60.614615,
+          -31.702979
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5441700-6499530-8D62D075",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 20586.86,
+        "centroid_posgar": [
+          5441696.08,
+          6499526.36
+        ],
+        "centroid_wgs84": [
+          -60.614644,
+          -31.643081
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5440340-6498950-D211F643",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 20586.86,
+        "centroid_posgar": [
+          5440338.75,
+          6498947.51
+        ],
+        "centroid_wgs84": [
+          -60.628988,
+          -31.648231
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5444430-6495430-B0C8F05F",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 20486.92,
+        "centroid_posgar": [
+          5444428.73,
+          6495434.79
+        ],
+        "centroid_wgs84": [
+          -60.58607,
+          -31.680115
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439440-6497310-40977E31",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 20386.99,
+        "centroid_posgar": [
+          5439435.34,
+          6497313.31
+        ],
+        "centroid_wgs84": [
+          -60.638612,
+          -31.662921
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439350-6496650-ED00F61C",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 20187.12,
+        "centroid_posgar": [
+          5439346.7,
+          6496645.87
+        ],
+        "centroid_wgs84": [
+          -60.639588,
+          -31.668936
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5441260-6496290-98CABCC1",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 19587.5,
+        "centroid_posgar": [
+          5441262.65,
+          6496293.95
+        ],
+        "centroid_wgs84": [
+          -60.619407,
+          -31.672209
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5437600-6496030-49A8FA62",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 19587.5,
+        "centroid_posgar": [
+          5437602.13,
+          6496025.69
+        ],
+        "centroid_wgs84": [
+          -60.658023,
+          -31.674435
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5440070-6497810-F60965B9",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 19287.69,
+        "centroid_posgar": [
+          5440072.88,
+          6497812.49
+        ],
+        "centroid_wgs84": [
+          -60.63186,
+          -31.658453
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5446320-6490670-B40ACA1C",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 19287.69,
+        "centroid_posgar": [
+          5446319.54,
+          6490667.19
+        ],
+        "centroid_wgs84": [
+          -60.566391,
+          -31.7232
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5440380-6492360-B314315E",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 19187.75,
+        "centroid_posgar": [
+          5440376.73,
+          6492361.27
+        ],
+        "centroid_wgs84": [
+          -60.628988,
+          -31.707629
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5445180-6499770-93CF5847",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_MIGRACION_BARRA",
+        "area_m2": 18987.88,
+        "centroid_posgar": [
+          5445175.79,
+          6499773.83
+        ],
+        "centroid_wgs84": [
+          -60.577949,
+          -31.64102
+        ],
+        "reason_detail": "Par dipolar de erosión/acreción natural de banco de arena."
+      },
+      {
+        "candidate_uid": "RIO-5347-5440310-6490720-4CBA509E",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 18987.88,
+        "centroid_posgar": [
+          5440308.92,
+          6490721.73
+        ],
+        "centroid_wgs84": [
+          -60.629803,
+          -31.722411
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5444530-6497650-F1795E34",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 18887.95,
+        "centroid_posgar": [
+          5444532.35,
+          6497651.37
+        ],
+        "centroid_wgs84": [
+          -60.584852,
+          -31.66013
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5447240-6499530-FD24D9C6",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 18688.07,
+        "centroid_posgar": [
+          5447241.84,
+          6499529.2
+        ],
+        "centroid_wgs84": [
+          -60.556183,
+          -31.643323
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5440340-6489920-78594540",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 18588.14,
+        "centroid_posgar": [
+          5440336.94,
+          6489920.76
+        ],
+        "centroid_wgs84": [
+          -60.629556,
+          -31.729635
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5443360-6493600-F15A8264",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 18488.2,
+        "centroid_posgar": [
+          5443363.87,
+          6493604.91
+        ],
+        "centroid_wgs84": [
+          -60.597405,
+          -31.696565
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439710-6495430-B8F05704",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 18488.2,
+        "centroid_posgar": [
+          5439710.49,
+          6495428.3
+        ],
+        "centroid_wgs84": [
+          -60.635827,
+          -31.679935
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5444350-6494860-55666000",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 18388.26,
+        "centroid_posgar": [
+          5444354.47,
+          6494863.69
+        ],
+        "centroid_wgs84": [
+          -60.586885,
+          -31.685262
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5447080-6499170-C3FC47D0",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 18388.26,
+        "centroid_posgar": [
+          5447078.93,
+          6499169.14
+        ],
+        "centroid_wgs84": [
+          -60.55792,
+          -31.646563
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5438520-6492480-AE061224",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 18388.26,
+        "centroid_posgar": [
+          5438518.89,
+          6492480.17
+        ],
+        "centroid_wgs84": [
+          -60.648578,
+          -31.706458
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439570-6489170-FF08AB51",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 18288.33,
+        "centroid_posgar": [
+          5439572.12,
+          6489167.92
+        ],
+        "centroid_wgs84": [
+          -60.637673,
+          -31.736384
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5447090-6496770-45235256",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 17888.58,
+        "centroid_posgar": [
+          5447088.52,
+          6496767.5
+        ],
+        "centroid_wgs84": [
+          -60.557948,
+          -31.668222
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5443720-6499390-E6F391F4",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 17688.71,
+        "centroid_posgar": [
+          5443716.04,
+          6499392.03
+        ],
+        "centroid_wgs84": [
+          -60.593359,
+          -31.644393
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5442460-6495860-2D552308",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 17688.71,
+        "centroid_posgar": [
+          5442456.44,
+          6495863.63
+        ],
+        "centroid_wgs84": [
+          -60.606844,
+          -31.67615
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5442910-6494160-7B0EB249",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 17588.77,
+        "centroid_posgar": [
+          5442907.5,
+          6494156.38
+        ],
+        "centroid_wgs84": [
+          -60.602187,
+          -31.691569
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5442320-6496810-57ED7B47",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 17488.84,
+        "centroid_posgar": [
+          5442324.21,
+          6496807.45
+        ],
+        "centroid_wgs84": [
+          -60.608183,
+          -31.667632
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439810-6493300-0AD4F154",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 17388.9,
+        "centroid_posgar": [
+          5439813.97,
+          6493298.25
+        ],
+        "centroid_wgs84": [
+          -60.634867,
+          -31.69915
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5446870-6498680-8F6B4105",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 17388.9,
+        "centroid_posgar": [
+          5446870.8,
+          6498675.24
+        ],
+        "centroid_wgs84": [
+          -60.560141,
+          -31.651007
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5449020-6495100-5E7F8AC9",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 17288.97,
+        "centroid_posgar": [
+          5449024.61,
+          6495099.52
+        ],
+        "centroid_wgs84": [
+          -60.53762,
+          -31.683352
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5443010-6492910-A79AD243",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 17288.97,
+        "centroid_posgar": [
+          5443006.01,
+          6492907.25
+        ],
+        "centroid_wgs84": [
+          -60.60122,
+          -31.702839
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5438010-6496090-787E959A",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 17288.97,
+        "centroid_posgar": [
+          5438012.8,
+          6496094.51
+        ],
+        "centroid_wgs84": [
+          -60.653688,
+          -31.673837
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5449320-6492170-5F8D20A0",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 17089.09,
+        "centroid_posgar": [
+          5449319.21,
+          6492165.14
+        ],
+        "centroid_wgs84": [
+          -60.534664,
+          -31.709828
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5438400-6489480-8819F4F0",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 17089.09,
+        "centroid_posgar": [
+          5438401.47,
+          6489477.18
+        ],
+        "centroid_wgs84": [
+          -60.650006,
+          -31.733533
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5442680-6499490-57116BB9",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 16889.22,
+        "centroid_posgar": [
+          5442684.19,
+          6499488.29
+        ],
+        "centroid_wgs84": [
+          -60.60423,
+          -31.643474
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5438760-6495820-1CEB3C0C",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 16889.22,
+        "centroid_posgar": [
+          5438760.23,
+          6495815.69
+        ],
+        "centroid_wgs84": [
+          -60.645824,
+          -31.676391
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5438030-6496120-FB5588D1",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 16789.28,
+        "centroid_posgar": [
+          5438027.87,
+          6496123.96
+        ],
+        "centroid_wgs84": [
+          -60.653528,
+          -31.673572
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439840-6490280-C33D3814",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 16789.28,
+        "centroid_posgar": [
+          5439840.57,
+          6490277.72
+        ],
+        "centroid_wgs84": [
+          -60.634772,
+          -31.72639
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5440370-6497390-99570852",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 16489.48,
+        "centroid_posgar": [
+          5440367.57,
+          6497388.87
+        ],
+        "centroid_wgs84": [
+          -60.628779,
+          -31.662289
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439740-6498960-98F7F294",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 16189.67,
+        "centroid_posgar": [
+          5439744.48,
+          6498957.64
+        ],
+        "centroid_wgs84": [
+          -60.635252,
+          -31.648109
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439300-6497570-1B20B51B",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 16189.67,
+        "centroid_posgar": [
+          5439299.49,
+          6497568.61
+        ],
+        "centroid_wgs84": [
+          -60.640029,
+          -31.660612
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439660-6492310-6B7C414C",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 15989.8,
+        "centroid_posgar": [
+          5439656.05,
+          6492313.82
+        ],
+        "centroid_wgs84": [
+          -60.636593,
+          -31.708019
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5443740-6498220-EF451B4A",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 15789.92,
+        "centroid_posgar": [
+          5443740.44,
+          6498216.59
+        ],
+        "centroid_wgs84": [
+          -60.593169,
+          -31.654995
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5440870-6496370-BD396E32",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 15590.05,
+        "centroid_posgar": [
+          5440867.53,
+          6496368.09
+        ],
+        "centroid_wgs84": [
+          -60.623569,
+          -31.67152
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5441050-6496600-419BDABB",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 15290.24,
+        "centroid_posgar": [
+          5441051.36,
+          6496599.86
+        ],
+        "centroid_wgs84": [
+          -60.621616,
+          -31.66944
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5444950-6497490-73075DB3",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 15190.31,
+        "centroid_posgar": [
+          5444950.42,
+          6497489.41
+        ],
+        "centroid_wgs84": [
+          -60.580453,
+          -31.661611
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5445280-6498060-5D811ED4",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 14990.43,
+        "centroid_posgar": [
+          5445281.73,
+          6498057.43
+        ],
+        "centroid_wgs84": [
+          -60.576928,
+          -31.656504
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439070-6493810-E314D5CB",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 14890.5,
+        "centroid_posgar": [
+          5439071.22,
+          6493805.95
+        ],
+        "centroid_wgs84": [
+          -60.64267,
+          -31.694532
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5448480-6496180-0598B5E0",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 14490.75,
+        "centroid_posgar": [
+          5448475.74,
+          6496183.6
+        ],
+        "centroid_wgs84": [
+          -60.543351,
+          -31.673551
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5442940-6495030-D2A87E56",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 14490.75,
+        "centroid_posgar": [
+          5442939.5,
+          6495028.12
+        ],
+        "centroid_wgs84": [
+          -60.601798,
+          -31.683709
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5444840-6498420-EF28EB5B",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 14490.75,
+        "centroid_posgar": [
+          5444837.17,
+          6498419.62
+        ],
+        "centroid_wgs84": [
+          -60.581594,
+          -31.653217
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5442940-6496190-69665E11",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 14390.82,
+        "centroid_posgar": [
+          5442938.84,
+          6496187.47
+        ],
+        "centroid_wgs84": [
+          -60.601738,
+          -31.673254
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5443310-6495860-5DDD5643",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 14190.94,
+        "centroid_posgar": [
+          5443306.95,
+          6495855.57
+        ],
+        "centroid_wgs84": [
+          -60.597875,
+          -31.676265
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5448550-6498200-AF81C2B3",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 13991.07,
+        "centroid_posgar": [
+          5448546.74,
+          6498201.85
+        ],
+        "centroid_wgs84": [
+          -60.542497,
+          -31.655353
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5446180-6496500-5F788813",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 13891.13,
+        "centroid_posgar": [
+          5446180.33,
+          6496496.3
+        ],
+        "centroid_wgs84": [
+          -60.567539,
+          -31.670625
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5438820-6497700-475C9B28",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 13791.2,
+        "centroid_posgar": [
+          5438815.26,
+          6497703.95
+        ],
+        "centroid_wgs84": [
+          -60.645126,
+          -31.659366
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439540-6490040-DC128DE4",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 13391.45,
+        "centroid_posgar": [
+          5439539.93,
+          6490040.46
+        ],
+        "centroid_wgs84": [
+          -60.637958,
+          -31.728514
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5441440-6499320-3FFF436A",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 13391.45,
+        "centroid_posgar": [
+          5441438.95,
+          6499324.82
+        ],
+        "centroid_wgs84": [
+          -60.617367,
+          -31.644885
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5445940-6496260-6ED045E6",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 13191.58,
+        "centroid_posgar": [
+          5445938.1,
+          6496257.6
+        ],
+        "centroid_wgs84": [
+          -60.570107,
+          -31.672767
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5447840-6496920-42B165DE",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 13191.58,
+        "centroid_posgar": [
+          5447835.68,
+          6496923.78
+        ],
+        "centroid_wgs84": [
+          -60.550061,
+          -31.666847
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5437940-6496550-06B447E1",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 13091.64,
+        "centroid_posgar": [
+          5437937.48,
+          6496549.79
+        ],
+        "centroid_wgs84": [
+          -60.654454,
+          -31.669727
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5440860-6499180-94DA5286",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 12991.71,
+        "centroid_posgar": [
+          5440864.63,
+          6499179.56
+        ],
+        "centroid_wgs84": [
+          -60.62343,
+          -31.646166
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5443270-6489710-DB88D6C5",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 12891.77,
+        "centroid_posgar": [
+          5443268.59,
+          6489710.57
+        ],
+        "centroid_wgs84": [
+          -60.598636,
+          -31.73168
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5444870-6495170-27C5247F",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 12691.9,
+        "centroid_posgar": [
+          5444865.3,
+          6495174.76
+        ],
+        "centroid_wgs84": [
+          -60.58148,
+          -31.682481
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5439600-6497670-30A030BF",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 12591.96,
+        "centroid_posgar": [
+          5439598.98,
+          6497674.41
+        ],
+        "centroid_wgs84": [
+          -60.636865,
+          -31.659674
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5448860-6496870-C70DEC84",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 12591.96,
+        "centroid_posgar": [
+          5448857.93,
+          6496873.53
+        ],
+        "centroid_wgs84": [
+          -60.539285,
+          -31.667346
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5446420-6496490-3DF46529",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 12492.03,
+        "centroid_posgar": [
+          5446424.9,
+          6496491.9
+        ],
+        "centroid_wgs84": [
+          -60.564961,
+          -31.670677
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5441820-6499380-9C1301C1",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 12392.09,
+        "centroid_posgar": [
+          5441816.3,
+          6499375.25
+        ],
+        "centroid_wgs84": [
+          -60.613386,
+          -31.64445
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5446490-6497280-8174A003",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 12392.09,
+        "centroid_posgar": [
+          5446492.47,
+          6497283.65
+        ],
+        "centroid_wgs84": [
+          -60.564205,
+          -31.66354
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5440940-6496820-9FFB07AA",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 12392.09,
+        "centroid_posgar": [
+          5440940.53,
+          6496819.8
+        ],
+        "centroid_wgs84": [
+          -60.622772,
+          -31.66745
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5438070-6495060-C4FDD691",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 12392.09,
+        "centroid_posgar": [
+          5438073.38,
+          6495059.19
+        ],
+        "centroid_wgs84": [
+          -60.653115,
+          -31.683177
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5440340-6495340-46987094",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 12292.15,
+        "centroid_posgar": [
+          5440335.24,
+          6495343.49
+        ],
+        "centroid_wgs84": [
+          -60.629244,
+          -31.680733
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      }
+    ],
     "institutional_note": "Las geometrías detectadas son anomalías morfológicas candidatas; no constituyen por sí solas infracción ni extracción ilegal sin cruce catastral oficial y revisión humana."
   },
   "features": [
@@ -227,8 +3266,11 @@
       },
       "properties": {
         "id": "RIO-0001",
+        "candidate_uid": "RIO-5347-5446990-6495250-22E20DED",
+        "coarse_location_uid": "RIO-CELL100-5347-5447000-6495200",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.889,
+        "signal_score": 0.889,
         "area_m2": 1748.76,
         "area_ha": 0.1749,
         "rectangularity": 0.795,
@@ -358,8 +3400,11 @@
       },
       "properties": {
         "id": "RIO-0002",
+        "candidate_uid": "RIO-5347-5445810-6495280-72605689",
+        "coarse_location_uid": "RIO-CELL100-5347-5445800-6495300",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.841,
+        "signal_score": 0.841,
         "area_m2": 2798.02,
         "area_ha": 0.2798,
         "rectangularity": 0.636,
@@ -566,8 +3611,11 @@
       },
       "properties": {
         "id": "RIO-0003",
+        "candidate_uid": "RIO-5347-5445510-6495320-FAF336C3",
+        "coarse_location_uid": "RIO-CELL100-5347-5445500-6495300",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.808,
+        "signal_score": 0.808,
         "area_m2": 18886.62,
         "area_ha": 1.8887,
         "rectangularity": 0.527,
@@ -719,8 +3767,11 @@
       },
       "properties": {
         "id": "RIO-0004",
+        "candidate_uid": "RIO-5347-5447820-6495430-44B3EB88",
+        "coarse_location_uid": "RIO-CELL100-5347-5447800-6495400",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.799,
+        "signal_score": 0.799,
         "area_m2": 3347.63,
         "area_ha": 0.3348,
         "rectangularity": 0.498,
@@ -863,8 +3914,11 @@
       },
       "properties": {
         "id": "RIO-0005",
+        "candidate_uid": "RIO-5347-5445470-6495500-0AFA2E99",
+        "coarse_location_uid": "RIO-CELL100-5347-5445500-6495500",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.802,
+        "signal_score": 0.802,
         "area_m2": 4946.49,
         "area_ha": 0.4946,
         "rectangularity": 0.505,
@@ -1151,8 +4205,11 @@
       },
       "properties": {
         "id": "RIO-0006",
+        "candidate_uid": "RIO-5347-5445680-6495490-5C5352B6",
+        "coarse_location_uid": "RIO-CELL100-5347-5445700-6495500",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.856,
+        "signal_score": 0.856,
         "area_m2": 40970.96,
         "area_ha": 4.0971,
         "rectangularity": 0.688,
@@ -1364,8 +4421,11 @@
       },
       "properties": {
         "id": "RIO-0007",
+        "candidate_uid": "RIO-5347-5446750-6495670-9158BFCC",
+        "coarse_location_uid": "RIO-CELL100-5347-5446800-6495700",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.79,
+        "signal_score": 0.79,
         "area_m2": 28030.14,
         "area_ha": 2.803,
         "rectangularity": 0.467,
@@ -1497,8 +4557,11 @@
       },
       "properties": {
         "id": "RIO-0008",
+        "candidate_uid": "RIO-5347-5437540-6496610-260B7109",
+        "coarse_location_uid": "RIO-CELL100-5347-5437500-6496600",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.577,
+        "signal_score": 0.577,
         "area_m2": 1648.83,
         "area_ha": 0.1649,
         "rectangularity": 0.304,
@@ -1611,8 +4674,11 @@
       },
       "properties": {
         "id": "RIO-0009",
+        "candidate_uid": "RIO-5347-5437860-6496640-85CCB77B",
+        "coarse_location_uid": "RIO-CELL100-5347-5437900-6496600",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.659,
+        "signal_score": 0.659,
         "area_m2": 1948.62,
         "area_ha": 0.1949,
         "rectangularity": 0.506,
@@ -1757,8 +4823,11 @@
       },
       "properties": {
         "id": "RIO-0010",
+        "candidate_uid": "RIO-5347-5437450-6496670-44BB8847",
+        "coarse_location_uid": "RIO-CELL100-5347-5437400-6496700",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.754,
+        "signal_score": 0.754,
         "area_m2": 1898.65,
         "area_ha": 0.1899,
         "rectangularity": 0.393,
@@ -1879,15 +4948,18 @@
       },
       "properties": {
         "id": "RIO-0011",
+        "candidate_uid": "RIO-5347-5437920-6497750-FA49586A",
+        "coarse_location_uid": "RIO-CELL100-5347-5437900-6497700",
         "anomaly_type": "frente_excavacion_inundado",
-        "confidence": 0.845,
+        "confidence": 0.84,
+        "signal_score": 0.84,
         "area_m2": 3697.38,
         "area_ha": 0.3697,
         "rectangularity": 0.661,
         "elongation": 1.143,
-        "delta_mndwi_mean": 0.7947,
-        "delta_bsi_mean": 0.0947,
-        "delta_ndvi_mean": -0.9707,
+        "delta_mndwi_mean": 0.7883,
+        "delta_bsi_mean": 0.1054,
+        "delta_ndvi_mean": -0.9875,
         "bbox_posgar": [
           5437886.426579699,
           6497715.89880133,
@@ -1909,18 +4981,18 @@
         "distance_to_water_t0_m": 480.1,
         "spectral_stats": {
           "area_method": "shapely_polygon_posgar_2007",
-          "pixel_count_10m": 31,
-          "effective_swir_pixels_20m": 7.75,
-          "t0_b11_median": 2212.8142,
+          "pixel_count_10m": 37,
+          "effective_swir_pixels_20m": 9.25,
+          "t0_b11_median": 2213.9568,
           "t1_b11_median": 48.8921,
           "t1_b04_median": 88.0715,
-          "t0_ndvi_median": 0.6612,
-          "t1_ndvi_median": -0.2988,
-          "t0_bsi_median": -0.036,
-          "t1_bsi_median": 0.0267,
-          "t1_mndwi_median": 0.2711,
+          "t0_ndvi_median": 0.6649,
+          "t1_ndvi_median": -0.3155,
+          "t0_bsi_median": -0.0427,
+          "t1_bsi_median": 0.0314,
+          "t1_mndwi_median": 0.2567,
           "t1_scl_counts": {
-            "6": 31
+            "6": 37
           }
         },
         "uncertainty": {
@@ -2085,8 +5157,11 @@
       },
       "properties": {
         "id": "RIO-0012",
+        "candidate_uid": "RIO-5347-5441100-6498400-9618DD03",
+        "coarse_location_uid": "RIO-CELL100-5347-5441100-6498400",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.735,
+        "signal_score": 0.735,
         "area_m2": 20685.34,
         "area_ha": 2.0685,
         "rectangularity": 0.516,
@@ -2206,15 +5281,18 @@
       },
       "properties": {
         "id": "RIO-0013",
+        "candidate_uid": "RIO-5347-5446610-6490100-DC801B43",
+        "coarse_location_uid": "RIO-CELL100-5347-5446600-6490100",
         "anomaly_type": "desmonte_ribera_acopio",
-        "confidence": 0.663,
+        "confidence": 0.645,
+        "signal_score": 0.645,
         "area_m2": 1848.69,
         "area_ha": 0.1849,
         "rectangularity": 0.561,
         "elongation": 3.666,
-        "delta_mndwi_mean": 0.0522,
-        "delta_bsi_mean": 0.3767,
-        "delta_ndvi_mean": -0.4842,
+        "delta_mndwi_mean": 0.0663,
+        "delta_bsi_mean": 0.3427,
+        "delta_ndvi_mean": -0.4794,
         "bbox_posgar": [
           5446593.6484752735,
           6490048.88507512,
@@ -2236,18 +5314,19 @@
         "distance_to_water_t0_m": 245.1,
         "spectral_stats": {
           "area_method": "shapely_polygon_posgar_2007",
-          "pixel_count_10m": 12,
-          "effective_swir_pixels_20m": 3.0,
-          "t0_b11_median": 1779.6096,
-          "t1_b11_median": 1719.4363,
-          "t1_b04_median": 953.5496,
-          "t0_ndvi_median": 0.7242,
-          "t1_ndvi_median": 0.1584,
-          "t0_bsi_median": -0.2622,
-          "t1_bsi_median": 0.1503,
-          "t1_mndwi_median": -0.3753,
+          "pixel_count_10m": 19,
+          "effective_swir_pixels_20m": 4.75,
+          "t0_b11_median": 1893.9619,
+          "t1_b11_median": 1920.7548,
+          "t1_b04_median": 1102.166,
+          "t0_ndvi_median": 0.6694,
+          "t1_ndvi_median": 0.1493,
+          "t0_bsi_median": -0.1836,
+          "t1_bsi_median": 0.1366,
+          "t1_mndwi_median": -0.3662,
           "t1_scl_counts": {
-            "5": 12
+            "5": 17,
+            "7": 2
           }
         },
         "uncertainty": {

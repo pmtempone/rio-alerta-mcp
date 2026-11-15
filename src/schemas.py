@@ -18,6 +18,8 @@ NaturalFilterStatusLiteral = Literal[
     "DESCARTADO_MIGRACION_BARRA",
     "DESCARTADO_ESTACIONAL",
     "DESCARTADO_NUBE_SOMBRA",
+    "DESCARTADO_CONFUSOR_TURBIDEZ",
+    "DESCARTADO_COMPUERTA_MINERAL",
 ]
 
 CadastreStatusLiteral = Literal[
@@ -235,6 +237,10 @@ class ExtractionAnomalyFeature(BaseModel):
     candidate_uid: Optional[str] = Field(
         default=None,
         description="Identificador determinista estable entre corridas derivado de CRS, centroide POSGAR redondeado a 10 m y tipo.",
+    )
+    coarse_location_uid: Optional[str] = Field(
+        default=None,
+        description="Identificador espacial en grilla gruesa de 100 m para seguimiento longitudinal entre épocas aunque el frente se expanda.",
     )
     anomaly_type: ChangeAnomalyTypeLiteral = Field(
         ..., description="Tipología espectral/morfológica de la alteración fluvial o ribereña."

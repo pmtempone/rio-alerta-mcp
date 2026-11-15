@@ -1,5 +1,6 @@
 """Servidor FastMCP principal para RíoAlerta (`rio-alerta-mcp`)."""
 
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict
 
@@ -124,6 +125,13 @@ def tool_search_multitemporal_pair(
         raise ValueError("Coordenadas WGS84 fuera de rango [-180..180, -90..90].")
     if lookback_years < 1 or lookback_years > 10:
         raise ValueError("lookback_years debe estar entre 1 y 10.")
+    if t1_end_date is not None:
+        try:
+            datetime.fromisoformat(t1_end_date.replace("Z", "+00:00"))
+        except ValueError as exc:
+            raise ValueError(
+                f"t1_end_date inválido ('{t1_end_date}'): se requiere formato ISO 8601 (ej. 'YYYY-MM-DD')."
+            ) from exc
     settings.ensure_directories()
     return search_and_fetch_stac_multitemporal(
         bbox_wgs84=(float(min_lon), float(min_lat), float(max_lon), float(max_lat)),

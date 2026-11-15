@@ -302,6 +302,103 @@ class Settings(BaseSettings):
         alias="TURBIDITY_BRIGHT_BAR_B04_DN",
         description="Reflectancia roja B04 (DN) en T0 indicativa de banco de arena somero brillante.",
     )
+    max_discarded_records: int = Field(
+        default=200,
+        ge=1,
+        alias="MAX_DISCARDED_RECORDS",
+        description="Cantidad máxima de candidatos descartados incluidos inline en metadata.discarded_candidates (ordenados por área descendente).",
+    )
+    reach_water_mndwi_threshold: float = Field(
+        default=0.15,
+        alias="REACH_WATER_MNDWI_THRESHOLD",
+        description="Umbral MNDWI para lámina de agua en balance hidrométrico del tramo.",
+    )
+    systemic_stage_strong_pct: float = Field(
+        default=12.0,
+        ge=0.0,
+        alias="SYSTEMIC_STAGE_STRONG_PCT",
+        description="Variación porcentual fuerte de lámina de agua que activa crecida sistémica directa.",
+    )
+    shoreline_change_min_fraction: float = Field(
+        default=0.25,
+        ge=0.0,
+        le=1.0,
+        alias="SHORELINE_CHANGE_MIN_FRACTION",
+        description="Fracción mínima del anillo costero inundado/expuesto para confirmar pulso hidrométrico uniforme.",
+    )
+    geomorph_water_mndwi_min: float = Field(
+        default=0.05,
+        alias="GEOMORPH_WATER_MNDWI_MIN",
+        description="Umbral MNDWI en T0 para cuerpos de agua en clasificación geomorfológica.",
+    )
+    geomorph_min_channel_area_m2: float = Field(
+        default=50000.0,
+        gt=0.0,
+        alias="GEOMORPH_MIN_CHANNEL_AREA_M2",
+        description="Área mínima (m²) en T0 para clasificar un cuerpo de agua conexo como cauce activo principal (5 ha).",
+    )
+    geomorph_bar_max_ndvi: float = Field(
+        default=0.25,
+        alias="GEOMORPH_BAR_MAX_NDVI",
+        description="NDVI máximo en T0 para clasificar sedimento expuesto como barra móvil.",
+    )
+    geomorph_bar_max_dist_m: float = Field(
+        default=300.0,
+        ge=0.0,
+        alias="GEOMORPH_BAR_MAX_DIST_M",
+        description="Distancia máxima (m) al cauce activo para clasificar barras y bancos móviles.",
+    )
+    geomorph_lagoon_buffer_m: float = Field(
+        default=450.0,
+        ge=0.0,
+        alias="GEOMORPH_LAGOON_BUFFER_M",
+        description="Buffer métrico (m) alrededor de lagunas internas para zonificar planicie inundable.",
+    )
+    geomorph_island_max_dist_m: float = Field(
+        default=2500.0,
+        ge=0.0,
+        alias="GEOMORPH_ISLAND_MAX_DIST_M",
+        description="Distancia máxima (m) al cauce activo para sectores encerrados entre brazos (islas aluviales).",
+    )
+    dipole_min_abs_delta_mndwi: float = Field(
+        default=0.35,
+        gt=0.0,
+        alias="DIPOLE_MIN_ABS_DELTA_MNDWI",
+        description="Magnitud mínima de |ΔMNDWI| para frentes de erosión/acreción en dipolos de barras.",
+    )
+    dipole_max_erosion_ndvi: float = Field(
+        default=0.35,
+        alias="DIPOLE_MAX_EROSION_NDVI",
+        description="NDVI máximo en T0 para considerar erosión de barra no vegetada.",
+    )
+    dipole_min_accretion_mndwi_t0: float = Field(
+        default=0.05,
+        alias="DIPOLE_MIN_ACCRETION_MNDWI_T0",
+        description="MNDWI mínimo en T0 para considerar acreción sobre lámina de agua preexistente.",
+    )
+    dipole_min_area_ratio: float = Field(
+        default=0.40,
+        gt=0.0,
+        alias="DIPOLE_MIN_AREA_RATIO",
+        description="Cociente mínimo de área erosión/acreción para emparejar un dipolo natural.",
+    )
+    dipole_max_area_ratio: float = Field(
+        default=2.50,
+        gt=0.0,
+        alias="DIPOLE_MAX_AREA_RATIO",
+        description="Cociente máximo de área erosión/acreción para emparejar un dipolo natural.",
+    )
+    dipole_max_span_m: float = Field(
+        default=450.0,
+        gt=0.0,
+        alias="DIPOLE_MAX_SPAN_M",
+        description="Distancia máxima (m) entre centroides de erosión y acreción en migración de barras.",
+    )
+    riparian_veg_min_ndvi_t0: float = Field(
+        default=0.45,
+        alias="RIPARIAN_VEG_MIN_NDVI_T0",
+        description="NDVI mínimo en T0 para máscara de bosque/vegetación ribereña de referencia fenológica.",
+    )
 
     def get_calibration_parameters(self) -> Dict[str, float]:
         """Devuelve el diccionario completo de umbrales de detección y calibración para trazabilidad."""
@@ -317,6 +414,9 @@ class Settings(BaseSettings):
             "hydrometric_stage_rise_alert_m": self.hydrometric_stage_rise_alert_m,
             "moderate_stage_rise_m": self.moderate_stage_rise_m,
             "water_stage_warning_pct": self.water_stage_warning_pct,
+            "reach_water_mndwi_threshold": self.reach_water_mndwi_threshold,
+            "systemic_stage_strong_pct": self.systemic_stage_strong_pct,
+            "shoreline_change_min_fraction": self.shoreline_change_min_fraction,
             "flooded_min_delta_mndwi": self.flooded_min_delta_mndwi,
             "flooded_min_t1_mndwi": self.flooded_min_t1_mndwi,
             "clearing_min_delta_bsi_adj": self.clearing_min_delta_bsi_adj,
@@ -331,6 +431,19 @@ class Settings(BaseSettings):
             "turbidity_wet_bar_mndwi": self.turbidity_wet_bar_mndwi,
             "turbidity_red_shift_dn": self.turbidity_red_shift_dn,
             "turbidity_bright_bar_b04_dn": self.turbidity_bright_bar_b04_dn,
+            "geomorph_water_mndwi_min": self.geomorph_water_mndwi_min,
+            "geomorph_min_channel_area_m2": self.geomorph_min_channel_area_m2,
+            "geomorph_bar_max_ndvi": self.geomorph_bar_max_ndvi,
+            "geomorph_bar_max_dist_m": self.geomorph_bar_max_dist_m,
+            "geomorph_lagoon_buffer_m": self.geomorph_lagoon_buffer_m,
+            "geomorph_island_max_dist_m": self.geomorph_island_max_dist_m,
+            "dipole_min_abs_delta_mndwi": self.dipole_min_abs_delta_mndwi,
+            "dipole_max_erosion_ndvi": self.dipole_max_erosion_ndvi,
+            "dipole_min_accretion_mndwi_t0": self.dipole_min_accretion_mndwi_t0,
+            "dipole_min_area_ratio": self.dipole_min_area_ratio,
+            "dipole_max_area_ratio": self.dipole_max_area_ratio,
+            "dipole_max_span_m": self.dipole_max_span_m,
+            "riparian_veg_min_ndvi_t0": self.riparian_veg_min_ndvi_t0,
         }
 
     def ensure_directories(self) -> None:

@@ -57,10 +57,10 @@ def compute_reach_hydrological_state(
     mndwi_t0: np.ndarray,
     mndwi_t1: np.ndarray,
     valid_mask: np.ndarray,
-    water_threshold: float = 0.15,
+    water_threshold: Optional[float] = None,
     stage_t0_m: Optional[float] = None,
     stage_t1_m: Optional[float] = None,
-    stage_rise_alert_m: float = 0.80,
+    stage_rise_alert_m: Optional[float] = None,
 ) -> Dict[str, Any]:
     """Evalúa el pulso hidrométrico global del tramo (crecida/bajante) entre T0 y T1.
 
@@ -69,8 +69,14 @@ def compute_reach_hydrological_state(
     En ese caso, devuelve `uniform_stage_belt_mask` para descontar el efecto de crecida sin suprimir
     excavaciones cerradas internas ni cortes antrópicos profundos.
     """
-    water_t0 = valid_mask & np.isfinite(mndwi_t0) & (mndwi_t0 > water_threshold)
-    water_t1 = valid_mask & np.isfinite(mndwi_t1) & (mndwi_t1 > water_threshold)
+    eff_water_thr = float(
+        water_threshold if water_threshold is not None else settings.reach_water_mndwi_threshold
+    )
+    eff_stage_alert = float(
+        stage_rise_alert_m if stage_rise_alert_m is not None else settings.hydrometric_stage_rise_alert_m
+    )
+    water_t0 = valid_mask & np.isfinite(mndwi_t0) & (mndwi_t0 > eff_water_thr)
+    water_t1 = valid_mask & np.isfinite(mndwi_t1) & (mndwi_t1 > eff_water_thr)
 
     area_t0_px = int(np.sum(water_t0))
     area_t1_px = int(np.sum(water_t1))
@@ -110,15 +116,20 @@ def compute_reach_hydrological_state(
     )
 
     uniform_stage_belt_mask = np.zeros(mndwi_t0.shape, dtype=bool)
+    warn_pct = settings.water_stage_warning_pct
+    min_shore_frac = settings.shoreline_change_min_fraction
+    strong_pct = settings.systemic_stage_strong_pct
     is_systemic_stage_rise = int(np.sum(water_gain)) > 0 and (
         (
-            water_stage_delta_pct >= 8.0
-            and (shoreline_flooding_fraction >= 0.25 or water_stage_delta_pct >= 12.0)
+            water_stage_delta_pct >= warn_pct
+            and (shoreline_flooding_fraction >= min_shore_frac or water_stage_delta_pct >= strong_pct)
         )
-        or (stage_delta_m is not None and stage_delta_m >= stage_rise_alert_m)
+        or (stage_delta_m is not None and stage_delta_m >= eff_stage_alert)
     )
     is_systemic_stage_drop = (
-        water_stage_delta_pct <= -8.0 and shoreline_drawdown_fraction >= 0.25 and int(np.sum(water_loss)) > 0
+        water_stage_delta_pct <= -warn_pct
+        and shoreline_drawdown_fraction >= min_shore_frac
+        and int(np.sum(water_loss)) > 0
     )
 
     if is_systemic_stage_rise:
@@ -186,10 +197,10 @@ def classify_aoi_geomorphology(
     """
     scl6 = (scl_t0 == 6) if scl_t0 is not None else np.zeros(mndwi_t0.shape, dtype=bool)
     scl5 = (scl_t0 == 5) if scl_t0 is not None else (mndwi_t0 > -0.15)
-    water_t0 = valid_mask & np.isfinite(mndwi_t0) & ((mndwi_t0 > 0.05) | scl6)
+    water_t0 = valid_mask & np.isfinite(mndwi_t0) & ((mndwi_t0 > settings.geomorph_water_mndwi_min) | scl6)
 
     px_area_m2 = grid_res_m * grid_res_m
-    min_channel_px = max(50, int(round(50000.0 / max(1.0, px_area_m2))))
+    min_channel_px = max(50, int(round(settings.geomorph_min_channel_area_m2 / max(1.0, px_area_m2))))
 
     num_w, w_labels, w_stats, _ = cv2.connectedComponentsWithStats(water_t0.astype(np.uint8), connectivity=8)
     cauce_activo = np.zeros(mndwi_t0.shape, dtype=bool)
@@ -211,7 +222,14 @@ def classify_aoi_geomorphology(
         internal_lagoons &= ~cauce_activo
 
     dist_cauce_m = distance_transform_edt(~cauce_activo) * grid_res_m
-    barras_moviles = (~water_t0) & valid_mask & scl5 & np.isfinite(ndvi_t0) & (ndvi_t0 < 0.25) & (dist_cauce_m <= 300.0)
+    barras_moviles = (
+        (~water_t0)
+        & valid_mask
+        & scl5
+        & np.isfinite(ndvi_t0)
+        & (ndvi_t0 < settings.geomorph_bar_max_ndvi)
+        & (dist_cauce_m <= settings.geomorph_bar_max_dist_m)
+    )
 
     # Detectar sectores entre brazos activos (islas aluviales) mediante barrido direccional N/S y E/O
     has_north = np.maximum.accumulate(cauce_activo, axis=0)
@@ -222,7 +240,7 @@ def classify_aoi_geomorphology(
 
     if np.any(internal_lagoons):
         dist_lagoon_m = distance_transform_edt(~internal_lagoons) * grid_res_m
-        lagoon_belt = dist_lagoon_m <= 450.0
+        lagoon_belt = dist_lagoon_m <= settings.geomorph_lagoon_buffer_m
     else:
         lagoon_belt = np.zeros(mndwi_t0.shape, dtype=bool)
 
@@ -230,7 +248,7 @@ def classify_aoi_geomorphology(
         valid_mask
         & (~cauce_activo)
         & (~barras_moviles)
-        & (internal_lagoons | lagoon_belt | (between_branches & (dist_cauce_m <= 2500.0)))
+        & (internal_lagoons | lagoon_belt | (between_branches & (dist_cauce_m <= settings.geomorph_island_max_dist_m)))
     )
     ribera_firme = valid_mask & (~cauce_activo) & (~barras_moviles) & (~planicie_islas)
 
@@ -281,7 +299,7 @@ def detect_natural_bar_migration_dipoles(
     pixel_area_m2: float,
     grid_res_m: float = 10.0,
     min_area_m2: float = 1600.0,
-    max_dipole_span_m: float = 450.0,
+    max_dipole_span_m: Optional[float] = None,
 ) -> Tuple[np.ndarray, List[Dict[str, Any]]]:
     """Detecta dipolos acoplados de erosión/acreción por migración natural de bancos de arena.
 
@@ -291,8 +309,20 @@ def detect_natural_bar_migration_dipoles(
     vegetado (`NDVI_T0 < 0.35`). En contraste, una excavación antrópica extrae material fuera del
     cauce y no genera acreción compensatoria de banco nuevo aguas abajo.
     """
-    erosion_bin = valid_mask & np.isfinite(delta_mndwi) & (delta_mndwi > 0.35) & (ndvi_t0 < 0.35)
-    accretion_bin = valid_mask & np.isfinite(delta_mndwi) & (delta_mndwi < -0.35) & (mndwi_t0 > 0.05)
+    eff_span_m = float(max_dipole_span_m if max_dipole_span_m is not None else settings.dipole_max_span_m)
+    min_dm = settings.dipole_min_abs_delta_mndwi
+    erosion_bin = (
+        valid_mask
+        & np.isfinite(delta_mndwi)
+        & (delta_mndwi > min_dm)
+        & (ndvi_t0 < settings.dipole_max_erosion_ndvi)
+    )
+    accretion_bin = (
+        valid_mask
+        & np.isfinite(delta_mndwi)
+        & (delta_mndwi < -min_dm)
+        & (mndwi_t0 > settings.dipole_min_accretion_mndwi_t0)
+    )
 
     erosion_comps = _extract_component_stats(erosion_bin, pixel_area_m2, min_area_m2)
     accretion_comps = _extract_component_stats(accretion_bin, pixel_area_m2, min_area_m2)
@@ -309,11 +339,11 @@ def detect_natural_bar_migration_dipoles(
             if idx in used_accretion:
                 continue
             ratio = er["area_m2"] / max(1.0, ac["area_m2"])
-            if not (0.40 <= ratio <= 2.50):
+            if not (settings.dipole_min_area_ratio <= ratio <= settings.dipole_max_area_ratio):
                 continue
             acx, acy = ac["centroid_xy"]
             dist_m = float(np.hypot(ecx - acx, ecy - acy)) * grid_res_m
-            if dist_m <= max_dipole_span_m and dist_m < best_dist_m:
+            if dist_m <= eff_span_m and dist_m < best_dist_m:
                 best_dist_m = dist_m
                 best_acc_idx = idx
 
@@ -354,7 +384,7 @@ def normalize_seasonal_riparian_indices(
         & np.isfinite(ndvi_t0)
         & np.isfinite(delta_ndvi)
         & np.isfinite(delta_bsi)
-        & (ndvi_t0 > 0.45)
+        & (ndvi_t0 > settings.riparian_veg_min_ndvi_t0)
     )
 
     if int(np.sum(veg_mask_t0)) >= 20:

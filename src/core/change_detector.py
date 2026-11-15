@@ -1,6 +1,7 @@
 """Motor multitemporal de índices espectrales y detección morfológica de extracción de áridos."""
 
 import hashlib
+import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
@@ -296,6 +297,13 @@ def _build_candidate_uid(crs_epsg: int, cx_m: float, cy_m: float, anomaly_type: 
     return f"RIO-{crs_epsg}-{gx}-{gy}-{digest}"
 
 
+def _build_coarse_location_uid(crs_epsg: int, cx_m: float, cy_m: float) -> str:
+    """Construye un identificador de celda de 100 m para seguimiento longitudinal entre épocas."""
+    gx100 = int(round(cx_m / 100.0)) * 100
+    gy100 = int(round(cy_m / 100.0)) * 100
+    return f"RIO-CELL100-{crs_epsg}-{gx100}-{gy100}"
+
+
 def _polygonize_mask_components(
     binary_mask: np.ndarray,
     anomaly_type: ChangeAnomalyTypeLiteral,
@@ -389,7 +397,7 @@ def _polygonize_mask_components(
                     DiscardedAnomalyRecord(
                         candidate_uid=_build_candidate_uid(crs_epsg, cx_d, cy_d, anomaly_type),
                         anomaly_type=anomaly_type,
-                        filter_status="DESCARTADO_PULSO_HIDROMETRICO",
+                        filter_status="DESCARTADO_CONFUSOR_TURBIDEZ",
                         area_m2=round(area_m2, 2),
                         centroid_posgar=(round(cx_d, 2), round(cy_d, 2)),
                         centroid_wgs84=(round(float(lon_d), 6), round(float(lat_d), 6)),
@@ -522,6 +530,7 @@ def _polygonize_mask_components(
             ExtractionAnomalyFeature(
                 id=f"RIO-{idx:04d}",
                 candidate_uid=_build_candidate_uid(crs_epsg, cx_m, cy_m, eff_type),
+                coarse_location_uid=_build_coarse_location_uid(crs_epsg, cx_m, cy_m),
                 anomaly_type=eff_type,
                 confidence=confidence,
                 signal_score=confidence,
@@ -564,7 +573,7 @@ def _collect_filtered_components(
     drawdown_belt_mask: np.ndarray,
     flood_zone_excl: np.ndarray,
     scl_mineral_gate: np.ndarray,
-    cloud_shadow_dilated: np.ndarray,
+    check_mineral_gate: bool = False,
 ) -> List[DiscardedAnomalyRecord]:
     """Registra con trazabilidad los componentes >= `min_area_m2` suprimidos por controles naturales o SCL."""
     records: List[DiscardedAnomalyRecord] = []
@@ -608,17 +617,16 @@ def _collect_filtered_components(
         ):
             filter_status = "DESCARTADO_PULSO_HIDROMETRICO"
             reason_detail = "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
-        elif np.any(
-            ((~scl_mineral_gate[y : y + h, x : x + w]) | cloud_shadow_dilated[y : y + h, x : x + w])
-            & comp_mask
-        ):
+        elif check_mineral_gate and np.any((~scl_mineral_gate[y : y + h, x : x + w]) & comp_mask):
             filter_status = "DESCARTADO_NUBE_SOMBRA"
-            reason_detail = "Excluido por clase SCL (agua SCL=6, borde SCL=7 o sombra/nube)."
+            reason_detail = (
+                "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+            )
         else:
-            filter_status = "DESCARTADO_ESTACIONAL"
+            filter_status = "DESCARTADO_COMPUERTA_MINERAL"
             reason_detail = (
                 "Excluido por compuerta física de agua oscura / reflectancia mineral insuficiente "
-                "(BSI_reg / B11 / B04)."
+                "(BSI_reg / B11 / B04 / B08)."
             )
 
         records.append(
@@ -646,6 +654,7 @@ def detect_extraction_anomalies(
     stage_t1_m: Optional[float] = None,
     stage_t0_source: Optional[str] = None,
     stage_t1_source: Optional[str] = None,
+    max_discarded_records: Optional[int] = None,
 ) -> ChangeDetectionResult:
     """Detecta anomalías morfológicas candidatas filtrando cambios fluviales naturales y nubes SCL.
 
@@ -889,7 +898,7 @@ def detect_extraction_anomalies(
             drawdown_belt_mask=hydro_state["drawdown_belt_mask"],
             flood_zone_excl=in_unprotected_flood_zone,
             scl_mineral_gate=scl_mineral_gate,
-            cloud_shadow_dilated=cloud_shadow_dilated,
+            check_mineral_gate=False,
         )
     )
     discarded_records.extend(
@@ -907,8 +916,19 @@ def detect_extraction_anomalies(
             drawdown_belt_mask=hydro_state["drawdown_belt_mask"],
             flood_zone_excl=clearing_flood_excl,
             scl_mineral_gate=scl_mineral_gate,
-            cloud_shadow_dilated=cloud_shadow_dilated,
+            check_mineral_gate=True,
         )
+    )
+    discarded_records.sort(key=lambda r: r.area_m2, reverse=True)
+    discarded_log_path = target_dir / "discarded_candidates_log.json"
+    discarded_payload = [d.model_dump(mode="json") for d in discarded_records]
+    discarded_log_path.write_text(
+        json.dumps(discarded_payload, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+    eff_max_disc = max(
+        1,
+        int(max_discarded_records if max_discarded_records is not None else settings.max_discarded_records),
     )
 
     all_feats = excavation_feats + clearing_feats
@@ -955,7 +975,9 @@ def detect_extraction_anomalies(
         "calibration_parameters": settings.get_calibration_parameters(),
         "candidate_count": len(geojson_features),
         "discarded_count": len(discarded_records),
-        "discarded_candidates": [d.model_dump(mode="json") for d in discarded_records],
+        "discarded_truncated": len(discarded_records) > eff_max_disc,
+        "discarded_log_path": str(discarded_log_path),
+        "discarded_candidates": discarded_payload[:eff_max_disc],
         "institutional_note": (
             "Las geometrías detectadas son anomalías morfológicas candidatas; "
             "no constituyen por sí solas infracción ni extracción ilegal sin cruce catastral oficial y revisión humana."

@@ -1,12 +1,46 @@
 {
   "frozen_calibration_parameters": {
+    "min_anomaly_area_m2": 1600.0,
     "bsi_reg_albedo_k": 800.0,
     "dark_water_min_b11_dn": 600.0,
     "dark_water_min_b04_dn": 420.0,
     "dark_water_min_b08_dn": 350.0,
+    "dark_water_min_b11_b03_ratio": 0.85,
     "scl7_min_b11_dn": 850.0,
     "scl7_min_b04_dn": 500.0,
-    "hydrometric_stage_rise_alert_m": 0.8
+    "hydrometric_stage_rise_alert_m": 0.8,
+    "moderate_stage_rise_m": 0.4,
+    "water_stage_warning_pct": 8.0,
+    "reach_water_mndwi_threshold": 0.15,
+    "systemic_stage_strong_pct": 12.0,
+    "shoreline_change_min_fraction": 0.25,
+    "flooded_min_delta_mndwi": 0.4,
+    "flooded_min_t1_mndwi": 0.2,
+    "clearing_min_delta_bsi_adj": 0.25,
+    "clearing_min_delta_bsi_reg": 0.18,
+    "clearing_min_t1_bsi_reg": 0.03,
+    "clearing_max_delta_ndvi_adj": -0.3,
+    "clearing_min_t1_bsi": -0.02,
+    "clearing_max_t1_mndwi": 0.1,
+    "road_min_elongation": 4.0,
+    "cloud_shadow_buffer_m": 40.0,
+    "turbidity_open_water_mndwi": 0.2,
+    "turbidity_wet_bar_mndwi": 0.05,
+    "turbidity_red_shift_dn": 150.0,
+    "turbidity_bright_bar_b04_dn": 750.0,
+    "geomorph_water_mndwi_min": 0.05,
+    "geomorph_min_channel_area_m2": 50000.0,
+    "geomorph_bar_max_ndvi": 0.25,
+    "geomorph_bar_max_dist_m": 300.0,
+    "geomorph_lagoon_buffer_m": 450.0,
+    "geomorph_island_max_dist_m": 2500.0,
+    "dipole_min_abs_delta_mndwi": 0.35,
+    "dipole_max_erosion_ndvi": 0.35,
+    "dipole_min_accretion_mndwi_t0": 0.05,
+    "dipole_min_area_ratio": 0.4,
+    "dipole_max_area_ratio": 2.5,
+    "dipole_max_span_m": 450.0,
+    "riparian_veg_min_ndvi_t0": 0.45
   },
   "runs": [
     {
@@ -267,14 +301,14 @@
           "type": "frente_excavacion_inundado",
           "zone": "RIBERA_FIRME_Y_TERRAZA",
           "area_m2": 3697.38,
-          "confidence": 0.845,
+          "confidence": 0.84,
           "centroid_wgs84": [
             -60.654528,
             -31.65892
           ],
           "t1_b11_median": 48.8921,
           "t1_scl_counts": {
-            "6": 31
+            "6": 37
           }
         },
         {
@@ -451,15 +485,15 @@
           "type": "desmonte_ribera_acopio",
           "zone": "PLANICIE_INUNDABLE_E_ISLAS",
           "area_m2": 26431.27,
-          "confidence": 0.798,
+          "confidence": 0.797,
           "centroid_wgs84": [
             -60.62293,
             -31.646815
           ],
-          "t1_b11_median": 2257.4224,
+          "t1_b11_median": 2220.0449,
           "t1_scl_counts": {
-            "4": 122,
-            "5": 142
+            "4": 128,
+            "5": 139
           }
         },
         {
@@ -547,15 +581,15 @@
           "type": "apertura_camino_acceso",
           "zone": "PLANICIE_INUNDABLE_E_ISLAS",
           "area_m2": 7344.79,
-          "confidence": 0.714,
+          "confidence": 0.717,
           "centroid_wgs84": [
             -60.543986,
             -31.672486
           ],
-          "t1_b11_median": 2972.583,
+          "t1_b11_median": 2972.3306,
           "t1_scl_counts": {
             "4": 27,
-            "5": 51
+            "5": 52
           }
         },
         {
@@ -563,15 +597,15 @@
           "type": "desmonte_ribera_acopio",
           "zone": "PLANICIE_INUNDABLE_E_ISLAS",
           "area_m2": 7194.9,
-          "confidence": 0.588,
+          "confidence": 0.582,
           "centroid_wgs84": [
             -60.548706,
             -31.660836
           ],
-          "t1_b11_median": 1986.1349,
+          "t1_b11_median": 2036.6343,
           "t1_scl_counts": {
-            "4": 27,
-            "5": 56
+            "4": 21,
+            "5": 53
           }
         },
         {
@@ -752,16 +786,16 @@
           "type": "apertura_camino_acceso",
           "zone": "PLANICIE_INUNDABLE_E_ISLAS",
           "area_m2": 59557.79,
-          "confidence": 0.693,
+          "confidence": 0.691,
           "centroid_wgs84": [
             -60.576818,
             -31.679345
           ],
-          "t1_b11_median": 2702.9807,
+          "t1_b11_median": 2674.4214,
           "t1_scl_counts": {
-            "4": 109,
-            "5": 476,
-            "7": 9
+            "4": 104,
+            "5": 478,
+            "7": 14
           }
         },
         {
@@ -774,10 +808,10 @@
             -60.654113,
             -31.715156
           ],
-          "t1_b11_median": 2543.2319,
+          "t1_b11_median": 2538.4702,
           "t1_scl_counts": {
             "4": 13,
-            "5": 546
+            "5": 551
           }
         },
         {
@@ -1045,8 +1079,8 @@
           ],
           "t1_b11_median": 3942.9792,
           "t1_scl_counts": {
-            "4": 12,
-            "5": 2014
+            "4": 13,
+            "5": 2013
           }
         },
         {
@@ -1059,11 +1093,11 @@
             -60.686279,
             -32.037373
           ],
-          "t1_b11_median": 110.6752,
+          "t1_b11_median": 110.5639,
           "t1_scl_counts": {
-            "4": 2,
-            "5": 84,
-            "6": 1595
+            "4": 12,
+            "5": 106,
+            "6": 1561
           }
         },
         {
@@ -1134,15 +1168,14 @@
           "type": "desmonte_ribera_acopio",
           "zone": "PLANICIE_INUNDABLE_E_ISLAS",
           "area_m2": 68311.24,
-          "confidence": 0.543,
+          "confidence": 0.542,
           "centroid_wgs84": [
             -60.736184,
             -32.090904
           ],
-          "t1_b11_median": 3059.3367,
+          "t1_b11_median": 3069.8374,
           "t1_scl_counts": {
-            "4": 1,
-            "5": 689
+            "5": 687
           }
         },
         {

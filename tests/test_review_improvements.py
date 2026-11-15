@@ -1,19 +1,22 @@
 """Tests unitarios para validar el cierre de los 8 puntos de la revisión técnica."""
 
 import asyncio
+import json
 import logging
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
+from unittest.mock import MagicMock, patch
 
+import httpx
 import numpy as np
 import pytest
 import rasterio
 from rasterio.transform import from_origin
 
 from src.config import settings
-from src.core.change_detector import detect_extraction_anomalies
-from src.core.hydrological_control import compute_turbidity_confounder_flag
+from src.core.change_detector import _build_coarse_location_uid, detect_extraction_anomalies
+from src.core.hydrological_control import compute_turbidity_confounder_flag, fetch_ina_stage_height
 from src.core.optical_providers import (
     _item_covers_bbox,
     _read_stac_asset_window_posgar,
@@ -58,6 +61,14 @@ def test_mcp_tool_search_multitemporal_pair_and_input_validation(
             max_lon=-60.53,
             max_lat=-31.64,
             lookback_years=0,
+        )
+    with pytest.raises(ValueError, match="t1_end_date inválido"):
+        tool_search_multitemporal_pair(
+            min_lon=-60.66,
+            min_lat=-31.74,
+            max_lon=-60.53,
+            max_lat=-31.64,
+            t1_end_date="fecha-invalida",
         )
 
     captured_calls: List[Dict[str, Any]] = []
@@ -215,11 +226,15 @@ def test_deterministic_candidate_uid_and_discarded_candidates_log(
     p2 = res2.features[0]["properties"]
     assert str(p1["candidate_uid"]).startswith("RIO-5347-")
     assert p1["candidate_uid"] == p2["candidate_uid"]
+    assert str(p1["coarse_location_uid"]).startswith("RIO-CELL100-5347-")
+    assert _build_coarse_location_uid(5347, 5446607.0, 6490103.0) == _build_coarse_location_uid(
+        5347, 5446628.0, 6490119.0
+    )
     assert p1["signal_score"] == p1["confidence"]
 
     cal_params = res1.metadata["calibration_parameters"]
     expected_cal = settings.get_calibration_parameters()
-    assert len(expected_cal) == 25
+    assert len(expected_cal) == 41
     assert cal_params == expected_cal
 
     # Registro explícito de descartados en migración natural de bancos
@@ -236,7 +251,7 @@ def test_deterministic_candidate_uid_and_discarded_candidates_log(
     bar_statuses = {d["filter_status"] for d in res_bar.metadata["discarded_candidates"]}
     assert "DESCARTADO_MIGRACION_BARRA" in bar_statuses
 
-    # Registro explícito de descartados en crecida hidrométrica uniforme
+    # Registro explícito de descartados en crecida hidrométrica uniforme + truncamiento y persistencia JSON
     sc_flood = synthetic_native_s2_scenarios["neg_uniform_stage_rise"]
     res_flood = detect_extraction_anomalies(
         t0_vnir_paths=sc_flood["t0"]["vnir_10m"],
@@ -244,10 +259,17 @@ def test_deterministic_candidate_uid_and_discarded_candidates_log(
         t0_swir_scl_paths=sc_flood["t0"]["swir_20m"],
         t1_swir_scl_path=sc_flood["t1"]["swir_20m"],
         work_dir=tmp_path / "run_flood",
+        max_discarded_records=1,
     )
     assert res_flood.metadata["candidate_count"] == 0
     assert res_flood.metadata["discarded_count"] >= 1
-    flood_statuses = {d["filter_status"] for d in res_flood.metadata["discarded_candidates"]}
+    assert len(res_flood.metadata["discarded_candidates"]) <= 1
+    assert res_flood.metadata["discarded_truncated"] is (res_flood.metadata["discarded_count"] > 1)
+    log_path = Path(res_flood.metadata["discarded_log_path"])
+    assert log_path.exists()
+    full_log = json.loads(log_path.read_text(encoding="utf-8"))
+    assert len(full_log) == res_flood.metadata["discarded_count"]
+    flood_statuses = {d["filter_status"] for d in full_log}
     assert "DESCARTADO_PULSO_HIDROMETRICO" in flood_statuses
 
 
@@ -345,3 +367,123 @@ def test_stac_network_query_and_resolution_degradation_warning(
     assert out_shape == (32, 32)
     assert arr.shape == (32, 32)
     assert any("max_master_side_px" in rec.message and rec.levelno == logging.WARNING for rec in caplog.records)
+
+
+def _write_local_s2_pair(
+    out_dir: Path,
+    prefix: str,
+    cube: np.ndarray,
+    scl: np.ndarray,
+    west: float,
+    north: float,
+) -> Tuple[Path, Path]:
+    out_dir.mkdir(parents=True, exist_ok=True)
+    h10, w10 = cube.shape[1], cube.shape[2]
+    h20, w20 = h10 // 2, w10 // 2
+    vnir_path = out_dir / f"{prefix}_vnir10m.tif"
+    swir_path = out_dir / f"{prefix}_swir_scl20m.tif"
+    with rasterio.open(
+        vnir_path,
+        "w",
+        driver="GTiff",
+        height=h10,
+        width=w10,
+        count=4,
+        dtype="float32",
+        crs=rasterio.crs.CRS.from_epsg(5347),
+        transform=from_origin(west, north, 10.0, 10.0),
+        nodata=-9999.0,
+    ) as dst:
+        dst.write(cube[:4].astype(np.float32))
+        dst.descriptions = ("B02", "B03", "B04", "B08")
+
+    b11_20 = cube[4].reshape(h20, 2, w20, 2).mean(axis=(1, 3)).astype(np.float32)
+    b12_20 = cube[5].reshape(h20, 2, w20, 2).mean(axis=(1, 3)).astype(np.float32)
+    scl_20 = scl[::2, ::2].astype(np.float32)
+    with rasterio.open(
+        swir_path,
+        "w",
+        driver="GTiff",
+        height=h20,
+        width=w20,
+        count=3,
+        dtype="float32",
+        crs=rasterio.crs.CRS.from_epsg(5347),
+        transform=from_origin(west, north, 20.0, 20.0),
+        nodata=-9999.0,
+    ) as dst:
+        dst.write(np.stack([b11_20, b12_20, scl_20], axis=0))
+        dst.descriptions = ("B11", "B12", "SCL")
+    return vnir_path, swir_path
+
+
+def test_discard_attribution_ignores_cloud_adjacency_and_ina_wrapper(tmp_path: Path) -> None:
+    """Verifica atribución exacta de descartes (compuerta mineral vs nube, turbidez) y wrapper INA."""
+    height, width = 60, 60
+    west, north = 5440500.0, 6356300.0
+    rr, cc = np.meshgrid(np.arange(height), np.arange(width), indexing="ij")
+
+    forest_sig = (350.0, 600.0, 400.0, 3800.0, 1400.0, 700.0)
+    water_sig = (700.0, 900.0, 600.0, 250.0, 150.0, 120.0)
+    dark_soil_sig = (250.0, 300.0, 380.0, 280.0, 500.0, 350.0)
+    wet_bar_t0_sig = (500.0, 900.0, 600.0, 700.0, 700.0, 500.0)
+    turbid_water_sig = (700.0, 950.0, 950.0, 250.0, 150.0, 120.0)
+
+    c0 = np.zeros((6, height, width), dtype=np.float32)
+    s0 = np.full((height, width), 4, dtype=np.int32)
+    for b_idx, val in enumerate(forest_sig):
+        c0[b_idx] = val
+
+    channel = (cc >= 2) & (cc < 18)
+    for b_idx, val in enumerate(water_sig):
+        c0[b_idx][channel] = val
+    s0[channel] = 6
+
+    # Barra húmeda en T0 (MNDWI_T0 = 0.125 en franja 0.05..0.20) situada en ribera_firme (> 300 m del cauce)
+    wet_bar_patch = (rr >= 34) & (rr < 42) & (cc >= 50) & (cc < 58)
+    for b_idx, val in enumerate(wet_bar_t0_sig):
+        c0[b_idx][wet_bar_patch] = val
+    s0[wet_bar_patch] = 5
+
+    c1, s1 = c0.copy(), s0.copy()
+
+    # Parche de desmonte que falla compuerta mineral (B11=500 < 600 DN) con SCL=5 y nube adyacente a <40m
+    mineral_patch = (rr >= 20) & (rr < 28) & (cc >= 22) & (cc < 30)
+    for b_idx, val in enumerate(dark_soil_sig):
+        c1[b_idx][mineral_patch] = val
+    s1[mineral_patch] = 5
+    # Nube en T1 a 20m del borde del parche (dilatación 40m lo solapa, pero SCL=9 está fuera del parche)
+    s1[(rr >= 18) & (rr < 20) & (cc >= 22) & (cc < 24)] = 9
+
+    # Misma barra húmeda recibe pulso de turbidez en T1 (|ΔB04| = 350 > 150 DN)
+    for b_idx, val in enumerate(turbid_water_sig):
+        c1[b_idx][wet_bar_patch] = val
+    s1[wet_bar_patch] = 6
+
+    t0_v, t0_s = _write_local_s2_pair(tmp_path / "attr_t0", "t0", c0, s0, west, north)
+    t1_v, t1_s = _write_local_s2_pair(tmp_path / "attr_t1", "t1", c1, s1, west, north)
+
+    res = detect_extraction_anomalies(
+        t0_vnir_paths=t0_v,
+        t1_vnir_path=t1_v,
+        t0_swir_scl_paths=t0_s,
+        t1_swir_scl_path=t1_s,
+        work_dir=tmp_path / "attr_work",
+    )
+    assert res.metadata["candidate_count"] == 0
+    statuses = [d["filter_status"] for d in res.metadata["discarded_candidates"]]
+    assert "DESCARTADO_COMPUERTA_MINERAL" in statuses
+    assert "DESCARTADO_NUBE_SOMBRA" not in statuses
+    assert "DESCARTADO_CONFUSOR_TURBIDEZ" in statuses
+
+    # Cobertura de wrapper fetch_ina_stage_height (dict payload y ConnectError)
+    mock_ok = MagicMock()
+    mock_ok.status_code = 200
+    mock_ok.json.return_value = {"data": [{"valor": 3.12}]}
+    with patch("src.core.hydrological_control.httpx.Client") as mock_client_cls:
+        mock_client_cls.return_value.__enter__.return_value.get.return_value = mock_ok
+        assert fetch_ina_stage_height(30, "2026-11-08") == 3.12
+
+    with patch("src.core.hydrological_control.httpx.Client") as mock_client_cls:
+        mock_client_cls.return_value.__enter__.return_value.get.side_effect = httpx.ConnectError("offline")
+        assert fetch_ina_stage_height(30, "2026-11-08") is None

@@ -125,15 +125,624 @@
       "ribera_firme": 0.2424
     },
     "calibration_parameters": {
+      "min_anomaly_area_m2": 1600.0,
       "bsi_reg_albedo_k": 800.0,
       "dark_water_min_b11_dn": 600.0,
       "dark_water_min_b04_dn": 420.0,
       "dark_water_min_b08_dn": 350.0,
+      "dark_water_min_b11_b03_ratio": 0.85,
       "scl7_min_b11_dn": 850.0,
       "scl7_min_b04_dn": 500.0,
-      "hydrometric_stage_rise_alert_m": 0.8
+      "hydrometric_stage_rise_alert_m": 0.8,
+      "moderate_stage_rise_m": 0.4,
+      "water_stage_warning_pct": 8.0,
+      "reach_water_mndwi_threshold": 0.15,
+      "systemic_stage_strong_pct": 12.0,
+      "shoreline_change_min_fraction": 0.25,
+      "flooded_min_delta_mndwi": 0.4,
+      "flooded_min_t1_mndwi": 0.2,
+      "clearing_min_delta_bsi_adj": 0.25,
+      "clearing_min_delta_bsi_reg": 0.18,
+      "clearing_min_t1_bsi_reg": 0.03,
+      "clearing_max_delta_ndvi_adj": -0.3,
+      "clearing_min_t1_bsi": -0.02,
+      "clearing_max_t1_mndwi": 0.1,
+      "road_min_elongation": 4.0,
+      "cloud_shadow_buffer_m": 40.0,
+      "turbidity_open_water_mndwi": 0.2,
+      "turbidity_wet_bar_mndwi": 0.05,
+      "turbidity_red_shift_dn": 150.0,
+      "turbidity_bright_bar_b04_dn": 750.0,
+      "geomorph_water_mndwi_min": 0.05,
+      "geomorph_min_channel_area_m2": 50000.0,
+      "geomorph_bar_max_ndvi": 0.25,
+      "geomorph_bar_max_dist_m": 300.0,
+      "geomorph_lagoon_buffer_m": 450.0,
+      "geomorph_island_max_dist_m": 2500.0,
+      "dipole_min_abs_delta_mndwi": 0.35,
+      "dipole_max_erosion_ndvi": 0.35,
+      "dipole_min_accretion_mndwi_t0": 0.05,
+      "dipole_min_area_ratio": 0.4,
+      "dipole_max_area_ratio": 2.5,
+      "dipole_max_span_m": 450.0,
+      "riparian_veg_min_ndvi_t0": 0.45
     },
     "candidate_count": 61,
+    "discarded_count": 38,
+    "discarded_truncated": false,
+    "discarded_log_path": "/Users/pablotempone/rio-alerta-mcp/data/experiments/exp_002_validation/work_aoi2_diamante/discarded_candidates_log.json",
+    "discarded_candidates": [
+      {
+        "candidate_uid": "RIO-5347-5429360-6454280-8088C22D",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 354460.85,
+        "centroid_posgar": [
+          5429359.09,
+          6454279.87
+        ],
+        "centroid_wgs84": [
+          -60.747979,
+          -32.050406
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5433120-6451200-8AC5FDA7",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_MIGRACION_BARRA",
+        "area_m2": 189479.07,
+        "centroid_posgar": [
+          5433123.86,
+          6451201.84
+        ],
+        "centroid_wgs84": [
+          -60.708332,
+          -32.07839
+        ],
+        "reason_detail": "Par dipolar de erosión/acreción natural de banco de arena."
+      },
+      {
+        "candidate_uid": "RIO-5347-5430990-6449220-99D4DDA7",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 88290.25,
+        "centroid_posgar": [
+          5430988.9,
+          6449223.91
+        ],
+        "centroid_wgs84": [
+          -60.731085,
+          -32.096098
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5429840-6449680-E9DF04F0",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 69892.28,
+        "centroid_posgar": [
+          5429835.55,
+          6449680.05
+        ],
+        "centroid_wgs84": [
+          -60.743269,
+          -32.091914
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5437100-6455980-6141E0F4",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 58793.51,
+        "centroid_posgar": [
+          5437096.42,
+          6455983.5
+        ],
+        "centroid_wgs84": [
+          -60.665946,
+          -32.0355
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5437140-6450520-7F707421",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 56493.76,
+        "centroid_posgar": [
+          5437141.11,
+          6450520.22
+        ],
+        "centroid_wgs84": [
+          -60.66583,
+          -32.084768
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5437510-6447510-535F85DB",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 48694.62,
+        "centroid_posgar": [
+          5437505.28,
+          6447512.57
+        ],
+        "centroid_wgs84": [
+          -60.662168,
+          -32.111909
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5432570-6456260-DDACDC16",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 31796.49,
+        "centroid_posgar": [
+          5432570.8,
+          6456261.49
+        ],
+        "centroid_wgs84": [
+          -60.713835,
+          -32.032733
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5433230-6448510-89B1D414",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 26097.12,
+        "centroid_posgar": [
+          5433231.38,
+          6448514.69
+        ],
+        "centroid_wgs84": [
+          -60.70738,
+          -32.102628
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5437930-6457030-EF183D89",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 21497.63,
+        "centroid_posgar": [
+          5437932.86,
+          6457033.71
+        ],
+        "centroid_wgs84": [
+          -60.657024,
+          -32.026076
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5436180-6452230-FD3FB0C5",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 16298.2,
+        "centroid_posgar": [
+          5436184.72,
+          6452227.12
+        ],
+        "centroid_wgs84": [
+          -60.675846,
+          -32.069322
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5433070-6454800-7FF4B06E",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 15198.32,
+        "centroid_posgar": [
+          5433072.31,
+          6454795.5
+        ],
+        "centroid_wgs84": [
+          -60.708628,
+          -32.045982
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5435090-6446650-FAFD03A1",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_MIGRACION_BARRA",
+        "area_m2": 12798.59,
+        "centroid_posgar": [
+          5435089.05,
+          6446651.7
+        ],
+        "centroid_wgs84": [
+          -60.687826,
+          -32.119536
+        ],
+        "reason_detail": "Par dipolar de erosión/acreción natural de banco de arena."
+      },
+      {
+        "candidate_uid": "RIO-5347-5436870-6448520-5C651ABE",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 9698.93,
+        "centroid_posgar": [
+          5436867.28,
+          6448524.12
+        ],
+        "centroid_wgs84": [
+          -60.668861,
+          -32.102752
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5435940-6452910-DEF25E51",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 9098.99,
+        "centroid_posgar": [
+          5435944.34,
+          6452908.66
+        ],
+        "centroid_wgs84": [
+          -60.678347,
+          -32.063163
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5437810-6453390-F239A71F",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_MIGRACION_BARRA",
+        "area_m2": 8199.09,
+        "centroid_posgar": [
+          5437812.83,
+          6453392.56
+        ],
+        "centroid_wgs84": [
+          -60.658529,
+          -32.058904
+        ],
+        "reason_detail": "Par dipolar de erosión/acreción natural de banco de arena."
+      },
+      {
+        "candidate_uid": "RIO-5347-5437190-6457460-1652510D",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 6799.25,
+        "centroid_posgar": [
+          5437193.88,
+          6457457.57
+        ],
+        "centroid_wgs84": [
+          -60.664818,
+          -32.022213
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5437440-6453110-3F54E567",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 6199.32,
+        "centroid_posgar": [
+          5437441.41,
+          6453109.75
+        ],
+        "centroid_wgs84": [
+          -60.662481,
+          -32.061433
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5432820-6448910-EAA626A8",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 4299.53,
+        "centroid_posgar": [
+          5432821.66,
+          6448905.41
+        ],
+        "centroid_wgs84": [
+          -60.711693,
+          -32.09908
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5435800-6453620-01F87DBA",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 4199.54,
+        "centroid_posgar": [
+          5435801.54,
+          6453618.8
+        ],
+        "centroid_wgs84": [
+          -60.679811,
+          -32.056751
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5437690-6451930-B6A8ECAB",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 3899.57,
+        "centroid_posgar": [
+          5437685.45,
+          6451934.16
+        ],
+        "centroid_wgs84": [
+          -60.659973,
+          -32.072048
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5437590-6454510-5CDBEB7B",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 3599.6,
+        "centroid_posgar": [
+          5437591.52,
+          6454509.75
+        ],
+        "centroid_wgs84": [
+          -60.6608,
+          -32.048817
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5433140-6450690-13445F60",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_MIGRACION_BARRA",
+        "area_m2": 3199.65,
+        "centroid_posgar": [
+          5433136.42,
+          6450688.84
+        ],
+        "centroid_wgs84": [
+          -60.708235,
+          -32.083017
+        ],
+        "reason_detail": "Par dipolar de erosión/acreción natural de banco de arena."
+      },
+      {
+        "candidate_uid": "RIO-5347-5433450-6451210-54AD0866",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 3099.66,
+        "centroid_posgar": [
+          5433454.69,
+          6451206.76
+        ],
+        "centroid_wgs84": [
+          -60.704828,
+          -32.078366
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5437600-6452200-FBB8BF1F",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 2999.67,
+        "centroid_posgar": [
+          5437598.63,
+          6452204.63
+        ],
+        "centroid_wgs84": [
+          -60.660875,
+          -32.069604
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5435820-6457710-1A52935B",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 2799.69,
+        "centroid_posgar": [
+          5435820.11,
+          6457706.72
+        ],
+        "centroid_wgs84": [
+          -60.679343,
+          -32.019889
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5434160-6457250-A68DE3DB",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_COMPUERTA_MINERAL",
+        "area_m2": 2699.7,
+        "centroid_posgar": [
+          5434163.93,
+          6457252.48
+        ],
+        "centroid_wgs84": [
+          -60.696903,
+          -32.02389
+        ],
+        "reason_detail": "Excluido por compuerta física de agua oscura / reflectancia mineral insuficiente (BSI_reg / B11 / B04 / B08)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5432850-6450700-B77B3A35",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_MIGRACION_BARRA",
+        "area_m2": 2599.71,
+        "centroid_posgar": [
+          5432852.64,
+          6450698.89
+        ],
+        "centroid_wgs84": [
+          -60.71124,
+          -32.08291
+        ],
+        "reason_detail": "Par dipolar de erosión/acreción natural de banco de arena."
+      },
+      {
+        "candidate_uid": "RIO-5347-5438150-6452220-DD15683B",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_MIGRACION_BARRA",
+        "area_m2": 2499.72,
+        "centroid_posgar": [
+          5438154.87,
+          6452217.3
+        ],
+        "centroid_wgs84": [
+          -60.654983,
+          -32.06952
+        ],
+        "reason_detail": "Par dipolar de erosión/acreción natural de banco de arena."
+      },
+      {
+        "candidate_uid": "RIO-5347-5435580-6457440-8887FF5B",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 2299.75,
+        "centroid_posgar": [
+          5435577.67,
+          6457444.1
+        ],
+        "centroid_wgs84": [
+          -60.681926,
+          -32.022244
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5435460-6455100-8FF4DD8F",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 2299.75,
+        "centroid_posgar": [
+          5435456.38,
+          6455097.5
+        ],
+        "centroid_wgs84": [
+          -60.683367,
+          -32.043397
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5435970-6457600-6629C955",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 2199.76,
+        "centroid_posgar": [
+          5435967.12,
+          6457600.76
+        ],
+        "centroid_wgs84": [
+          -60.677794,
+          -32.020853
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5431920-6456950-08A75252",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_MIGRACION_BARRA",
+        "area_m2": 2099.77,
+        "centroid_posgar": [
+          5431917.71,
+          6456948.82
+        ],
+        "centroid_wgs84": [
+          -60.7207,
+          -32.026496
+        ],
+        "reason_detail": "Par dipolar de erosión/acreción natural de banco de arena."
+      },
+      {
+        "candidate_uid": "RIO-5347-5433110-6455190-3382ABCD",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 2099.77,
+        "centroid_posgar": [
+          5433108.6,
+          6455192.72
+        ],
+        "centroid_wgs84": [
+          -60.708216,
+          -32.042402
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5437890-6456700-DB6112AF",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 1999.78,
+        "centroid_posgar": [
+          5437885.78,
+          6456703.29
+        ],
+        "centroid_wgs84": [
+          -60.657543,
+          -32.029053
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5432990-6450810-6D376133",
+        "anomaly_type": "frente_excavacion_inundado",
+        "filter_status": "DESCARTADO_PULSO_HIDROMETRICO",
+        "area_m2": 1799.8,
+        "centroid_posgar": [
+          5432988.44,
+          6450814.77
+        ],
+        "centroid_wgs84": [
+          -60.709793,
+          -32.081873
+        ],
+        "reason_detail": "Cinturón de crecida/bajante uniforme o inundación en cauce/planicie aluvial."
+      },
+      {
+        "candidate_uid": "RIO-5347-5432210-6456910-7E389E9A",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 1699.81,
+        "centroid_posgar": [
+          5432207.25,
+          6456911.27
+        ],
+        "centroid_wgs84": [
+          -60.717638,
+          -32.026851
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      },
+      {
+        "candidate_uid": "RIO-5347-5437730-6454510-21C76A33",
+        "anomaly_type": "desmonte_ribera_acopio",
+        "filter_status": "DESCARTADO_NUBE_SOMBRA",
+        "area_m2": 1699.81,
+        "centroid_posgar": [
+          5437728.12,
+          6454513.1
+        ],
+        "centroid_wgs84": [
+          -60.659354,
+          -32.048794
+        ],
+        "reason_detail": "Excluido por compuerta SCL en T1 (agua SCL=6 o borde mixto SCL=7 sin reflectancia mineral suficiente)."
+      }
+    ],
     "institutional_note": "Las geometrías detectadas son anomalías morfológicas candidatas; no constituyen por sí solas infracción ni extracción ilegal sin cruce catastral oficial y revisión humana."
   },
   "features": [
@@ -1297,8 +1906,11 @@
       },
       "properties": {
         "id": "RIO-0001",
+        "candidate_uid": "RIO-5347-5437510-6447370-FEAA74FA",
+        "coarse_location_uid": "RIO-CELL100-5347-5437500-6447400",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.818,
+        "signal_score": 0.818,
         "area_m2": 315001.85,
         "area_ha": 31.5002,
         "rectangularity": 0.394,
@@ -1428,8 +2040,11 @@
       },
       "properties": {
         "id": "RIO-0002",
+        "candidate_uid": "RIO-5347-5436770-6448430-78C26A27",
+        "coarse_location_uid": "RIO-CELL100-5347-5436800-6448400",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.76,
+        "signal_score": 0.76,
         "area_m2": 1850.3,
         "area_ha": 0.185,
         "rectangularity": 0.569,
@@ -1602,15 +2217,18 @@
       },
       "properties": {
         "id": "RIO-0003",
+        "candidate_uid": "RIO-5347-5429470-6449730-509823D1",
+        "coarse_location_uid": "RIO-CELL100-5347-5429500-6449700",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.795,
+        "signal_score": 0.795,
         "area_m2": 22453.7,
         "area_ha": 2.2454,
         "rectangularity": 0.721,
         "elongation": 2.243,
-        "delta_mndwi_mean": 0.624,
-        "delta_bsi_mean": 0.0236,
-        "delta_ndvi_mean": -0.5511,
+        "delta_mndwi_mean": 0.6235,
+        "delta_bsi_mean": 0.0298,
+        "delta_ndvi_mean": -0.5542,
         "bbox_posgar": [
           5429409.752831493,
           6449606.726414366,
@@ -1629,22 +2247,22 @@
         "effective_resolution_m": 20.013954982963806,
         "natural_filter_status": "CANDIDATO_RESIDUAL",
         "geomorphological_zone": "PLANICIE_INUNDABLE_E_ISLAS",
-        "distance_to_water_t0_m": 136.0,
+        "distance_to_water_t0_m": 130.0,
         "spectral_stats": {
           "area_method": "shapely_polygon_posgar_2007",
           "pixel_count_10m": 227,
           "effective_swir_pixels_20m": 56.75,
           "t0_b11_median": 470.7045,
           "t1_b11_median": 137.4463,
-          "t1_b04_median": 697.7399,
-          "t0_ndvi_median": 0.2146,
-          "t1_ndvi_median": -0.4295,
+          "t1_b04_median": 697.0059,
+          "t0_ndvi_median": 0.2479,
+          "t1_ndvi_median": -0.4284,
           "t0_bsi_median": -0.0527,
-          "t1_bsi_median": 0.0905,
+          "t1_bsi_median": 0.0895,
           "t1_mndwi_median": 0.659,
           "t1_scl_counts": {
-            "5": 18,
-            "6": 209
+            "5": 14,
+            "6": 213
           }
         },
         "uncertainty": {
@@ -2569,8 +3187,11 @@
       },
       "properties": {
         "id": "RIO-0004",
+        "candidate_uid": "RIO-5347-5436900-6450830-C2D45CA7",
+        "coarse_location_uid": "RIO-CELL100-5347-5436900-6450800",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.761,
+        "signal_score": 0.761,
         "area_m2": 140323.1,
         "area_ha": 14.0323,
         "rectangularity": 0.205,
@@ -2776,8 +3397,11 @@
       },
       "properties": {
         "id": "RIO-0005",
+        "candidate_uid": "RIO-5347-5430190-6452180-8E7BA92F",
+        "coarse_location_uid": "RIO-CELL100-5347-5430200-6452200",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.736,
+        "signal_score": 0.736,
         "area_m2": 10701.76,
         "area_ha": 1.0702,
         "rectangularity": 0.519,
@@ -2998,8 +3622,11 @@
       },
       "properties": {
         "id": "RIO-0006",
+        "candidate_uid": "RIO-5347-5429640-6452180-379F58F1",
+        "coarse_location_uid": "RIO-CELL100-5347-5429600-6452200",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.679,
+        "signal_score": 0.679,
         "area_m2": 11651.92,
         "area_ha": 1.1652,
         "rectangularity": 0.548,
@@ -3548,15 +4175,18 @@
       },
       "properties": {
         "id": "RIO-0007",
+        "candidate_uid": "RIO-5347-5436200-6452120-4F56B663",
+        "coarse_location_uid": "RIO-CELL100-5347-5436200-6452100",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.878,
+        "signal_score": 0.878,
         "area_m2": 45407.47,
         "area_ha": 4.5407,
         "rectangularity": 0.592,
         "elongation": 10.98,
-        "delta_mndwi_mean": 1.1265,
-        "delta_bsi_mean": 0.0222,
-        "delta_ndvi_mean": -0.8485,
+        "delta_mndwi_mean": 1.1286,
+        "delta_bsi_mean": -0.0234,
+        "delta_ndvi_mean": -0.756,
         "bbox_posgar": [
           5435989.389475222,
           6451727.192509482,
@@ -3578,19 +4208,19 @@
         "distance_to_water_t0_m": 10.0,
         "spectral_stats": {
           "area_method": "shapely_polygon_posgar_2007",
-          "pixel_count_10m": 448,
-          "effective_swir_pixels_20m": 112.0,
-          "t0_b11_median": 1783.5809,
-          "t1_b11_median": 83.8877,
-          "t1_b04_median": 852.3687,
-          "t0_ndvi_median": 0.5409,
-          "t1_ndvi_median": -0.5131,
-          "t0_bsi_median": -0.0387,
-          "t1_bsi_median": 0.142,
-          "t1_mndwi_median": 0.786,
+          "pixel_count_10m": 455,
+          "effective_swir_pixels_20m": 113.75,
+          "t0_b11_median": 1613.6407,
+          "t1_b11_median": 68.4994,
+          "t1_b04_median": 851.2203,
+          "t0_ndvi_median": 0.463,
+          "t1_ndvi_median": -0.5202,
+          "t0_bsi_median": -0.0206,
+          "t1_bsi_median": 0.1365,
+          "t1_mndwi_median": 0.8199,
           "t1_scl_counts": {
-            "5": 87,
-            "6": 361
+            "5": 43,
+            "6": 412
           }
         },
         "uncertainty": {
@@ -3759,8 +4389,11 @@
       },
       "properties": {
         "id": "RIO-0008",
+        "candidate_uid": "RIO-5347-5429290-6453900-A1C24DDA",
+        "coarse_location_uid": "RIO-CELL100-5347-5429300-6453900",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.897,
+        "signal_score": 0.897,
         "area_m2": 32405.33,
         "area_ha": 3.2405,
         "rectangularity": 0.657,
@@ -3881,15 +4514,18 @@
       },
       "properties": {
         "id": "RIO-0009",
+        "candidate_uid": "RIO-5347-5441080-6455060-E307C3CF",
+        "coarse_location_uid": "RIO-CELL100-5347-5441100-6455100",
         "anomaly_type": "frente_excavacion_inundado",
-        "confidence": 0.751,
+        "confidence": 0.747,
+        "signal_score": 0.747,
         "area_m2": 4000.66,
         "area_ha": 0.4001,
         "rectangularity": 0.516,
         "elongation": 6.198,
-        "delta_mndwi_mean": 0.6486,
-        "delta_bsi_mean": -0.2577,
-        "delta_ndvi_mean": -0.1635,
+        "delta_mndwi_mean": 0.6434,
+        "delta_bsi_mean": -0.244,
+        "delta_ndvi_mean": -0.1821,
         "bbox_posgar": [
           5440979.113920847,
           6455047.92243202,
@@ -3908,19 +4544,19 @@
         "effective_resolution_m": 20.013954982963806,
         "natural_filter_status": "CANDIDATO_RESIDUAL",
         "geomorphological_zone": "PLANICIE_INUNDABLE_E_ISLAS",
-        "distance_to_water_t0_m": 554.6,
+        "distance_to_water_t0_m": 563.6,
         "spectral_stats": {
           "area_method": "shapely_polygon_posgar_2007",
           "pixel_count_10m": 54,
           "effective_swir_pixels_20m": 13.5,
-          "t0_b11_median": 1729.7905,
-          "t1_b11_median": 287.5594,
-          "t1_b04_median": 705.6235,
-          "t0_ndvi_median": 0.1646,
-          "t1_ndvi_median": -0.1476,
-          "t0_bsi_median": 0.1421,
-          "t1_bsi_median": 0.0726,
-          "t1_mndwi_median": 0.2952,
+          "t0_b11_median": 1702.6326,
+          "t1_b11_median": 286.2859,
+          "t1_b04_median": 702.0305,
+          "t0_ndvi_median": 0.1641,
+          "t1_ndvi_median": -0.1876,
+          "t0_bsi_median": 0.1429,
+          "t1_bsi_median": 0.0794,
+          "t1_mndwi_median": 0.2992,
           "t1_scl_counts": {
             "5": 15,
             "6": 39
@@ -4020,8 +4656,11 @@
       },
       "properties": {
         "id": "RIO-0010",
+        "candidate_uid": "RIO-5347-5432800-6455260-C9002CBA",
+        "coarse_location_uid": "RIO-CELL100-5347-5432800-6455300",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.809,
+        "signal_score": 0.809,
         "area_m2": 2150.35,
         "area_ha": 0.215,
         "rectangularity": 0.582,
@@ -4147,8 +4786,11 @@
       },
       "properties": {
         "id": "RIO-0011",
+        "candidate_uid": "RIO-5347-5434180-6456110-D514D707",
+        "coarse_location_uid": "RIO-CELL100-5347-5434200-6456100",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.901,
+        "signal_score": 0.901,
         "area_m2": 3900.64,
         "area_ha": 0.3901,
         "rectangularity": 0.671,
@@ -4665,15 +5307,18 @@
       },
       "properties": {
         "id": "RIO-0012",
+        "candidate_uid": "RIO-5347-5435180-6455760-DE7D355A",
+        "coarse_location_uid": "RIO-CELL100-5347-5435200-6455800",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.859,
+        "signal_score": 0.859,
         "area_m2": 167027.49,
         "area_ha": 16.7027,
         "rectangularity": 0.531,
         "elongation": 3.288,
-        "delta_mndwi_mean": 0.8054,
-        "delta_bsi_mean": -0.0336,
-        "delta_ndvi_mean": -0.3958,
+        "delta_mndwi_mean": 0.8063,
+        "delta_bsi_mean": -0.0354,
+        "delta_ndvi_mean": -0.3904,
         "bbox_posgar": [
           5434859.451875311,
           6455367.9927860005,
@@ -4692,23 +5337,23 @@
         "effective_resolution_m": 20.013954982963806,
         "natural_filter_status": "CANDIDATO_RESIDUAL",
         "geomorphological_zone": "PLANICIE_INUNDABLE_E_ISLAS",
-        "distance_to_water_t0_m": 183.8,
+        "distance_to_water_t0_m": 174.6,
         "spectral_stats": {
           "area_method": "shapely_polygon_posgar_2007",
-          "pixel_count_10m": 1681,
-          "effective_swir_pixels_20m": 420.25,
-          "t0_b11_median": 749.0074,
-          "t1_b11_median": 110.6752,
-          "t1_b04_median": 1934.6721,
+          "pixel_count_10m": 1679,
+          "effective_swir_pixels_20m": 419.75,
+          "t0_b11_median": 742.6391,
+          "t1_b11_median": 110.5639,
+          "t1_b04_median": 1934.6801,
           "t0_ndvi_median": 0.5424,
           "t1_ndvi_median": -0.2372,
-          "t0_bsi_median": -0.2117,
-          "t1_bsi_median": -0.0195,
-          "t1_mndwi_median": 0.8588,
+          "t0_bsi_median": -0.2166,
+          "t1_bsi_median": -0.0199,
+          "t1_mndwi_median": 0.8589,
           "t1_scl_counts": {
-            "4": 2,
-            "5": 84,
-            "6": 1595
+            "4": 12,
+            "5": 106,
+            "6": 1561
           }
         },
         "uncertainty": {
@@ -4801,8 +5446,11 @@
       },
       "properties": {
         "id": "RIO-0013",
+        "candidate_uid": "RIO-5347-5439200-6456320-250135BF",
+        "coarse_location_uid": "RIO-CELL100-5347-5439200-6456300",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.829,
+        "signal_score": 0.829,
         "area_m2": 2100.35,
         "area_ha": 0.21,
         "rectangularity": 0.455,
@@ -4984,8 +5632,11 @@
       },
       "properties": {
         "id": "RIO-0014",
+        "candidate_uid": "RIO-5347-5440880-6456250-F3D20E88",
+        "coarse_location_uid": "RIO-CELL100-5347-5440900-6456300",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.785,
+        "signal_score": 0.785,
         "area_m2": 17352.86,
         "area_ha": 1.7353,
         "rectangularity": 0.59,
@@ -5207,8 +5858,11 @@
       },
       "properties": {
         "id": "RIO-0015",
+        "candidate_uid": "RIO-5347-5439420-6456540-A2051BC3",
+        "coarse_location_uid": "RIO-CELL100-5347-5439400-6456500",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.813,
+        "signal_score": 0.813,
         "area_m2": 13852.28,
         "area_ha": 1.3852,
         "rectangularity": 0.378,
@@ -5458,8 +6112,11 @@
       },
       "properties": {
         "id": "RIO-0016",
+        "candidate_uid": "RIO-5347-5434830-6456440-0AC924EC",
+        "coarse_location_uid": "RIO-CELL100-5347-5434800-6456400",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.813,
+        "signal_score": 0.813,
         "area_m2": 34555.69,
         "area_ha": 3.4556,
         "rectangularity": 0.376,
@@ -5813,8 +6470,11 @@
       },
       "properties": {
         "id": "RIO-0017",
+        "candidate_uid": "RIO-5347-5439550-6456850-99861CF5",
+        "coarse_location_uid": "RIO-CELL100-5347-5439600-6456800",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.866,
+        "signal_score": 0.866,
         "area_m2": 65360.76,
         "area_ha": 6.5361,
         "rectangularity": 0.553,
@@ -6016,8 +6676,11 @@
       },
       "properties": {
         "id": "RIO-0018",
+        "candidate_uid": "RIO-5347-5432210-6457000-C7AFE6E9",
+        "coarse_location_uid": "RIO-CELL100-5347-5432200-6457000",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.874,
+        "signal_score": 0.874,
         "area_m2": 15702.58,
         "area_ha": 1.5703,
         "rectangularity": 0.581,
@@ -6163,15 +6826,18 @@
       },
       "properties": {
         "id": "RIO-0019",
+        "candidate_uid": "RIO-5347-5439300-6457230-B9679902",
+        "coarse_location_uid": "RIO-CELL100-5347-5439300-6457200",
         "anomaly_type": "frente_excavacion_inundado",
-        "confidence": 0.847,
+        "confidence": 0.841,
+        "signal_score": 0.841,
         "area_m2": 5950.98,
         "area_ha": 0.5951,
         "rectangularity": 0.591,
         "elongation": 2.035,
-        "delta_mndwi_mean": 0.7559,
-        "delta_bsi_mean": -0.0191,
-        "delta_ndvi_mean": -0.4745,
+        "delta_mndwi_mean": 0.7465,
+        "delta_bsi_mean": -0.018,
+        "delta_ndvi_mean": -0.4726,
         "bbox_posgar": [
           5439259.208901513,
           6457168.388527136,
@@ -6190,22 +6856,22 @@
         "effective_resolution_m": 20.013954982963806,
         "natural_filter_status": "CANDIDATO_RESIDUAL",
         "geomorphological_zone": "PLANICIE_INUNDABLE_E_ISLAS",
-        "distance_to_water_t0_m": 291.5,
+        "distance_to_water_t0_m": 300.6,
         "spectral_stats": {
           "area_method": "shapely_polygon_posgar_2007",
           "pixel_count_10m": 60,
           "effective_swir_pixels_20m": 15.0,
-          "t0_b11_median": 1591.2996,
-          "t1_b11_median": 211.3864,
-          "t1_b04_median": 347.0007,
-          "t0_ndvi_median": 0.7444,
-          "t1_ndvi_median": 0.1241,
-          "t0_bsi_median": -0.2886,
-          "t1_bsi_median": -0.1326,
+          "t0_b11_median": 1591.8926,
+          "t1_b11_median": 210.2965,
+          "t1_b04_median": 347.0207,
+          "t0_ndvi_median": 0.7445,
+          "t1_ndvi_median": 0.1278,
+          "t0_bsi_median": -0.2897,
+          "t1_bsi_median": -0.1356,
           "t1_mndwi_median": 0.2925,
           "t1_scl_counts": {
-            "5": 14,
-            "6": 46
+            "5": 10,
+            "6": 50
           }
         },
         "uncertainty": {
@@ -6342,8 +7008,11 @@
       },
       "properties": {
         "id": "RIO-0020",
+        "candidate_uid": "RIO-5347-5439670-6457260-27D45DCA",
+        "coarse_location_uid": "RIO-CELL100-5347-5439700-6457300",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.876,
+        "signal_score": 0.876,
         "area_m2": 11251.85,
         "area_ha": 1.1252,
         "rectangularity": 0.586,
@@ -6881,8 +7550,11 @@
       },
       "properties": {
         "id": "RIO-0021",
+        "candidate_uid": "RIO-5347-5440530-6457040-C3E8F6C4",
+        "coarse_location_uid": "RIO-CELL100-5347-5440500-6457000",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.854,
+        "signal_score": 0.854,
         "area_m2": 105217.32,
         "area_ha": 10.5217,
         "rectangularity": 0.514,
@@ -6996,8 +7668,11 @@
       },
       "properties": {
         "id": "RIO-0022",
+        "candidate_uid": "RIO-5347-5433710-6457480-26CD3547",
+        "coarse_location_uid": "RIO-CELL100-5347-5433700-6457500",
         "anomaly_type": "frente_excavacion_inundado",
         "confidence": 0.865,
+        "signal_score": 0.865,
         "area_m2": 2250.37,
         "area_ha": 0.225,
         "rectangularity": 0.551,
@@ -7119,15 +7794,18 @@
       },
       "properties": {
         "id": "RIO-0023",
+        "candidate_uid": "RIO-5347-5439610-6457530-B268F703",
+        "coarse_location_uid": "RIO-CELL100-5347-5439600-6457500",
         "anomaly_type": "frente_excavacion_inundado",
-        "confidence": 0.604,
+        "confidence": 0.595,
+        "signal_score": 0.595,
         "area_m2": 2000.33,
         "area_ha": 0.2,
         "rectangularity": 0.459,
         "elongation": 6.343,
-        "delta_mndwi_mean": 0.4596,
-        "delta_bsi_mean": -0.1414,
-        "delta_ndvi_mean": -0.2894,
+        "delta_mndwi_mean": 0.4471,
+        "delta_bsi_mean": -0.1298,
+        "delta_ndvi_mean": -0.2767,
         "bbox_posgar": [
           5439539.193439544,
           6457478.4566825535,
@@ -7146,22 +7824,22 @@
         "effective_resolution_m": 20.013954982963806,
         "natural_filter_status": "CANDIDATO_RESIDUAL",
         "geomorphological_zone": "PLANICIE_INUNDABLE_E_ISLAS",
-        "distance_to_water_t0_m": 636.0,
+        "distance_to_water_t0_m": 645.6,
         "spectral_stats": {
           "area_method": "shapely_polygon_posgar_2007",
-          "pixel_count_10m": 23,
-          "effective_swir_pixels_20m": 5.75,
-          "t0_b11_median": 467.6829,
-          "t1_b11_median": 315.5016,
-          "t1_b04_median": 1028.5518,
-          "t0_ndvi_median": 0.2145,
-          "t1_ndvi_median": -0.2162,
-          "t0_bsi_median": 0.0582,
-          "t1_bsi_median": 0.0881,
-          "t1_mndwi_median": 0.3538,
+          "pixel_count_10m": 22,
+          "effective_swir_pixels_20m": 5.5,
+          "t0_b11_median": 422.9397,
+          "t1_b11_median": 287.5698,
+          "t1_b04_median": 1028.4749,
+          "t0_ndvi_median": 0.2019,
+          "t1_ndvi_median": -0.2184,
+          "t0_bsi_median": 0.0209,
+          "t1_bsi_median": 0.0777,
+          "t1_mndwi_median": 0.4021,
           "t1_scl_counts": {
-            "5": 19,
-            "6": 4
+            "5": 13,
+            "6": 9
           }
         },
         "uncertainty": {
@@ -7350,8 +8028,11 @@
       },
       "properties": {
         "id": "RIO-0024",
+        "candidate_uid": "RIO-5347-5436970-6446710-1A12AC9F",
+        "coarse_location_uid": "RIO-CELL100-5347-5437000-6446700",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.631,
+        "signal_score": 0.631,
         "area_m2": 12502.06,
         "area_ha": 1.2502,
         "rectangularity": 0.44,
@@ -7489,15 +8170,18 @@
       },
       "properties": {
         "id": "RIO-0025",
+        "candidate_uid": "RIO-5347-5432750-6446780-936ED436",
+        "coarse_location_uid": "RIO-CELL100-5347-5432700-6446800",
         "anomaly_type": "desmonte_ribera_acopio",
-        "confidence": 0.574,
+        "confidence": 0.57,
+        "signal_score": 0.57,
         "area_m2": 2550.42,
         "area_ha": 0.255,
         "rectangularity": 0.48,
         "elongation": 3.346,
-        "delta_mndwi_mean": -0.0342,
-        "delta_bsi_mean": 0.2943,
-        "delta_ndvi_mean": -0.3165,
+        "delta_mndwi_mean": -0.0465,
+        "delta_bsi_mean": 0.296,
+        "delta_ndvi_mean": -0.3066,
         "bbox_posgar": [
           5432719.570048931,
           6446716.091029987,
@@ -7516,21 +8200,21 @@
         "effective_resolution_m": 20.013954982963806,
         "natural_filter_status": "CANDIDATO_RESIDUAL",
         "geomorphological_zone": "PLANICIE_INUNDABLE_E_ISLAS",
-        "distance_to_water_t0_m": 622.9,
+        "distance_to_water_t0_m": 613.5,
         "spectral_stats": {
           "area_method": "shapely_polygon_posgar_2007",
-          "pixel_count_10m": 26,
-          "effective_swir_pixels_20m": 6.5,
-          "t0_b11_median": 2321.665,
-          "t1_b11_median": 3562.1572,
-          "t1_b04_median": 1124.5115,
-          "t0_ndvi_median": 0.83,
-          "t1_ndvi_median": 0.3658,
-          "t0_bsi_median": -0.251,
-          "t1_bsi_median": 0.2087,
-          "t1_mndwi_median": -0.6077,
+          "pixel_count_10m": 27,
+          "effective_swir_pixels_20m": 6.75,
+          "t0_b11_median": 2288.7759,
+          "t1_b11_median": 3500.6816,
+          "t1_b04_median": 1070.5029,
+          "t0_ndvi_median": 0.8241,
+          "t1_ndvi_median": 0.3749,
+          "t0_bsi_median": -0.2531,
+          "t1_bsi_median": 0.2092,
+          "t1_mndwi_median": -0.6115,
           "t1_scl_counts": {
-            "5": 26
+            "5": 27
           }
         },
         "uncertainty": {
@@ -7623,15 +8307,18 @@
       },
       "properties": {
         "id": "RIO-0026",
+        "candidate_uid": "RIO-5347-5431930-6446800-B1E56FDE",
+        "coarse_location_uid": "RIO-CELL100-5347-5431900-6446800",
         "anomaly_type": "apertura_camino_acceso",
-        "confidence": 0.581,
+        "confidence": 0.587,
+        "signal_score": 0.587,
         "area_m2": 2300.38,
         "area_ha": 0.23,
         "rectangularity": 0.485,
         "elongation": 6.224,
-        "delta_mndwi_mean": -0.0614,
-        "delta_bsi_mean": 0.2765,
-        "delta_ndvi_mean": -0.3463,
+        "delta_mndwi_mean": -0.0533,
+        "delta_bsi_mean": 0.2915,
+        "delta_ndvi_mean": -0.3439,
         "bbox_posgar": [
           5431909.614778198,
           6446706.088831425,
@@ -7650,19 +8337,19 @@
         "effective_resolution_m": 20.013954982963806,
         "natural_filter_status": "CANDIDATO_RESIDUAL",
         "geomorphological_zone": "PLANICIE_INUNDABLE_E_ISLAS",
-        "distance_to_water_t0_m": 1432.6,
+        "distance_to_water_t0_m": 1422.7,
         "spectral_stats": {
           "area_method": "shapely_polygon_posgar_2007",
           "pixel_count_10m": 24,
           "effective_swir_pixels_20m": 6.0,
-          "t0_b11_median": 2284.7544,
-          "t1_b11_median": 3434.1216,
-          "t1_b04_median": 1141.1086,
-          "t0_ndvi_median": 0.8075,
-          "t1_ndvi_median": 0.3088,
-          "t0_bsi_median": -0.2112,
-          "t1_bsi_median": 0.2366,
-          "t1_mndwi_median": -0.6136,
+          "t0_b11_median": 2303.8137,
+          "t1_b11_median": 3414.79,
+          "t1_b04_median": 1141.1453,
+          "t0_ndvi_median": 0.8263,
+          "t1_ndvi_median": 0.3214,
+          "t0_bsi_median": -0.2382,
+          "t1_bsi_median": 0.2278,
+          "t1_mndwi_median": -0.612,
           "t1_scl_counts": {
             "5": 24
           }
@@ -7765,8 +8452,11 @@
       },
       "properties": {
         "id": "RIO-0027",
+        "candidate_uid": "RIO-5347-5432450-6446860-239F2FA6",
+        "coarse_location_uid": "RIO-CELL100-5347-5432400-6446900",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.65,
+        "signal_score": 0.65,
         "area_m2": 2700.44,
         "area_ha": 0.27,
         "rectangularity": 0.614,
@@ -7883,8 +8573,11 @@
       },
       "properties": {
         "id": "RIO-0028",
+        "candidate_uid": "RIO-5347-5433650-6447310-DFF82DC8",
+        "coarse_location_uid": "RIO-CELL100-5347-5433700-6447300",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.587,
+        "signal_score": 0.587,
         "area_m2": 1600.26,
         "area_ha": 0.16,
         "rectangularity": 0.526,
@@ -8021,8 +8714,11 @@
       },
       "properties": {
         "id": "RIO-0029",
+        "candidate_uid": "RIO-5347-5435520-6447960-3212DAFA",
+        "coarse_location_uid": "RIO-CELL100-5347-5435500-6448000",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.599,
+        "signal_score": 0.599,
         "area_m2": 4100.67,
         "area_ha": 0.4101,
         "rectangularity": 0.547,
@@ -8151,8 +8847,11 @@
       },
       "properties": {
         "id": "RIO-0030",
+        "candidate_uid": "RIO-5347-5439860-6448020-81D1F8FD",
+        "coarse_location_uid": "RIO-CELL100-5347-5439900-6448000",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.67,
+        "signal_score": 0.67,
         "area_m2": 1950.32,
         "area_ha": 0.195,
         "rectangularity": 0.635,
@@ -8329,8 +9028,11 @@
       },
       "properties": {
         "id": "RIO-0031",
+        "candidate_uid": "RIO-5347-5439910-6448160-6455553E",
+        "coarse_location_uid": "RIO-CELL100-5347-5439900-6448200",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.702,
+        "signal_score": 0.702,
         "area_m2": 15452.54,
         "area_ha": 1.5453,
         "rectangularity": 0.659,
@@ -8459,8 +9161,11 @@
       },
       "properties": {
         "id": "RIO-0032",
+        "candidate_uid": "RIO-5347-5431650-6448290-AF8ECD07",
+        "coarse_location_uid": "RIO-CELL100-5347-5431600-6448300",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.591,
+        "signal_score": 0.591,
         "area_m2": 2400.4,
         "area_ha": 0.24,
         "rectangularity": 0.533,
@@ -8681,8 +9386,11 @@
       },
       "properties": {
         "id": "RIO-0033",
+        "candidate_uid": "RIO-5347-5442020-6448270-D5690ACD",
+        "coarse_location_uid": "RIO-CELL100-5347-5442000-6448300",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.868,
+        "signal_score": 0.868,
         "area_m2": 28554.7,
         "area_ha": 2.8555,
         "rectangularity": 0.824,
@@ -8816,8 +9524,11 @@
       },
       "properties": {
         "id": "RIO-0034",
+        "candidate_uid": "RIO-5347-5439820-6448480-457E3AA6",
+        "coarse_location_uid": "RIO-CELL100-5347-5439800-6448500",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.58,
+        "signal_score": 0.58,
         "area_m2": 3050.5,
         "area_ha": 0.3051,
         "rectangularity": 0.508,
@@ -8958,8 +9669,11 @@
       },
       "properties": {
         "id": "RIO-0035",
+        "candidate_uid": "RIO-5347-5441860-6448530-834B5321",
+        "coarse_location_uid": "RIO-CELL100-5347-5441900-6448500",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.657,
+        "signal_score": 0.657,
         "area_m2": 6501.07,
         "area_ha": 0.6501,
         "rectangularity": 0.679,
@@ -9129,8 +9843,11 @@
       },
       "properties": {
         "id": "RIO-0036",
+        "candidate_uid": "RIO-5347-5441710-6448570-69B780FC",
+        "coarse_location_uid": "RIO-CELL100-5347-5441700-6448600",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.692,
+        "signal_score": 0.692,
         "area_m2": 12852.12,
         "area_ha": 1.2852,
         "rectangularity": 0.748,
@@ -9283,8 +10000,11 @@
       },
       "properties": {
         "id": "RIO-0037",
+        "candidate_uid": "RIO-5347-5440990-6448720-585FD10B",
+        "coarse_location_uid": "RIO-CELL100-5347-5441000-6448700",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.694,
+        "signal_score": 0.694,
         "area_m2": 7451.23,
         "area_ha": 0.7451,
         "rectangularity": 0.637,
@@ -10142,8 +10862,11 @@
       },
       "properties": {
         "id": "RIO-0038",
+        "candidate_uid": "RIO-5347-5441400-6448370-A25BD166",
+        "coarse_location_uid": "RIO-CELL100-5347-5441400-6448400",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.8,
+        "signal_score": 0.8,
         "area_m2": 261693.07,
         "area_ha": 26.1693,
         "rectangularity": 0.575,
@@ -10277,8 +11000,11 @@
       },
       "properties": {
         "id": "RIO-0039",
+        "candidate_uid": "RIO-5347-5440650-6448970-152E04FE",
+        "coarse_location_uid": "RIO-CELL100-5347-5440700-6449000",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.648,
+        "signal_score": 0.648,
         "area_m2": 5600.92,
         "area_ha": 0.5601,
         "rectangularity": 0.601,
@@ -10628,8 +11354,11 @@
       },
       "properties": {
         "id": "RIO-0040",
+        "candidate_uid": "RIO-5347-5440850-6448890-7A3BCEFE",
+        "coarse_location_uid": "RIO-CELL100-5347-5440900-6448900",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.691,
+        "signal_score": 0.691,
         "area_m2": 72311.9,
         "area_ha": 7.2312,
         "rectangularity": 0.514,
@@ -10803,8 +11532,11 @@
       },
       "properties": {
         "id": "RIO-0041",
+        "candidate_uid": "RIO-5347-5430600-6449710-3149A716",
+        "coarse_location_uid": "RIO-CELL100-5347-5430600-6449700",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.596,
+        "signal_score": 0.596,
         "area_m2": 6751.11,
         "area_ha": 0.6751,
         "rectangularity": 0.487,
@@ -11169,8 +11901,11 @@
       },
       "properties": {
         "id": "RIO-0042",
+        "candidate_uid": "RIO-5347-5442150-6449850-A9D52A23",
+        "coarse_location_uid": "RIO-CELL100-5347-5442100-6449900",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.684,
+        "signal_score": 0.684,
         "area_m2": 83413.73,
         "area_ha": 8.3414,
         "rectangularity": 0.71,
@@ -11747,15 +12482,18 @@
       },
       "properties": {
         "id": "RIO-0043",
+        "candidate_uid": "RIO-5347-5430500-6449800-B8AAD96C",
+        "coarse_location_uid": "RIO-CELL100-5347-5430500-6449800",
         "anomaly_type": "desmonte_ribera_acopio",
-        "confidence": 0.543,
+        "confidence": 0.542,
+        "signal_score": 0.542,
         "area_m2": 68311.24,
         "area_ha": 6.8311,
         "rectangularity": 0.345,
         "elongation": 2.666,
-        "delta_mndwi_mean": -0.075,
-        "delta_bsi_mean": 0.2957,
-        "delta_ndvi_mean": -0.3352,
+        "delta_mndwi_mean": -0.0764,
+        "delta_bsi_mean": 0.2945,
+        "delta_ndvi_mean": -0.3355,
         "bbox_posgar": [
           5430319.702580093,
           6449496.702230185,
@@ -11774,22 +12512,21 @@
         "effective_resolution_m": 20.013954982963806,
         "natural_filter_status": "CANDIDATO_RESIDUAL",
         "geomorphological_zone": "PLANICIE_INUNDABLE_E_ISLAS",
-        "distance_to_water_t0_m": 363.4,
+        "distance_to_water_t0_m": 373.3,
         "spectral_stats": {
           "area_method": "shapely_polygon_posgar_2007",
-          "pixel_count_10m": 690,
-          "effective_swir_pixels_20m": 172.5,
-          "t0_b11_median": 1916.7806,
-          "t1_b11_median": 3059.3367,
-          "t1_b04_median": 1090.0751,
-          "t0_ndvi_median": 0.7964,
-          "t1_ndvi_median": 0.2837,
-          "t0_bsi_median": -0.2698,
+          "pixel_count_10m": 687,
+          "effective_swir_pixels_20m": 171.75,
+          "t0_b11_median": 1919.7251,
+          "t1_b11_median": 3069.8374,
+          "t1_b04_median": 1101.9176,
+          "t0_ndvi_median": 0.7927,
+          "t1_ndvi_median": 0.2814,
+          "t0_bsi_median": -0.2666,
           "t1_bsi_median": 0.2278,
-          "t1_mndwi_median": -0.5923,
+          "t1_mndwi_median": -0.5892,
           "t1_scl_counts": {
-            "4": 1,
-            "5": 689
+            "5": 687
           }
         },
         "uncertainty": {
@@ -11918,15 +12655,18 @@
       },
       "properties": {
         "id": "RIO-0044",
+        "candidate_uid": "RIO-5347-5431030-6450110-F4B053C6",
+        "coarse_location_uid": "RIO-CELL100-5347-5431000-6450100",
         "anomaly_type": "desmonte_ribera_acopio",
-        "confidence": 0.632,
+        "confidence": 0.633,
+        "signal_score": 0.633,
         "area_m2": 10001.65,
         "area_ha": 1.0002,
         "rectangularity": 0.595,
         "elongation": 1.714,
-        "delta_mndwi_mean": -0.0345,
-        "delta_bsi_mean": 0.3096,
-        "delta_ndvi_mean": -0.3535,
+        "delta_mndwi_mean": -0.0321,
+        "delta_bsi_mean": 0.3079,
+        "delta_ndvi_mean": -0.3561,
         "bbox_posgar": [
           5430949.667790663,
           6450036.820952526,
@@ -11945,19 +12685,19 @@
         "effective_resolution_m": 20.013954982963806,
         "natural_filter_status": "CANDIDATO_RESIDUAL",
         "geomorphological_zone": "PLANICIE_INUNDABLE_E_ISLAS",
-        "distance_to_water_t0_m": 452.7,
+        "distance_to_water_t0_m": 444.2,
         "spectral_stats": {
           "area_method": "shapely_polygon_posgar_2007",
           "pixel_count_10m": 105,
           "effective_swir_pixels_20m": 26.25,
-          "t0_b11_median": 2149.231,
-          "t1_b11_median": 3664.7466,
-          "t1_b04_median": 1412.8395,
-          "t0_ndvi_median": 0.8468,
-          "t1_ndvi_median": 0.3427,
-          "t0_bsi_median": -0.3206,
-          "t1_bsi_median": 0.1631,
-          "t1_mndwi_median": -0.5521,
+          "t0_b11_median": 2171.2876,
+          "t1_b11_median": 3671.8611,
+          "t1_b04_median": 1426.707,
+          "t0_ndvi_median": 0.8457,
+          "t1_ndvi_median": 0.3393,
+          "t0_bsi_median": -0.3184,
+          "t1_bsi_median": 0.1638,
+          "t1_mndwi_median": -0.5518,
           "t1_scl_counts": {
             "5": 105
           }
@@ -12072,8 +12812,11 @@
       },
       "properties": {
         "id": "RIO-0045",
+        "candidate_uid": "RIO-5347-5430500-6450140-742CD521",
+        "coarse_location_uid": "RIO-CELL100-5347-5430500-6450100",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.58,
+        "signal_score": 0.58,
         "area_m2": 2950.49,
         "area_ha": 0.295,
         "rectangularity": 0.493,
@@ -12206,15 +12949,18 @@
       },
       "properties": {
         "id": "RIO-0046",
+        "candidate_uid": "RIO-5347-5440610-6451340-CD202134",
+        "coarse_location_uid": "RIO-CELL100-5347-5440600-6451300",
         "anomaly_type": "desmonte_ribera_acopio",
-        "confidence": 0.557,
+        "confidence": 0.559,
+        "signal_score": 0.559,
         "area_m2": 2350.39,
         "area_ha": 0.235,
         "rectangularity": 0.372,
         "elongation": 2.526,
-        "delta_mndwi_mean": -0.1072,
-        "delta_bsi_mean": 0.338,
-        "delta_ndvi_mean": -0.3061,
+        "delta_mndwi_mean": -0.1045,
+        "delta_bsi_mean": 0.3421,
+        "delta_ndvi_mean": -0.3071,
         "bbox_posgar": [
           5440539.138218227,
           6451317.102368445,
@@ -12233,20 +12979,21 @@
         "effective_resolution_m": 20.013954982963806,
         "natural_filter_status": "CANDIDATO_RESIDUAL",
         "geomorphological_zone": "RIBERA_FIRME_Y_TERRAZA",
-        "distance_to_water_t0_m": 2238.5,
+        "distance_to_water_t0_m": 2299.1,
         "spectral_stats": {
           "area_method": "shapely_polygon_posgar_2007",
-          "pixel_count_10m": 17,
-          "effective_swir_pixels_20m": 4.25,
-          "t0_b11_median": 2136.5781,
-          "t1_b11_median": 2149.5571,
-          "t1_b04_median": 701.8858,
-          "t0_ndvi_median": 0.8113,
-          "t1_ndvi_median": 0.3499,
-          "t0_bsi_median": -0.2969,
-          "t1_bsi_median": 0.2148,
-          "t1_mndwi_median": -0.6129,
+          "pixel_count_10m": 18,
+          "effective_swir_pixels_20m": 4.5,
+          "t0_b11_median": 2089.7954,
+          "t1_b11_median": 2109.7041,
+          "t1_b04_median": 697.7305,
+          "t0_ndvi_median": 0.8166,
+          "t1_ndvi_median": 0.36,
+          "t0_bsi_median": -0.3065,
+          "t1_bsi_median": 0.2083,
+          "t1_mndwi_median": -0.6188,
           "t1_scl_counts": {
+            "4": 1,
             "5": 17
           }
         },
@@ -12348,8 +13095,11 @@
       },
       "properties": {
         "id": "RIO-0047",
+        "candidate_uid": "RIO-5347-5431770-6451590-1260A6C7",
+        "coarse_location_uid": "RIO-CELL100-5347-5431800-6451600",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.628,
+        "signal_score": 0.628,
         "area_m2": 1650.27,
         "area_ha": 0.165,
         "rectangularity": 0.503,
@@ -12466,15 +13216,18 @@
       },
       "properties": {
         "id": "RIO-0048",
+        "candidate_uid": "RIO-5347-5431290-6452650-119A64AA",
+        "coarse_location_uid": "RIO-CELL100-5347-5431300-6452600",
         "anomaly_type": "desmonte_ribera_acopio",
-        "confidence": 0.744,
+        "confidence": 0.727,
+        "signal_score": 0.727,
         "area_m2": 3250.54,
         "area_ha": 0.3251,
         "rectangularity": 0.802,
         "elongation": 1.0,
-        "delta_mndwi_mean": -0.1937,
-        "delta_bsi_mean": 0.4342,
-        "delta_ndvi_mean": -0.3371,
+        "delta_mndwi_mean": -0.1723,
+        "delta_bsi_mean": 0.4018,
+        "delta_ndvi_mean": -0.3321,
         "bbox_posgar": [
           5431259.650672055,
           6452607.385982926,
@@ -12493,21 +13246,21 @@
         "effective_resolution_m": 20.013954982963806,
         "natural_filter_status": "CANDIDATO_RESIDUAL",
         "geomorphological_zone": "PLANICIE_INUNDABLE_E_ISLAS",
-        "distance_to_water_t0_m": 1533.9,
+        "distance_to_water_t0_m": 1542.3,
         "spectral_stats": {
           "area_method": "shapely_polygon_posgar_2007",
-          "pixel_count_10m": 31,
-          "effective_swir_pixels_20m": 7.75,
-          "t0_b11_median": 1820.0618,
-          "t1_b11_median": 3220.5039,
-          "t1_b04_median": 838.4788,
-          "t0_ndvi_median": 0.8154,
-          "t1_ndvi_median": 0.3212,
-          "t0_bsi_median": -0.3032,
-          "t1_bsi_median": 0.327,
-          "t1_mndwi_median": -0.7228,
+          "pixel_count_10m": 32,
+          "effective_swir_pixels_20m": 8.0,
+          "t0_b11_median": 1798.0942,
+          "t1_b11_median": 3236.0913,
+          "t1_b04_median": 861.2552,
+          "t0_ndvi_median": 0.797,
+          "t1_ndvi_median": 0.3136,
+          "t0_bsi_median": -0.2716,
+          "t1_bsi_median": 0.3252,
+          "t1_mndwi_median": -0.7113,
           "t1_scl_counts": {
-            "5": 31
+            "5": 32
           }
         },
         "uncertainty": {
@@ -12588,8 +13341,11 @@
       },
       "properties": {
         "id": "RIO-0049",
+        "candidate_uid": "RIO-5347-5441230-6452900-4E9AB520",
+        "coarse_location_uid": "RIO-CELL100-5347-5441200-6452900",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.715,
+        "signal_score": 0.715,
         "area_m2": 1750.29,
         "area_ha": 0.175,
         "rectangularity": 0.729,
@@ -12710,15 +13466,18 @@
       },
       "properties": {
         "id": "RIO-0050",
+        "candidate_uid": "RIO-5347-5441440-6454190-0B13209E",
+        "coarse_location_uid": "RIO-CELL100-5347-5441400-6454200",
         "anomaly_type": "desmonte_ribera_acopio",
-        "confidence": 0.718,
+        "confidence": 0.714,
+        "signal_score": 0.714,
         "area_m2": 4650.77,
         "area_ha": 0.4651,
         "rectangularity": 0.83,
         "elongation": 1.143,
-        "delta_mndwi_mean": -0.1333,
-        "delta_bsi_mean": 0.3156,
-        "delta_ndvi_mean": -0.3791,
+        "delta_mndwi_mean": -0.1331,
+        "delta_bsi_mean": 0.3098,
+        "delta_ndvi_mean": -0.3773,
         "bbox_posgar": [
           5441399.090727894,
           6454157.726760015,
@@ -12737,19 +13496,19 @@
         "effective_resolution_m": 20.013954982963806,
         "natural_filter_status": "CANDIDATO_RESIDUAL",
         "geomorphological_zone": "RIBERA_FIRME_Y_TERRAZA",
-        "distance_to_water_t0_m": 1424.2,
+        "distance_to_water_t0_m": 1430.8,
         "spectral_stats": {
           "area_method": "shapely_polygon_posgar_2007",
           "pixel_count_10m": 42,
           "effective_swir_pixels_20m": 10.5,
-          "t0_b11_median": 2348.4697,
+          "t0_b11_median": 2348.2686,
           "t1_b11_median": 3244.208,
-          "t1_b04_median": 1286.2039,
-          "t0_ndvi_median": 0.7681,
-          "t1_ndvi_median": 0.2348,
-          "t0_bsi_median": -0.26,
-          "t1_bsi_median": 0.2312,
-          "t1_mndwi_median": -0.5537,
+          "t1_b04_median": 1304.8818,
+          "t0_ndvi_median": 0.765,
+          "t1_ndvi_median": 0.2343,
+          "t0_bsi_median": -0.2582,
+          "t1_bsi_median": 0.2293,
+          "t1_mndwi_median": -0.5511,
           "t1_scl_counts": {
             "5": 42
           }
@@ -12864,15 +13623,18 @@
       },
       "properties": {
         "id": "RIO-0051",
+        "candidate_uid": "RIO-5347-5430010-6454470-EBFA83F0",
+        "coarse_location_uid": "RIO-CELL100-5347-5430000-6454500",
         "anomaly_type": "desmonte_ribera_acopio",
-        "confidence": 0.629,
+        "confidence": 0.625,
+        "signal_score": 0.625,
         "area_m2": 5100.84,
         "area_ha": 0.5101,
         "rectangularity": 0.61,
         "elongation": 1.961,
-        "delta_mndwi_mean": -0.0594,
-        "delta_bsi_mean": 0.308,
-        "delta_ndvi_mean": -0.3375,
+        "delta_mndwi_mean": -0.0614,
+        "delta_bsi_mean": 0.3035,
+        "delta_ndvi_mean": -0.3344,
         "bbox_posgar": [
           5429959.722459768,
           6454427.786121185,
@@ -12896,13 +13658,13 @@
           "area_method": "shapely_polygon_posgar_2007",
           "pixel_count_10m": 51,
           "effective_swir_pixels_20m": 12.75,
-          "t0_b11_median": 1993.8373,
-          "t1_b11_median": 3036.0183,
-          "t1_b04_median": 1016.2307,
-          "t0_ndvi_median": 0.8171,
-          "t1_ndvi_median": 0.3304,
-          "t0_bsi_median": -0.2643,
-          "t1_bsi_median": 0.2202,
+          "t0_b11_median": 1973.4535,
+          "t1_b11_median": 3021.948,
+          "t1_b04_median": 1012.7888,
+          "t0_ndvi_median": 0.8109,
+          "t1_ndvi_median": 0.3296,
+          "t0_bsi_median": -0.2587,
+          "t1_bsi_median": 0.2232,
           "t1_mndwi_median": -0.5986,
           "t1_scl_counts": {
             "5": 51
@@ -12978,8 +13740,11 @@
       },
       "properties": {
         "id": "RIO-0052",
+        "candidate_uid": "RIO-5347-5440410-6454670-2881B25A",
+        "coarse_location_uid": "RIO-CELL100-5347-5440400-6454700",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.582,
+        "signal_score": 0.582,
         "area_m2": 1600.26,
         "area_ha": 0.16,
         "rectangularity": 0.515,
@@ -13128,8 +13893,11 @@
       },
       "properties": {
         "id": "RIO-0053",
+        "candidate_uid": "RIO-5347-5431500-6454790-CF71C8D5",
+        "coarse_location_uid": "RIO-CELL100-5347-5431500-6454800",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.635,
+        "signal_score": 0.635,
         "area_m2": 6951.14,
         "area_ha": 0.6951,
         "rectangularity": 0.643,
@@ -13242,15 +14010,18 @@
       },
       "properties": {
         "id": "RIO-0054",
+        "candidate_uid": "RIO-5347-5441950-6455020-1A4246A4",
+        "coarse_location_uid": "RIO-CELL100-5347-5441900-6455000",
         "anomaly_type": "desmonte_ribera_acopio",
-        "confidence": 0.694,
+        "confidence": 0.698,
+        "signal_score": 0.698,
         "area_m2": 1950.32,
         "area_ha": 0.195,
         "rectangularity": 0.692,
         "elongation": 2.619,
-        "delta_mndwi_mean": -0.0663,
-        "delta_bsi_mean": 0.3453,
-        "delta_ndvi_mean": -0.3893,
+        "delta_mndwi_mean": -0.0785,
+        "delta_bsi_mean": 0.3643,
+        "delta_ndvi_mean": -0.3774,
         "bbox_posgar": [
           5441919.062012808,
           6454977.907042088,
@@ -13269,19 +14040,19 @@
         "effective_resolution_m": 20.013954982963806,
         "natural_filter_status": "CANDIDATO_RESIDUAL",
         "geomorphological_zone": "PLANICIE_INUNDABLE_E_ISLAS",
-        "distance_to_water_t0_m": 1463.2,
+        "distance_to_water_t0_m": 1473.0,
         "spectral_stats": {
           "area_method": "shapely_polygon_posgar_2007",
           "pixel_count_10m": 17,
           "effective_swir_pixels_20m": 4.25,
-          "t0_b11_median": 2280.646,
-          "t1_b11_median": 2207.3518,
-          "t1_b04_median": 712.3126,
-          "t0_ndvi_median": 0.8341,
-          "t1_ndvi_median": 0.2962,
-          "t0_bsi_median": -0.2786,
-          "t1_bsi_median": 0.2441,
-          "t1_mndwi_median": -0.6071,
+          "t0_b11_median": 2174.1167,
+          "t1_b11_median": 2094.4568,
+          "t1_b04_median": 641.5894,
+          "t0_ndvi_median": 0.846,
+          "t1_ndvi_median": 0.3142,
+          "t0_bsi_median": -0.3059,
+          "t1_bsi_median": 0.2348,
+          "t1_mndwi_median": -0.6011,
           "t1_scl_counts": {
             "5": 17
           }
@@ -13352,8 +14123,11 @@
       },
       "properties": {
         "id": "RIO-0055",
+        "candidate_uid": "RIO-5347-5440380-6455060-5FB3A4E7",
+        "coarse_location_uid": "RIO-CELL100-5347-5440400-6455100",
         "anomaly_type": "apertura_camino_acceso",
         "confidence": 0.686,
+        "signal_score": 0.686,
         "area_m2": 2050.34,
         "area_ha": 0.205,
         "rectangularity": 0.526,
@@ -13458,15 +14232,18 @@
       },
       "properties": {
         "id": "RIO-0056",
+        "candidate_uid": "RIO-5347-5430570-6455930-8C252DC8",
+        "coarse_location_uid": "RIO-CELL100-5347-5430600-6455900",
         "anomaly_type": "desmonte_ribera_acopio",
-        "confidence": 0.651,
+        "confidence": 0.647,
+        "signal_score": 0.647,
         "area_m2": 2200.36,
         "area_ha": 0.22,
         "rectangularity": 0.629,
         "elongation": 1.4,
-        "delta_mndwi_mean": -0.0575,
-        "delta_bsi_mean": 0.3067,
-        "delta_ndvi_mean": -0.3752,
+        "delta_mndwi_mean": -0.0534,
+        "delta_bsi_mean": 0.2984,
+        "delta_ndvi_mean": -0.3755,
         "bbox_posgar": [
           5430529.690983617,
           6455898.1093097795,
@@ -13485,19 +14262,19 @@
         "effective_resolution_m": 20.013954982963806,
         "natural_filter_status": "CANDIDATO_RESIDUAL",
         "geomorphological_zone": "RIBERA_FIRME_Y_TERRAZA",
-        "distance_to_water_t0_m": 178.0,
+        "distance_to_water_t0_m": 172.0,
         "spectral_stats": {
           "area_method": "shapely_polygon_posgar_2007",
           "pixel_count_10m": 22,
           "effective_swir_pixels_20m": 5.5,
-          "t0_b11_median": 1826.9266,
-          "t1_b11_median": 2402.5859,
-          "t1_b04_median": 878.4857,
-          "t0_ndvi_median": 0.7695,
-          "t1_ndvi_median": 0.2361,
-          "t0_bsi_median": -0.2196,
-          "t1_bsi_median": 0.2639,
-          "t1_mndwi_median": -0.5831,
+          "t0_b11_median": 1865.5208,
+          "t1_b11_median": 2389.5352,
+          "t1_b04_median": 888.5715,
+          "t0_ndvi_median": 0.7587,
+          "t1_ndvi_median": 0.2308,
+          "t0_bsi_median": -0.2116,
+          "t1_bsi_median": 0.2618,
+          "t1_mndwi_median": -0.5814,
           "t1_scl_counts": {
             "5": 22
           }
@@ -13572,8 +14349,11 @@
       },
       "properties": {
         "id": "RIO-0057",
+        "candidate_uid": "RIO-5347-5441640-6456070-2EE98EF4",
+        "coarse_location_uid": "RIO-CELL100-5347-5441600-6456100",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.892,
+        "signal_score": 0.892,
         "area_m2": 14802.44,
         "area_ha": 1.4802,
         "rectangularity": 0.897,
@@ -13767,15 +14547,18 @@
       },
       "properties": {
         "id": "RIO-0058",
+        "candidate_uid": "RIO-5347-5441970-6455950-E05E1529",
+        "coarse_location_uid": "RIO-CELL100-5347-5442000-6456000",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.878,
+        "signal_score": 0.878,
         "area_m2": 202733.37,
         "area_ha": 20.2733,
         "rectangularity": 0.979,
         "elongation": 1.022,
-        "delta_mndwi_mean": -0.0078,
-        "delta_bsi_mean": 0.4337,
-        "delta_ndvi_mean": -0.514,
+        "delta_mndwi_mean": -0.0075,
+        "delta_bsi_mean": 0.4335,
+        "delta_ndvi_mean": -0.5144,
         "bbox_posgar": [
           5441739.071952646,
           6455728.071934228,
@@ -13794,22 +14577,22 @@
         "effective_resolution_m": 20.013954982963806,
         "natural_filter_status": "CANDIDATO_RESIDUAL",
         "geomorphological_zone": "RIBERA_FIRME_Y_TERRAZA",
-        "distance_to_water_t0_m": 1337.9,
+        "distance_to_water_t0_m": 1347.3,
         "spectral_stats": {
           "area_method": "shapely_polygon_posgar_2007",
           "pixel_count_10m": 2026,
           "effective_swir_pixels_20m": 506.5,
-          "t0_b11_median": 1752.6512,
+          "t0_b11_median": 1752.073,
           "t1_b11_median": 3942.9792,
-          "t1_b04_median": 1510.9731,
-          "t0_ndvi_median": 0.8615,
+          "t1_b04_median": 1509.2375,
+          "t0_ndvi_median": 0.8612,
           "t1_ndvi_median": 0.1953,
-          "t0_bsi_median": -0.3392,
-          "t1_bsi_median": 0.2635,
-          "t1_mndwi_median": -0.563,
+          "t0_bsi_median": -0.339,
+          "t1_bsi_median": 0.2636,
+          "t1_mndwi_median": -0.5632,
           "t1_scl_counts": {
-            "4": 12,
-            "5": 2014
+            "4": 13,
+            "5": 2013
           }
         },
         "uncertainty": {
@@ -13918,15 +14701,18 @@
       },
       "properties": {
         "id": "RIO-0059",
+        "candidate_uid": "RIO-5347-5441350-6456580-D41EDFFD",
+        "coarse_location_uid": "RIO-CELL100-5347-5441300-6456600",
         "anomaly_type": "desmonte_ribera_acopio",
-        "confidence": 0.787,
+        "confidence": 0.788,
+        "signal_score": 0.788,
         "area_m2": 25504.2,
         "area_ha": 2.5504,
         "rectangularity": 0.892,
         "elongation": 1.692,
-        "delta_mndwi_mean": 0.0949,
-        "delta_bsi_mean": 0.3646,
-        "delta_ndvi_mean": -0.4413,
+        "delta_mndwi_mean": 0.0932,
+        "delta_bsi_mean": 0.3664,
+        "delta_ndvi_mean": -0.4414,
         "bbox_posgar": [
           5441239.099563304,
           6456518.245620615,
@@ -13945,22 +14731,22 @@
         "effective_resolution_m": 20.013954982963806,
         "natural_filter_status": "CANDIDATO_RESIDUAL",
         "geomorphological_zone": "RIBERA_FIRME_Y_TERRAZA",
-        "distance_to_water_t0_m": 1324.3,
+        "distance_to_water_t0_m": 1330.5,
         "spectral_stats": {
           "area_method": "shapely_polygon_posgar_2007",
-          "pixel_count_10m": 248,
-          "effective_swir_pixels_20m": 62.0,
-          "t0_b11_median": 1475.2876,
-          "t1_b11_median": 3658.1401,
-          "t1_b04_median": 1673.5063,
-          "t0_ndvi_median": 0.8841,
-          "t1_ndvi_median": 0.2009,
-          "t0_bsi_median": -0.4026,
-          "t1_bsi_median": 0.1899,
-          "t1_mndwi_median": -0.4976,
+          "pixel_count_10m": 250,
+          "effective_swir_pixels_20m": 62.5,
+          "t0_b11_median": 1477.5234,
+          "t1_b11_median": 3644.6169,
+          "t1_b04_median": 1663.0117,
+          "t0_ndvi_median": 0.8846,
+          "t1_ndvi_median": 0.2022,
+          "t0_bsi_median": -0.402,
+          "t1_bsi_median": 0.1948,
+          "t1_mndwi_median": -0.5009,
           "t1_scl_counts": {
             "4": 34,
-            "5": 214
+            "5": 216
           }
         },
         "uncertainty": {
@@ -14081,8 +14867,11 @@
       },
       "properties": {
         "id": "RIO-0060",
+        "candidate_uid": "RIO-5347-5442300-6456790-135D8858",
+        "coarse_location_uid": "RIO-CELL100-5347-5442300-6456800",
         "anomaly_type": "desmonte_ribera_acopio",
         "confidence": 0.812,
+        "signal_score": 0.812,
         "area_m2": 26504.36,
         "area_ha": 2.6504,
         "rectangularity": 0.866,
@@ -14260,15 +15049,18 @@
       },
       "properties": {
         "id": "RIO-0061",
+        "candidate_uid": "RIO-5347-5441350-6457060-886CCAA9",
+        "coarse_location_uid": "RIO-CELL100-5347-5441300-6457100",
         "anomaly_type": "desmonte_ribera_acopio",
-        "confidence": 0.69,
+        "confidence": 0.691,
+        "signal_score": 0.691,
         "area_m2": 29004.77,
         "area_ha": 2.9005,
         "rectangularity": 0.604,
         "elongation": 1.2,
-        "delta_mndwi_mean": -0.0101,
-        "delta_bsi_mean": 0.424,
-        "delta_ndvi_mean": -0.3581,
+        "delta_mndwi_mean": -0.0134,
+        "delta_bsi_mean": 0.4268,
+        "delta_ndvi_mean": -0.3578,
         "bbox_posgar": [
           5441239.099563304,
           6456938.337960213,
@@ -14287,22 +15079,22 @@
         "effective_resolution_m": 20.013954982963806,
         "natural_filter_status": "CANDIDATO_RESIDUAL",
         "geomorphological_zone": "RIBERA_FIRME_Y_TERRAZA",
-        "distance_to_water_t0_m": 1614.3,
+        "distance_to_water_t0_m": 1621.1,
         "spectral_stats": {
           "area_method": "shapely_polygon_posgar_2007",
-          "pixel_count_10m": 277,
-          "effective_swir_pixels_20m": 69.25,
-          "t0_b11_median": 1346.494,
-          "t1_b11_median": 3300.9028,
-          "t1_b04_median": 1148.6539,
-          "t0_ndvi_median": 0.8893,
-          "t1_ndvi_median": 0.3772,
+          "pixel_count_10m": 274,
+          "effective_swir_pixels_20m": 68.5,
+          "t0_b11_median": 1345.73,
+          "t1_b11_median": 3304.4131,
+          "t1_b04_median": 1144.5596,
+          "t0_ndvi_median": 0.889,
+          "t1_ndvi_median": 0.377,
           "t0_bsi_median": -0.4574,
-          "t1_bsi_median": 0.1562,
-          "t1_mndwi_median": -0.5444,
+          "t1_bsi_median": 0.1563,
+          "t1_mndwi_median": -0.545,
           "t1_scl_counts": {
             "4": 9,
-            "5": 268
+            "5": 265
           }
         },
         "uncertainty": {
