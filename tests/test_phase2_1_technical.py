@@ -136,13 +136,14 @@ def test_t1_area_matches_vector_geometry_and_spectral_stats_separation(tmp_path:
 
     geom_posgar = reproject_geometry(feat["geometry"], "EPSG:4326", f"EPSG:{props['crs_epsg']}")
     exact_area = float(shape(geom_posgar).area)
+    assert props["area_m2"] == pytest.approx(3600.0, abs=1.0)
     assert props["area_m2"] == pytest.approx(exact_area, abs=0.1)
 
     stats = props["spectral_stats"]
     assert stats is not None
-    assert stats["pixel_count_10m"] >= 25
+    assert stats["pixel_count_10m"] == 36
     assert stats["t0_b11_median"] == pytest.approx(1400.0, abs=1.0)
-    assert stats["t1_b11_median"] == pytest.approx(3600.0, abs=1.0)
+    assert stats["t1_b11_median"] == pytest.approx(3050.0, abs=1.0)
     assert stats["t0_ndvi_median"] > 0.70
     assert stats["t1_ndvi_median"] < 0.0
     assert stats["t0_bsi_median"] < -0.20

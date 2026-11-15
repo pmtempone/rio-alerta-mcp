@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
@@ -304,6 +305,29 @@ def _build_coarse_location_uid(crs_epsg: int, cx_m: float, cy_m: float) -> str:
     return f"RIO-CELL100-{crs_epsg}-{gx100}-{gy100}"
 
 
+def _make_discarded_record(
+    crs_epsg: int,
+    cx_m: float,
+    cy_m: float,
+    to_wgs: Transformer,
+    anomaly_type: ChangeAnomalyTypeLiteral,
+    filter_status: NaturalFilterStatusLiteral,
+    area_m2: float,
+    reason_detail: str,
+) -> DiscardedAnomalyRecord:
+    """Construye un registro tipado de anomalía descartada para auditoría."""
+    lon_d, lat_d = to_wgs.transform(cx_m, cy_m)
+    return DiscardedAnomalyRecord(
+        candidate_uid=_build_candidate_uid(crs_epsg, cx_m, cy_m, anomaly_type),
+        anomaly_type=anomaly_type,
+        filter_status=filter_status,
+        area_m2=round(area_m2, 2),
+        centroid_posgar=(round(cx_m, 2), round(cy_m, 2)),
+        centroid_wgs84=(round(float(lon_d), 6), round(float(lat_d), 6)),
+        reason_detail=reason_detail,
+    )
+
+
 def _polygonize_mask_components(
     binary_mask: np.ndarray,
     anomaly_type: ChangeAnomalyTypeLiteral,
@@ -339,26 +363,85 @@ def _polygonize_mask_components(
     idx = start_index
 
     h_img, w_img = binary_mask.shape
+    half_px_m = 0.5 * abs(float(transform.a))
+    pixel_area_m2 = abs(float(transform.a) * float(transform.e))
 
     for cnt in contours:
+        pts_metric: List[Tuple[float, float]] = [
+            (
+                float(transform.c + (int(pt[0]) + 0.5) * transform.a),
+                float(transform.f + (int(pt[1]) + 0.5) * transform.e),
+            )
+            for pt in cnt.reshape(-1, 2)
+        ]
         if len(cnt) < 3:
+            if discarded_out is not None and pts_metric:
+                cx_d = float(np.mean([p[0] for p in pts_metric]))
+                cy_d = float(np.mean([p[1] for p in pts_metric]))
+                est_area = float(len(pts_metric) * pixel_area_m2)
+                discarded_out.append(
+                    _make_discarded_record(
+                        crs_epsg=crs_epsg,
+                        cx_m=cx_d,
+                        cy_m=cy_d,
+                        to_wgs=to_wgs,
+                        anomaly_type=anomaly_type,
+                        filter_status="DESCARTADO_GEOMETRIA_DEGENERADA",
+                        area_m2=est_area,
+                        reason_detail=(
+                            f"Contorno degenerado con {len(cnt)} vértice(s) (< 3 requeridos para polígono cerrado)."
+                        ),
+                    )
+                )
             continue
-        pts_metric: List[Tuple[float, float]] = []
-        for pt in cnt.reshape(-1, 2):
-            col, row = int(pt[0]), int(pt[1])
-            mx = float(transform.c + (col + 0.5) * transform.a)
-            my = float(transform.f + (row + 0.5) * transform.e)
-            pts_metric.append((mx, my))
 
-        poly = Polygon(pts_metric)
+        raw_poly = Polygon(pts_metric)
+        poly = raw_poly.buffer(half_px_m, cap_style=3, join_style=2)
         if not poly.is_valid:
             poly = poly.buffer(0)
         if poly.is_empty or poly.geom_type != "Polygon":
+            if discarded_out is not None:
+                if not poly.is_empty:
+                    c_pt = poly.centroid
+                    cx_d, cy_d = float(c_pt.x), float(c_pt.y)
+                else:
+                    cx_d = float(np.mean([p[0] for p in pts_metric]))
+                    cy_d = float(np.mean([p[1] for p in pts_metric]))
+                deg_area = float(poly.area) if not poly.is_empty else 0.0
+                discarded_out.append(
+                    _make_discarded_record(
+                        crs_epsg=crs_epsg,
+                        cx_m=cx_d,
+                        cy_m=cy_d,
+                        to_wgs=to_wgs,
+                        anomaly_type=anomaly_type,
+                        filter_status="DESCARTADO_GEOMETRIA_DEGENERADA",
+                        area_m2=deg_area,
+                        reason_detail=f"Geometría degenerada tras poligonización/buffer ({poly.geom_type}).",
+                    )
+                )
             continue
 
-        # P0.1: Usar exactamente el área vectorial POSGAR 2007 (poly.area) sin sobreestimar por bordes cv2.drawContours
+        # P0.1: Usar exactamente el área vectorial POSGAR 2007 (poly.area) con soporte de medio píxel
         area_m2 = float(poly.area)
         if area_m2 < min_area_m2:
+            if discarded_out is not None:
+                c_pt = poly.centroid
+                discarded_out.append(
+                    _make_discarded_record(
+                        crs_epsg=crs_epsg,
+                        cx_m=float(c_pt.x),
+                        cy_m=float(c_pt.y),
+                        to_wgs=to_wgs,
+                        anomaly_type=anomaly_type,
+                        filter_status="DESCARTADO_AREA_MINIMA",
+                        area_m2=area_m2,
+                        reason_detail=(
+                            f"Superficie vectorial ({area_m2:.1f} m²) inferior al piso físico mínimo "
+                            f"({min_area_m2:.1f} m²) para {anomaly_type}."
+                        ),
+                    )
+                )
             continue
 
         x_b, y_b, w_b, h_b = cv2.boundingRect(cnt)
@@ -391,17 +474,18 @@ def _polygonize_mask_components(
         ):
             if discarded_out is not None:
                 c_pt = poly.centroid
-                cx_d, cy_d = float(c_pt.x), float(c_pt.y)
-                lon_d, lat_d = to_wgs.transform(cx_d, cy_d)
                 discarded_out.append(
-                    DiscardedAnomalyRecord(
-                        candidate_uid=_build_candidate_uid(crs_epsg, cx_d, cy_d, anomaly_type),
+                    _make_discarded_record(
+                        crs_epsg=crs_epsg,
+                        cx_m=float(c_pt.x),
+                        cy_m=float(c_pt.y),
+                        to_wgs=to_wgs,
                         anomaly_type=anomaly_type,
                         filter_status="DESCARTADO_CONFUSOR_TURBIDEZ",
-                        area_m2=round(area_m2, 2),
-                        centroid_posgar=(round(cx_d, 2), round(cy_d, 2)),
-                        centroid_wgs84=(round(float(lon_d), 6), round(float(lat_d), 6)),
-                        reason_detail="Descartado por confusor de turbidez o lámina/barra húmeda preexistente en T0.",
+                        area_m2=area_m2,
+                        reason_detail=(
+                            "Descartado por confusor de turbidez o lámina/barra húmeda preexistente en T0."
+                        ),
                     )
                 )
             continue
@@ -574,6 +658,7 @@ def _collect_filtered_components(
     flood_zone_excl: np.ndarray,
     scl_mineral_gate: np.ndarray,
     check_mineral_gate: bool = False,
+    check_bar_migration: bool = True,
 ) -> List[DiscardedAnomalyRecord]:
     """Registra con trazabilidad los componentes >= `min_area_m2` suprimidos por controles naturales o SCL."""
     records: List[DiscardedAnomalyRecord] = []
@@ -600,11 +685,10 @@ def _collect_filtered_components(
         cy_px = float(centroids[lbl, 1])
         cx_m = float(transform.c + (cx_px + 0.5) * transform.a)
         cy_m = float(transform.f + (cy_px + 0.5) * transform.e)
-        lon_c, lat_c = to_wgs.transform(cx_m, cy_m)
 
         filter_status: NaturalFilterStatusLiteral
         reason_detail: str
-        if np.any(bar_migration_mask[y : y + h, x : x + w] & comp_mask):
+        if check_bar_migration and np.any(bar_migration_mask[y : y + h, x : x + w] & comp_mask):
             filter_status = "DESCARTADO_MIGRACION_BARRA"
             reason_detail = "Par dipolar de erosión/acreción natural de banco de arena."
         elif np.any(
@@ -630,13 +714,14 @@ def _collect_filtered_components(
             )
 
         records.append(
-            DiscardedAnomalyRecord(
-                candidate_uid=_build_candidate_uid(crs_epsg, cx_m, cy_m, anomaly_type),
+            _make_discarded_record(
+                crs_epsg=crs_epsg,
+                cx_m=cx_m,
+                cy_m=cy_m,
+                to_wgs=to_wgs,
                 anomaly_type=anomaly_type,
                 filter_status=filter_status,
-                area_m2=round(area_m2, 2),
-                centroid_posgar=(round(cx_m, 2), round(cy_m, 2)),
-                centroid_wgs84=(round(float(lon_c), 6), round(float(lat_c), 6)),
+                area_m2=area_m2,
                 reason_detail=reason_detail,
             )
         )
@@ -649,6 +734,7 @@ def detect_extraction_anomalies(
     t0_swir_scl_paths: Optional[Union[str, Path, Sequence[Union[str, Path]]]] = None,
     t1_swir_scl_path: Optional[Union[str, Path]] = None,
     min_area_m2: Optional[float] = None,
+    min_clearing_area_m2: Optional[float] = None,
     work_dir: Optional[Union[str, Path]] = None,
     stage_t0_m: Optional[float] = None,
     stage_t1_m: Optional[float] = None,
@@ -663,12 +749,16 @@ def detect_extraction_anomalies(
     - Pulso hidrométrico uniforme (crecida / bajante de nivel del río).
     - Dipolos acoplados de migración natural de bancos de arena.
     - Deriva fenológica/estacional uniforme de la vegetación ribereña.
-    - Piso de área física acorde a la resolución nativa SWIR (`>= 1600 m²`).
+    - Piso de área física diferenciado por resolución nativa (`>= 1600 m²` SWIR para excavación inundada y
+      `>= 800 m²` VNIR para desmonte ribereño o caminos).
 
     Nunca etiqueta un polígono como ilegal de forma autónoma: las detecciones constituyen
     candidatos morfológicos con registro de incertidumbre para cruce catastral y revisión humana.
     """
     eff_min_area = float(min_area_m2 if min_area_m2 is not None else settings.min_anomaly_area_m2)
+    eff_min_clearing_area = float(
+        min_clearing_area_m2 if min_clearing_area_m2 is not None else settings.min_clearing_area_m2
+    )
     target_dir = Path(work_dir) if work_dir else settings.processed_dir
     target_dir.mkdir(parents=True, exist_ok=True)
 
@@ -873,7 +963,7 @@ def detect_extraction_anomalies(
         b04_t0=t0_base["b04"],
         b04_t1=t1_bundle["B04"],
         effective_res_m=swir_native_res_m,
-        min_area_m2=eff_min_area,
+        min_area_m2=eff_min_clearing_area,
         persistence_count=int(t0_base["scenes_count"]),
         t0_base=t0_base,
         t1_bundle=t1_bundle,
@@ -899,6 +989,7 @@ def detect_extraction_anomalies(
             flood_zone_excl=in_unprotected_flood_zone,
             scl_mineral_gate=scl_mineral_gate,
             check_mineral_gate=False,
+            check_bar_migration=True,
         )
     )
     discarded_records.extend(
@@ -910,17 +1001,21 @@ def detect_extraction_anomalies(
             crs_epsg=crs_epsg,
             to_wgs=to_wgs,
             pixel_area_m2=pixel_area_m2,
-            min_area_m2=eff_min_area,
+            min_area_m2=eff_min_clearing_area,
             bar_migration_mask=bar_migration_mask,
             uniform_stage_belt_mask=hydro_state["uniform_stage_belt_mask"],
             drawdown_belt_mask=hydro_state["drawdown_belt_mask"],
             flood_zone_excl=clearing_flood_excl,
             scl_mineral_gate=scl_mineral_gate,
             check_mineral_gate=True,
+            check_bar_migration=False,
         )
     )
     discarded_records.sort(key=lambda r: r.area_m2, reverse=True)
-    discarded_log_path = target_dir / "discarded_candidates_log.json"
+    t0_stem = Path(t0_list[-1]).stem
+    t1_stem = Path(t1_vnir_path).stem
+    run_stem = re.sub(r"[^A-Za-z0-9_.-]+", "_", f"{t0_stem}_vs_{t1_stem}")[:120]
+    discarded_log_path = target_dir / f"discarded_candidates_{run_stem}.json"
     discarded_payload = [d.model_dump(mode="json") for d in discarded_records]
     discarded_log_path.write_text(
         json.dumps(discarded_payload, indent=2, ensure_ascii=False),
@@ -955,6 +1050,7 @@ def detect_extraction_anomalies(
         "grid_resolution_m": grid_res_m,
         "effective_swir_resolution_m": swir_native_res_m,
         "min_anomaly_area_m2": eff_min_area,
+        "min_clearing_area_m2": eff_min_clearing_area,
         "baseline_scenes_count": int(t0_base["scenes_count"]),
         "valid_pixel_fraction": round(float(np.mean(combined_valid)), 4) if combined_valid.size > 0 else 0.0,
         "hydrological_controls": {

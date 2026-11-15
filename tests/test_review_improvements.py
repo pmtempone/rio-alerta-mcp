@@ -15,14 +15,18 @@ import rasterio
 from rasterio.transform import from_origin
 
 from src.config import settings
-from src.core.change_detector import _build_coarse_location_uid, detect_extraction_anomalies
+from src.core.change_detector import (
+    _build_coarse_location_uid,
+    _collect_filtered_components,
+    detect_extraction_anomalies,
+)
 from src.core.hydrological_control import compute_turbidity_confounder_flag, fetch_ina_stage_height
 from src.core.optical_providers import (
     _item_covers_bbox,
     _read_stac_asset_window_posgar,
     query_stac_seasonal_pair_candidates,
 )
-from src.schemas import MultitemporalScenePair, SceneMetadata
+from src.schemas import ChangeDetectionResult, MultitemporalScenePair, SceneMetadata
 from src.server import (
     mcp,
     tool_compute_spectral_changes,
@@ -142,6 +146,18 @@ def test_mcp_tool_search_multitemporal_pair_and_input_validation(
             t1_path=missing_t1,
             min_area_m2=0.0,
         )
+    with pytest.raises(ValueError, match="min_clearing_area_m2"):
+        tool_detect_extraction_anomalies(
+            t0_path=missing_t0,
+            t1_path=missing_t1,
+            min_clearing_area_m2=0.0,
+        )
+    with pytest.raises(ValueError, match="max_discarded_records"):
+        tool_detect_extraction_anomalies(
+            t0_path=missing_t0,
+            t1_path=missing_t1,
+            max_discarded_records=0,
+        )
     with pytest.raises(FileNotFoundError, match="No existe el archivo raster requerido"):
         tool_detect_extraction_anomalies(
             t0_path=missing_t0,
@@ -153,6 +169,38 @@ def test_mcp_tool_search_multitemporal_pair_and_input_validation(
             t0_path=missing_t0,
             t1_path=missing_t1,
         )
+
+    # Verifica passthrough de min_clearing_area_m2, stage_t0_m, stage_t1_m y max_discarded_records
+    dummy_t0 = tmp_path / "dummy_t0.tif"
+    dummy_t1 = tmp_path / "dummy_t1.tif"
+    dummy_t0.write_bytes(b"tif")
+    dummy_t1.write_bytes(b"tif")
+    det_calls: List[Dict[str, Any]] = []
+
+    def _fake_detect(**kwargs: Any) -> ChangeDetectionResult:
+        det_calls.append(kwargs)
+        return ChangeDetectionResult(
+            type="FeatureCollection",
+            crs={"type": "name", "properties": {"name": "OGC:CRS84"}},
+            metadata={"candidate_count": 0},
+            features=[],
+        )
+
+    monkeypatch.setattr("src.server.detect_extraction_anomalies", _fake_detect)
+    tool_detect_extraction_anomalies(
+        t0_path=str(dummy_t0),
+        t1_path=str(dummy_t1),
+        min_area_m2=1600.0,
+        min_clearing_area_m2=750.0,
+        stage_t0_m=1.25,
+        stage_t1_m=4.60,
+        max_discarded_records=50,
+    )
+    assert len(det_calls) == 1
+    assert det_calls[0]["min_clearing_area_m2"] == 750.0
+    assert det_calls[0]["stage_t0_m"] == 1.25
+    assert det_calls[0]["stage_t1_m"] == 4.60
+    assert det_calls[0]["max_discarded_records"] == 50
 
 
 def test_turbidity_confounder_all_branches_reachable() -> None:
@@ -234,8 +282,45 @@ def test_deterministic_candidate_uid_and_discarded_candidates_log(
 
     cal_params = res1.metadata["calibration_parameters"]
     expected_cal = settings.get_calibration_parameters()
-    assert len(expected_cal) == 41
+    assert len(expected_cal) == 42
     assert cal_params == expected_cal
+    assert res1.metadata["min_clearing_area_m2"] == 800.0
+
+    # Dos corridas con stems distintos en el mismo work_dir generan bitácoras separadas sin pisarse
+    import shutil
+
+    shared_work = tmp_path / "shared_work"
+    alt_dir = tmp_path / "alt_stems"
+    alt_dir.mkdir(parents=True, exist_ok=True)
+    alt_t0_v = alt_dir / "t0_epoch_b_vnir10m.tif"
+    alt_t0_s = alt_dir / "t0_epoch_b_swir20m.tif"
+    alt_t1_v = alt_dir / "t1_epoch_b_vnir10m.tif"
+    alt_t1_s = alt_dir / "t1_epoch_b_swir20m.tif"
+    shutil.copy2(sc_clear["t0"]["vnir_10m"], alt_t0_v)
+    shutil.copy2(sc_clear["t0"]["swir_20m"], alt_t0_s)
+    shutil.copy2(sc_clear["t1"]["vnir_10m"], alt_t1_v)
+    shutil.copy2(sc_clear["t1"]["swir_20m"], alt_t1_s)
+
+    res_shared_a = detect_extraction_anomalies(
+        t0_vnir_paths=sc_clear["t0"]["vnir_10m"],
+        t1_vnir_path=sc_clear["t1"]["vnir_10m"],
+        t0_swir_scl_paths=sc_clear["t0"]["swir_20m"],
+        t1_swir_scl_path=sc_clear["t1"]["swir_20m"],
+        work_dir=shared_work,
+    )
+    res_shared_b = detect_extraction_anomalies(
+        t0_vnir_paths=alt_t0_v,
+        t1_vnir_path=alt_t1_v,
+        t0_swir_scl_paths=alt_t0_s,
+        t1_swir_scl_path=alt_t1_s,
+        work_dir=shared_work,
+    )
+    log_a = Path(res_shared_a.metadata["discarded_log_path"])
+    log_b = Path(res_shared_b.metadata["discarded_log_path"])
+    assert log_a.name.startswith("discarded_candidates_")
+    assert log_b.name.startswith("discarded_candidates_")
+    assert log_a != log_b
+    assert log_a.exists() and log_b.exists()
 
     # Registro explícito de descartados en migración natural de bancos
     sc_bar = synthetic_native_s2_scenarios["neg_bar_migration"]
@@ -418,14 +503,17 @@ def _write_local_s2_pair(
 
 
 def test_discard_attribution_ignores_cloud_adjacency_and_ina_wrapper(tmp_path: Path) -> None:
-    """Verifica atribución exacta de descartes (compuerta mineral vs nube, turbidez) y wrapper INA."""
-    height, width = 60, 60
+    """Verifica atribución exacta de descartes, buffer de medio píxel, simetría y wrapper INA."""
+    from pyproj import CRS, Transformer
+
+    height, width = 80, 80
     west, north = 5440500.0, 6356300.0
     rr, cc = np.meshgrid(np.arange(height), np.arange(width), indexing="ij")
 
     forest_sig = (350.0, 600.0, 400.0, 3800.0, 1400.0, 700.0)
     water_sig = (700.0, 900.0, 600.0, 250.0, 150.0, 120.0)
     dark_soil_sig = (250.0, 300.0, 380.0, 280.0, 500.0, 350.0)
+    clearing_sig = (1800.0, 2200.0, 2700.0, 2400.0, 3600.0, 3100.0)
     wet_bar_t0_sig = (500.0, 900.0, 600.0, 700.0, 700.0, 500.0)
     turbid_water_sig = (700.0, 950.0, 950.0, 250.0, 150.0, 120.0)
 
@@ -439,7 +527,7 @@ def test_discard_attribution_ignores_cloud_adjacency_and_ina_wrapper(tmp_path: P
         c0[b_idx][channel] = val
     s0[channel] = 6
 
-    # Barra húmeda en T0 (MNDWI_T0 = 0.125 en franja 0.05..0.20) situada en ribera_firme (> 300 m del cauce)
+    # Barra húmeda en T0 (MNDWI_T0 = 0.125 en franja 0.05..0.20) situada en ribera_firme
     wet_bar_patch = (rr >= 34) & (rr < 42) & (cc >= 50) & (cc < 58)
     for b_idx, val in enumerate(wet_bar_t0_sig):
         c0[b_idx][wet_bar_patch] = val
@@ -447,7 +535,7 @@ def test_discard_attribution_ignores_cloud_adjacency_and_ina_wrapper(tmp_path: P
 
     c1, s1 = c0.copy(), s0.copy()
 
-    # Parche de desmonte que falla compuerta mineral (B11=500 < 600 DN) con SCL=5 y nube adyacente a <40m
+    # 1. Parche de desmonte que falla compuerta mineral (B11=500 < 600 DN) con SCL=5 y nube adyacente a <40m
     mineral_patch = (rr >= 20) & (rr < 28) & (cc >= 22) & (cc < 30)
     for b_idx, val in enumerate(dark_soil_sig):
         c1[b_idx][mineral_patch] = val
@@ -455,10 +543,32 @@ def test_discard_attribution_ignores_cloud_adjacency_and_ina_wrapper(tmp_path: P
     # Nube en T1 a 20m del borde del parche (dilatación 40m lo solapa, pero SCL=9 está fuera del parche)
     s1[(rr >= 18) & (rr < 20) & (cc >= 22) & (cc < 24)] = 9
 
-    # Misma barra húmeda recibe pulso de turbidez en T1 (|ΔB04| = 350 > 150 DN)
+    # 2. Barra húmeda recibe pulso de turbidez en T1 (|ΔB04| = 350 > 150 DN)
     for b_idx, val in enumerate(turbid_water_sig):
         c1[b_idx][wet_bar_patch] = val
     s1[wet_bar_patch] = 6
+
+    # 3. Parche estrecho con cuello de 1 píxel en ribera_firme (antes degeneraba y caía < 1600 m², ahora >= 800 m²)
+    neck_clearing = (
+        ((rr >= 50) & (rr < 54) & (cc >= 22) & (cc < 24))
+        | ((rr == 52) & (cc >= 24) & (cc < 28))
+        | ((rr >= 51) & (rr < 55) & (cc >= 28) & (cc < 30))
+    )
+    for b_idx, val in enumerate(clearing_sig):
+        c1[b_idx][neck_clearing] = val
+    s1[neck_clearing] = 5
+
+    # 4. Parche pequeño (2x2 = 400 m² < 800 m²) -> DESCARTADO_AREA_MINIMA
+    small_clearing = (rr >= 10) & (rr < 12) & (cc >= 50) & (cc < 52)
+    for b_idx, val in enumerate(clearing_sig):
+        c1[b_idx][small_clearing] = val
+    s1[small_clearing] = 5
+
+    # 5. Tira degenerada de 1x2 píxeles (< 3 vértices de contorno) -> DESCARTADO_GEOMETRIA_DEGENERADA
+    deg_strip = (rr == 68) & (cc >= 50) & (cc < 52)
+    for b_idx, val in enumerate(clearing_sig):
+        c1[b_idx][deg_strip] = val
+    s1[deg_strip] = 5
 
     t0_v, t0_s = _write_local_s2_pair(tmp_path / "attr_t0", "t0", c0, s0, west, north)
     t1_v, t1_s = _write_local_s2_pair(tmp_path / "attr_t1", "t1", c1, s1, west, north)
@@ -470,11 +580,66 @@ def test_discard_attribution_ignores_cloud_adjacency_and_ina_wrapper(tmp_path: P
         t1_swir_scl_path=t1_s,
         work_dir=tmp_path / "attr_work",
     )
-    assert res.metadata["candidate_count"] == 0
+    assert res.metadata["candidate_count"] == 1
+    assert res.features[0]["properties"]["anomaly_type"] == "desmonte_ribera_acopio"
+    assert res.features[0]["properties"]["area_m2"] >= 800.0
+
     statuses = [d["filter_status"] for d in res.metadata["discarded_candidates"]]
     assert "DESCARTADO_COMPUERTA_MINERAL" in statuses
     assert "DESCARTADO_NUBE_SOMBRA" not in statuses
     assert "DESCARTADO_CONFUSOR_TURBIDEZ" in statuses
+    assert "DESCARTADO_AREA_MINIMA" in statuses
+    assert "DESCARTADO_GEOMETRIA_DEGENERADA" in statuses
+
+    # Simetría check_bar_migration=False para desmontes solapados con migración de barra y crecida
+    raw_m = np.zeros((20, 20), dtype=bool)
+    raw_m[4:10, 4:10] = True
+    final_m = np.zeros((20, 20), dtype=bool)
+    empty_m = np.zeros((20, 20), dtype=bool)
+    bar_m = raw_m.copy()
+    flood_m = raw_m.copy()
+    tf = from_origin(west, north, 10.0, 10.0)
+    to_wgs = Transformer.from_crs(CRS.from_epsg(5347), CRS.from_epsg(4326), always_xy=True)
+
+    rec_clearing = _collect_filtered_components(
+        raw_mask=raw_m,
+        final_mask=final_m,
+        anomaly_type="desmonte_ribera_acopio",
+        transform=tf,
+        crs_epsg=5347,
+        to_wgs=to_wgs,
+        pixel_area_m2=100.0,
+        min_area_m2=800.0,
+        bar_migration_mask=bar_m,
+        uniform_stage_belt_mask=flood_m,
+        drawdown_belt_mask=empty_m,
+        flood_zone_excl=empty_m,
+        scl_mineral_gate=np.ones((20, 20), dtype=bool),
+        check_mineral_gate=True,
+        check_bar_migration=False,
+    )
+    assert len(rec_clearing) == 1
+    assert rec_clearing[0].filter_status == "DESCARTADO_PULSO_HIDROMETRICO"
+
+    rec_excav = _collect_filtered_components(
+        raw_mask=raw_m,
+        final_mask=final_m,
+        anomaly_type="frente_excavacion_inundado",
+        transform=tf,
+        crs_epsg=5347,
+        to_wgs=to_wgs,
+        pixel_area_m2=100.0,
+        min_area_m2=800.0,
+        bar_migration_mask=bar_m,
+        uniform_stage_belt_mask=flood_m,
+        drawdown_belt_mask=empty_m,
+        flood_zone_excl=empty_m,
+        scl_mineral_gate=np.ones((20, 20), dtype=bool),
+        check_mineral_gate=False,
+        check_bar_migration=True,
+    )
+    assert len(rec_excav) == 1
+    assert rec_excav[0].filter_status == "DESCARTADO_MIGRACION_BARRA"
 
     # Cobertura de wrapper fetch_ina_stage_height (dict payload y ConnectError)
     mock_ok = MagicMock()

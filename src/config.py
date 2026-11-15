@@ -160,6 +160,12 @@ class Settings(BaseSettings):
         alias="MIN_ANOMALY_AREA_M2",
         description="Área mínima en m² (4 píxeles nativos de 20x20 m para bandas SWIR) para retener una anomalía.",
     )
+    min_clearing_area_m2: float = Field(
+        default=800.0,
+        gt=0.0,
+        alias="MIN_CLEARING_AREA_M2",
+        description="Área mínima en m² (8 píxeles nativos VNIR de 10x10 m / 2 píxeles SWIR de 20x20 m) para retener desmonte ribereño o camino.",
+    )
     excess_tolerance_pct: float = Field(
         default=5.0,
         ge=0.0,
@@ -404,6 +410,7 @@ class Settings(BaseSettings):
         """Devuelve el diccionario completo de umbrales de detección y calibración para trazabilidad."""
         return {
             "min_anomaly_area_m2": self.min_anomaly_area_m2,
+            "min_clearing_area_m2": self.min_clearing_area_m2,
             "bsi_reg_albedo_k": self.bsi_reg_albedo_k,
             "dark_water_min_b11_dn": self.dark_water_min_b11_dn,
             "dark_water_min_b04_dn": self.dark_water_min_b04_dn,

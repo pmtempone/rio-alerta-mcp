@@ -171,6 +171,10 @@ def tool_detect_extraction_anomalies(
     t0_swir_20m_path: str | None = None,
     t1_swir_20m_path: str | None = None,
     min_area_m2: float = 1600.0,
+    min_clearing_area_m2: float = 800.0,
+    stage_t0_m: float | None = None,
+    stage_t1_m: float | None = None,
+    max_discarded_records: int | None = None,
 ) -> ChangeDetectionResult:
     """Detecta polígonos de anomalías morfológicas candidatas filtrando cambios fluviales naturales.
 
@@ -179,6 +183,10 @@ def tool_detect_extraction_anomalies(
     """
     if min_area_m2 <= 0:
         raise ValueError("min_area_m2 debe ser mayor que 0.")
+    if min_clearing_area_m2 <= 0:
+        raise ValueError("min_clearing_area_m2 debe ser mayor que 0.")
+    if max_discarded_records is not None and max_discarded_records < 1:
+        raise ValueError("max_discarded_records debe ser mayor o igual a 1.")
     _validate_raster_paths(t0_path, t1_path, t0_swir_20m_path, t1_swir_20m_path)
     settings.ensure_directories()
     return detect_extraction_anomalies(
@@ -187,7 +195,11 @@ def tool_detect_extraction_anomalies(
         t0_swir_scl_paths=t0_swir_20m_path,
         t1_swir_scl_path=t1_swir_20m_path,
         min_area_m2=min_area_m2,
+        min_clearing_area_m2=min_clearing_area_m2,
         work_dir=settings.processed_dir,
+        stage_t0_m=stage_t0_m,
+        stage_t1_m=stage_t1_m,
+        max_discarded_records=max_discarded_records,
     )
 
 

@@ -51,6 +51,7 @@ data/processed/*
 !data/processed/.gitkeep
 data/reports/*
 !data/reports/.gitkeep
+data/experiments/**/work*/
 *.gpkg
 *.tif
 *.tiff

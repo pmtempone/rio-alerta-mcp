@@ -9,6 +9,7 @@ Ejecuta con parámetros congelados (sin ajuste posterior sobre AOI_2):
 from __future__ import annotations
 
 import json
+import math
 import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -29,8 +30,10 @@ AOI_1_BBOX = (-60.66, -31.74, -60.53, -31.64)
 AOI_2_BBOX = (-60.75, -32.12, -60.61, -32.02)
 
 EXP1_RASTERS = PROJECT_ROOT / "data" / "experiments" / "exp_001_parana_medio" / "rasters"
+EXP1_ORIG_GEOJSON = PROJECT_ROOT / "data" / "experiments" / "exp_001_parana_medio" / "06_anomalias_detectadas.geojson"
 OUT_RECAL = PROJECT_ROOT / "data" / "experiments" / "exp_001_recalibrated"
 OUT_EXP2 = PROJECT_ROOT / "data" / "experiments" / "exp_002_validation"
+COASTAL_FOCI_IDS: Tuple[str, ...] = ("RIO-0184", "RIO-0225", "RIO-0199", "RIO-0365")
 
 
 def _fetch_item_by_id(
@@ -127,6 +130,58 @@ def _safe_ina_stage(series_id: int, date_str: str, fallback: Optional[float]) ->
     return None, "NO_DISPONIBLE"
 
 
+def _evaluate_coastal_foci(res_fc: Any, orig_fc: Dict[str, Any]) -> Dict[str, Any]:
+    """Evalúa recuperación espacial (< 50 m) de los 4 focos costeros originales del Exp 001."""
+    orig_by_id = {f["id"]: f for f in orig_fc.get("features", []) if f.get("id") in COASTAL_FOCI_IDS}
+    clearing_feats = [
+        f
+        for f in res_fc.features
+        if f["properties"]["anomaly_type"] in ("desmonte_ribera_acopio", "apertura_camino_acceso")
+    ]
+    foci_report: Dict[str, Dict[str, Any]] = {}
+    recovered = 0
+    for fid in COASTAL_FOCI_IDS:
+        orig_feat = orig_by_id.get(fid)
+        if orig_feat is None:
+            foci_report[fid] = {"matched": False, "error": "missing_in_orig"}
+            continue
+        cx0, cy0 = orig_feat["properties"]["centroid_posgar"]
+        best_feat: Optional[Dict[str, Any]] = None
+        best_dist = float("inf")
+        for cand in clearing_feats:
+            cx, cy = cand["properties"]["centroid_posgar"]
+            dist = math.hypot(float(cx) - float(cx0), float(cy) - float(cy0))
+            if dist < best_dist:
+                best_dist = dist
+                best_feat = cand
+        if best_feat is not None and best_dist < 50.0:
+            bp = best_feat["properties"]
+            stats = bp.get("spectral_stats") or {}
+            recovered += 1
+            foci_report[fid] = {
+                "matched": True,
+                "matched_id": best_feat["id"],
+                "distance_m": round(best_dist, 2),
+                "area_m2": bp["area_m2"],
+                "pixel_count_10m": stats.get("pixel_count_10m"),
+                "confidence": bp["confidence"],
+            }
+        else:
+            foci_report[fid] = {
+                "matched": False,
+                "matched_id": None,
+                "distance_m": round(best_dist, 2) if math.isfinite(best_dist) else None,
+                "area_m2": None,
+                "pixel_count_10m": None,
+                "confidence": None,
+            }
+    return {
+        "recovered_count": recovered,
+        "total_foci": len(COASTAL_FOCI_IDS),
+        "foci": foci_report,
+    }
+
+
 def main() -> None:
     OUT_RECAL.mkdir(parents=True, exist_ok=True)
     OUT_EXP2.mkdir(parents=True, exist_ok=True)
@@ -150,6 +205,7 @@ def main() -> None:
     t1_v_exp1 = EXP1_RASTERS / "t1_S2A_20HQK_20261108_1_L2A_vnir10m.tif"
     t1_s_exp1 = EXP1_RASTERS / "t1_S2A_20HQK_20261108_1_L2A_swir_scl20m.tif"
 
+    h_paran_2024, s_paran_2024 = _safe_ina_stage(30, "2024-11-06", 0.67)
     h_paran_2025, s_paran_2025 = _safe_ina_stage(30, "2025-11-13", 2.64)
     h_paran_2026, s_paran_2026 = _safe_ina_stage(30, "2026-11-08", 4.85)
     res_recal = detect_extraction_anomalies(
@@ -166,9 +222,26 @@ def main() -> None:
     _save_geojson(res_recal, OUT_RECAL / "exp_001_recalibrated.geojson")
     summary_runs.append(_summarize_run("exp_001_recalibrated", res_recal))
 
+    print("1b/4 Regresión bitemporal Exp 001 (2024-11-06 -> 2026-11-08) para focos costeros...")
+    res_bi_2426 = detect_extraction_anomalies(
+        t0_vnir_paths=EXP1_RASTERS / "t0_S2A_20HQK_20241106_0_L2A_vnir10m.tif",
+        t0_swir_scl_paths=EXP1_RASTERS / "t0_S2A_20HQK_20241106_0_L2A_swir_scl20m.tif",
+        t1_vnir_path=t1_v_exp1,
+        t1_swir_scl_path=t1_s_exp1,
+        work_dir=OUT_RECAL / "work_bi_2426",
+        stage_t0_m=h_paran_2024,
+        stage_t1_m=h_paran_2026,
+        stage_t0_source=s_paran_2024,
+        stage_t1_source=s_paran_2026,
+    )
+    orig_exp1_fc = json.loads(EXP1_ORIG_GEOJSON.read_text(encoding="utf-8"))
+    coastal_foci_regression = {
+        "bitemporal_2024_2026": _evaluate_coastal_foci(res_bi_2426, orig_exp1_fc),
+        "exp_001_recalibrated": _evaluate_coastal_foci(res_recal, orig_exp1_fc),
+    }
+
     # 2. AOI_1 Estiaje 2024-11-06 -> 2025-11-13 (cacheados en exp_001)
     print("2/4 Ejecutando AOI_1 estiaje 2024-11-06 -> 2025-11-13...")
-    h_paran_2024, s_paran_2024 = _safe_ina_stage(30, "2024-11-06", 0.67)
     res_aoi1_2425 = detect_extraction_anomalies(
         t0_vnir_paths=EXP1_RASTERS / "t0_S2A_20HQK_20241106_0_L2A_vnir10m.tif",
         t0_swir_scl_paths=EXP1_RASTERS / "t0_S2A_20HQK_20241106_0_L2A_swir_scl20m.tif",
@@ -237,6 +310,7 @@ def main() -> None:
         json.dumps(
             {
                 "frozen_calibration_parameters": res_recal.metadata["calibration_parameters"],
+                "coastal_foci_regression": coastal_foci_regression,
                 "runs": summary_runs,
             },
             indent=2,
