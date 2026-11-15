@@ -16,7 +16,7 @@
 | **Superficie vectorial exacta** | **3,097.80 m²** (0.3098 ha) |
 | **Distancia al cuerpo de agua T0** | Sin dato |
 | **Estado de verificación** | `PENDIENTE_VERIFICACION_TERRENO_Y_CATASTRO` |
-| **Fecha de emisión** | 2026-11-15 13:06 UTC |
+| **Fecha de emisión** | 2026-11-15 17:11 UTC |
 
 ## 2. Resumen ejecutivo
 
@@ -103,8 +103,8 @@
 ## 9. Fuentes, parámetros y trazabilidad técnica
 
 - **CRS métrico de cálculo:** `EPSG:5347` (POSGAR 2007). Exportación GeoJSON: `EPSG:4326`.
-- **Procedencia hidrométrica (Puerto Paraná (INA seriesId=30), unidad `m`, consulta=2026-11-15 13:06 UTC):** T0=`2.69` m (`INA_API_A5`), T1=`4.76` m (`INA_API_A5`).
-- **Resolución de grilla / SWIR nativo:** 9.996810442680092 m / 20.009770821454982 m.
-- **Área mínima de detección:** 1600.0 m².
-- **Parámetros congelados Fase 2.1:** `bsi_reg_albedo_k=800.0`, `dark_water_min_b11_dn=600.0`, `dark_water_min_b04_dn=420.0`, `dark_water_min_b08_dn=350.0`, `scl7_min_b11_dn=850.0`, `scl7_min_b04_dn=500.0`, `hydrometric_stage_rise_alert_m=0.8`.
+- **Procedencia hidrométrica (Puerto Paraná (INA seriesId=30), unidad `m`, consulta=2026-11-15 17:11 UTC):** T0=`2.69` m (`INA_API_A5`), T1=`4.76` m (`INA_API_A5`).
+- **Resolución de grilla / SWIR nativo:** 9.996810442680092 m / 20.009770821454982 m (reconstrucción de huella de píxel completo mediante buffer cuadrado `5.0` m).
+- **Áreas mínimas de detección:** 1600.0 m² (excavación inundada / frente extractivo) y 800.0 m² (desmonte ribereño / acopio).
+- **Parámetros congelados Fase 2.1 (42):** `min_anomaly_area_m2=1600.0`, `min_clearing_area_m2=800.0`, `bsi_reg_albedo_k=800.0`, `dark_water_min_b11_dn=600.0`, `dark_water_min_b04_dn=420.0`, `dark_water_min_b08_dn=350.0`, `dark_water_min_b11_b03_ratio=0.85`, `scl7_min_b11_dn=850.0`, `scl7_min_b04_dn=500.0`, `hydrometric_stage_rise_alert_m=0.8`, `moderate_stage_rise_m=0.4`, `water_stage_warning_pct=8.0`, `reach_water_mndwi_threshold=0.15`, `systemic_stage_strong_pct=12.0`, `shoreline_change_min_fraction=0.25`, `flooded_min_delta_mndwi=0.4`, `flooded_min_t1_mndwi=0.2`, `clearing_min_delta_bsi_adj=0.25`, `clearing_min_delta_bsi_reg=0.18`, `clearing_min_t1_bsi_reg=0.03`, `clearing_max_delta_ndvi_adj=-0.3`, `clearing_min_t1_bsi=-0.02`, `clearing_max_t1_mndwi=0.1`, `road_min_elongation=4.0`, `cloud_shadow_buffer_m=40.0`, `turbidity_open_water_mndwi=0.2`, `turbidity_wet_bar_mndwi=0.05`, `turbidity_red_shift_dn=150.0`, `turbidity_bright_bar_b04_dn=750.0`, `geomorph_water_mndwi_min=0.05`, `geomorph_min_channel_area_m2=50000.0`, `geomorph_bar_max_ndvi=0.25`, `geomorph_bar_max_dist_m=300.0`, `geomorph_lagoon_buffer_m=450.0`, `geomorph_island_max_dist_m=2500.0`, `dipole_min_abs_delta_mndwi=0.35`, `dipole_max_erosion_ndvi=0.35`, `dipole_min_accretion_mndwi_t0=0.05`, `dipole_min_area_ratio=0.4`, `dipole_max_area_ratio=2.5`, `dipole_max_span_m=450.0`, `riparian_veg_min_ndvi_t0=0.45`.
 - **Nota institucional del motor:** Las geometrías detectadas son anomalías morfológicas candidatas; no constituyen por sí solas infracción ni extracción ilegal sin cruce catastral oficial y revisión humana.

@@ -9,7 +9,10 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Sequence
+
+if TYPE_CHECKING:
+    from src.schemas import CaseRecord, PermitValidationResult, VLMFluvialVerdict
 
 
 def _fmt_num(val: Optional[float], decimals: int = 3, suffix: str = "") -> str:
@@ -44,6 +47,9 @@ def generate_candidate_dossier(
     figure_captions: Optional[Dict[str, str]] = None,
     cadastre_note: Optional[str] = None,
     strict_hydrometric_consistency: bool = False,
+    permit_validation: Optional[PermitValidationResult] = None,
+    vlm_verdict: Optional[VLMFluvialVerdict] = None,
+    case_record: Optional[CaseRecord] = None,
 ) -> str:
     """Genera un Dossier de Investigación Territorial de 9 secciones para un candidato.
 
@@ -82,9 +88,23 @@ def generate_candidate_dossier(
     swir_px = stats.get("effective_swir_pixels_20m")
 
     generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-    cadastre_text = (
-        cadastre_note
-        or "Sin cruce realizado contra catastro oficial provincial o registro de concesiones mineras/áridos."
+    if cadastre_note:
+        cadastre_text = cadastre_note
+    elif permit_validation is not None:
+        cadastre_text = (
+            f"{permit_validation.classification} (prioridad={permit_validation.priority}, "
+            f"exceso={permit_validation.excess_area_m2:,.1f} m² / {permit_validation.excess_pct:.1f}%): "
+            f"{permit_validation.observations}"
+        )
+    else:
+        cadastre_text = (
+            "Sin cruce realizado contra catastro oficial provincial o registro de concesiones mineras/áridos."
+        )
+
+    case_status_label = (
+        case_record.status
+        if case_record is not None
+        else "PENDIENTE_VERIFICACION_TERRENO_Y_CATASTRO"
     )
 
     lines: List[str] = []
@@ -99,6 +119,8 @@ def generate_candidate_dossier(
     lines.append("| Campo | Valor |")
     lines.append("| :--- | :--- |")
     lines.append(f"| **ID de candidato** | `{fid}` |")
+    if case_record is not None:
+        lines.append(f"| **Expediente vinculado** | `{case_record.case_id}` (eventos={case_record.events_count}) |")
     lines.append(f"| **Sector / AOI** | {aoi_name} |")
     lines.append(f"| **Período analizado** | {period_label} |")
     lines.append(f"| **Tipología morfológica** | `{atype}` |")
@@ -107,7 +129,11 @@ def generate_candidate_dossier(
     lines.append(f"| **Centroide POSGAR 2007 (EPSG:{crs_epsg})** | `{centroid_pos[0]}, {centroid_pos[1]}` |")
     lines.append(f"| **Superficie vectorial exacta** | **{area_m2:,.2f} m²** ({area_ha:.4f} ha) |")
     lines.append(f"| **Distancia al cuerpo de agua T0** | {_fmt_num(dist_water_m, 1, ' m')} |")
-    lines.append("| **Estado de verificación** | `PENDIENTE_VERIFICACION_TERRENO_Y_CATASTRO` |")
+    if permit_validation is not None:
+        lines.append(f"| **Clasificación catastral (Fase 3)** | `{permit_validation.classification}` (`{permit_validation.priority}`) |")
+    if vlm_verdict is not None:
+        lines.append(f"| **Dictamen auxiliar VLM/morfología** | `{vlm_verdict.verdict}` ({vlm_verdict.certainty_pct}%, `{vlm_verdict.backend}`) |")
+    lines.append(f"| **Estado de verificación** | `{case_status_label}` |")
     lines.append(f"| **Fecha de emisión** | {generated_at} |")
     lines.append("")
 
@@ -330,6 +356,16 @@ def generate_candidate_dossier(
     # 8. Recomendación de actuación
     lines.append("## 8. Recomendación de actuación (Nivel: Verificación)")
     lines.append("")
+    if vlm_verdict is not None:
+        lines.append(
+            f"- **Síntesis pericial auxiliar (`{vlm_verdict.verdict}`, certeza={vlm_verdict.certainty_pct}%):** "
+            f"{vlm_verdict.extraction_evidence} {vlm_verdict.fluvial_dynamics_assessment}"
+        )
+    if case_record is not None:
+        lines.append(
+            f"- **Trazabilidad del caso (`{case_record.case_id}`):** estado vigente `{case_record.status}`, "
+            f"prioridad `{case_record.priority}`, eventos registrados={case_record.events_count}."
+        )
     lines.append("1. **Inspector ambiental:** Verificar en terreno las coordenadas WGS84 indicadas para constatar presencia de dragado, refulado, acopio o movimiento de suelos, o descartar uso rural/obra ajena a áridos.")
     lines.append("2. **Autoridad provincial / Catastro y Minería:** Cruzar el polígono contra padrón catastral, concesiones mineras de 3ª categoría y permisos ambientales vigentes.")
     lines.append("3. **Prefectura / Control ribereño:** Utilizar el centroide como orientación geográfica preliminar en patrullajes de jurisdicción fluvial, sin asumir infracción previa.")
@@ -345,11 +381,15 @@ def generate_candidate_dossier(
         f"- **Procedencia hidrométrica ({stage_station}, unidad `m`{queried_txt}):** "
         f"T0=`{stage_t0}` m (`{stage_t0_src}`), T1=`{stage_t1}` m (`{stage_t1_src}`)."
     )
-    lines.append(f"- **Resolución de grilla / SWIR nativo:** {detection_metadata.get('grid_resolution_m', 10.0)} m / {detection_metadata.get('effective_swir_resolution_m', 20.0)} m.")
-    lines.append(f"- **Área mínima de detección:** {detection_metadata.get('min_anomaly_area_m2', 1600.0)} m².")
+    grid_res = float(detection_metadata.get("grid_resolution_m", 10.0))
+    swir_res = float(detection_metadata.get("effective_swir_resolution_m", 20.0))
+    min_excav_area = float(detection_metadata.get("min_anomaly_area_m2", 1600.0))
+    min_clear_area = float(detection_metadata.get("min_clearing_area_m2", calib.get("min_clearing_area_m2", 800.0)))
+    lines.append(f"- **Resolución de grilla / SWIR nativo:** {grid_res} m / {swir_res} m (reconstrucción de huella de píxel completo mediante buffer cuadrado `{0.5 * grid_res:.1f}` m).")
+    lines.append(f"- **Áreas mínimas de detección:** {min_excav_area:.1f} m² (excavación inundada / frente extractivo) y {min_clear_area:.1f} m² (desmonte ribereño / acopio).")
     if calib:
         calib_str = ", ".join(f"`{k}={v}`" for k, v in calib.items())
-        lines.append(f"- **Parámetros congelados Fase 2.1:** {calib_str}.")
+        lines.append(f"- **Parámetros congelados Fase 2.1 ({len(calib)}):** {calib_str}.")
     lines.append(f"- **Nota institucional del motor:** {detection_metadata.get('institutional_note', '')}")
     lines.append("")
 
@@ -366,6 +406,8 @@ def generate_negative_or_area_dossier(
     hydro = detection_metadata.get("hydrological_controls") or {}
     zones = detection_metadata.get("geomorphological_zone_fractions") or {}
     calib = detection_metadata.get("calibration_parameters") or {}
+    min_excav_area = float(detection_metadata.get("min_anomaly_area_m2", 1600.0))
+    min_clear_area = float(detection_metadata.get("min_clearing_area_m2", calib.get("min_clearing_area_m2", 800.0)))
     generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
     lines = [
@@ -383,7 +425,7 @@ def generate_negative_or_area_dossier(
         "",
         "## 2. Resumen ejecutivo",
         "",
-        "- **Observación:** No se detectaron polígonos residuales que superen simultáneamente los umbrales espectrales, morfológicos (`>= 1600 m²`), de agua oscura y de dinámica fluvial.",
+        f"- **Observación:** No se detectaron polígonos residuales que superen simultáneamente los umbrales espectrales, morfológicos (`>= {min_excav_area:.0f} m²` excavación inundada / `>= {min_clear_area:.0f} m²` desmonte ribereño), de agua oscura y de dinámica fluvial.",
         "- **Interpretación:** En las escenas comparadas no hay evidencia satelital de frentes de extracción o desmontes ribereños compatibles con la firma del detector.",
         "- **Hipótesis:** Tramo sin anomalías detectables a resolución Sentinel-2 (10–20 m) durante el período analizado, o cambios por debajo del umbral de área/contraste.",
         "- **Verificación:** No se requiere inspección de campo de urgencia derivada de esta corrida; mantener monitoreo periódico.",
@@ -413,7 +455,7 @@ def generate_negative_or_area_dossier(
         "",
         "## 7. Limitaciones y datos faltantes",
         "",
-        "- Eventos menores a 1.600 m² o cubiertos por nubes/sombras SCL quedan fuera del alcance de detección.",
+        f"- Eventos menores al umbral operativo ({min_excav_area:.0f} m² para excavación inundada; {min_clear_area:.0f} m² para desmonte ribereño) o cubiertos por nubes/sombras SCL quedan fuera del alcance de detección.",
         "",
         "## 8. Recomendación de actuación (Nivel: Verificación)",
         "",

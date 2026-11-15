@@ -1,6 +1,6 @@
 """Modelos Pydantic v2 estrictos de entrada y salida para las herramientas MCP de RíoAlerta."""
 
-from typing import Any, Dict, List, Literal, Optional, Tuple
+from typing import Any, Dict, List, Literal, Optional, Tuple, Union
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -439,3 +439,102 @@ class EnforcementReportResult(BaseModel):
     t0_date: str = Field(..., description="Fecha ISO de adquisición de la escena T0.")
     t1_scene_id: str = Field(..., description="ID STAC de la escena actual T1.")
     t1_date: str = Field(..., description="Fecha ISO de adquisición de la escena T1.")
+
+
+CaseStatusLiteral = Literal[
+    "PENDIENTE_VERIFICACION_TERRENO_Y_CATASTRO",
+    "SIN_CATASTRO_OFICIAL_CARGADO",
+    "SIN_COINCIDENCIA_EN_CATASTRO_LOCAL",
+    "SIN_COINCIDENCIA_EN_REGISTROS_CONSULTADOS",
+    "EN_REVISION_GABINETE",
+    "INSPECCION_SOLICITADA",
+    "INSPECCIONADO_SIN_PERMISO_REGISTRADO",
+    "EXTRACCION_AUTORIZADA",
+    "EXCESO_DE_POLIGONO_EN_VERIFICACION",
+    "DESCARTADO_DINAMICA_NATURAL",
+    "ARCHIVADO_FALSO_POSITIVO",
+]
+
+CaseActionTypeLiteral = Literal[
+    "APERTURA_CASO",
+    "NOTA_ANALISTA",
+    "ACTUALIZACION_CATASTRAL",
+    "DICTAMEN_VLM",
+    "SOLICITUD_INSPECCION",
+    "RESULTADO_CAMPO",
+    "CAMBIO_ESTADO",
+]
+
+
+class CaseEventRecord(BaseModel):
+    """Evento auditable append-only del historial de investigación de un candidato."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    event_id: str = Field(..., description="Identificador único del evento en la bitácora.")
+    case_id: str = Field(..., description="Identificador estable del expediente o caso.")
+    candidate_uid: str = Field(..., description="Identificador determinista del candidato satelital.")
+    anomaly_id: str = Field(..., description="Código de anomalía en la corrida asociada (ej. RIO-0184).")
+    timestamp_utc: str = Field(..., description="Marca temporal ISO-8601 UTC de registro del evento.")
+    action_type: CaseActionTypeLiteral = Field(..., description="Tipo de acción registrada en el expediente.")
+    actor: str = Field(..., description="Usuario, operador o servicio que registró el evento.")
+    previous_status: Optional[CaseStatusLiteral] = Field(
+        default=None, description="Estado previo del caso antes de este evento."
+    )
+    new_status: CaseStatusLiteral = Field(..., description="Estado vigente del caso luego de este evento.")
+    summary: str = Field(..., description="Descripción técnica o nota institucional auditable del evento.")
+    metadata: Dict[str, Any] = Field(
+        default_factory=dict, description="Metadatos estructurados adicionales del evento."
+    )
+    human_review_required: bool = Field(
+        default=True,
+        description="Indica que toda decisión administrativa/judicial requiere verificación humana competente.",
+    )
+
+
+class CaseRecord(BaseModel):
+    """Estado consolidado actual de un expediente de investigación territorial en RíoAlerta."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    case_id: str = Field(..., description="Identificador único estable del expediente.")
+    candidate_uid: str = Field(..., description="Identificador determinista estable del candidato.")
+    anomaly_id: str = Field(..., description="Último código de anomalía asociado al candidato.")
+    status: CaseStatusLiteral = Field(..., description="Estado administrativo/técnico actual del expediente.")
+    priority: InspectionPriorityLiteral = Field(..., description="Prioridad operativa vigente.")
+    crs_epsg: int = Field(..., description="Código EPSG POSGAR 2007 de referencia métrica.")
+    centroid_wgs84: Tuple[float, float] = Field(..., description="Centroide (lon, lat) WGS84.")
+    area_m2: float = Field(..., gt=0.0, description="Superficie métrica estimada en m² (POSGAR 2007).")
+    created_at_utc: str = Field(..., description="Fecha y hora UTC de apertura inicial del caso.")
+    updated_at_utc: str = Field(..., description="Fecha y hora UTC de última actualización.")
+    events_count: int = Field(..., ge=1, description="Cantidad total de eventos registrados en el historial.")
+    latest_summary: str = Field(..., description="Resumen del último evento registrado.")
+    human_review_required: bool = Field(
+        default=True,
+        description="Indica que ningún resultado satelital automatizado constituye imputación legal directa.",
+    )
+
+
+def coerce_anomaly_feature(
+    anomaly: Union[ExtractionAnomalyFeature, Dict[str, Any]],
+) -> ExtractionAnomalyFeature:
+    """Convierte un `ExtractionAnomalyFeature`, dict plano o Feature GeoJSON al modelo estricto.
+
+    Args:
+        anomaly: Instancia `ExtractionAnomalyFeature`, diccionario con campos del modelo o
+            Feature GeoJSON emitido por `detect_extraction_anomalies`.
+
+    Returns:
+        Instancia validada de `ExtractionAnomalyFeature`.
+    """
+    if isinstance(anomaly, ExtractionAnomalyFeature):
+        return anomaly
+    if not isinstance(anomaly, dict):
+        raise TypeError("Se esperaba ExtractionAnomalyFeature o dict.")
+    if anomaly.get("type") == "Feature" and "properties" in anomaly and "geometry" in anomaly:
+        props = dict(anomaly["properties"])
+        props.setdefault("id", anomaly.get("id", "RIO-0000"))
+        props.setdefault("geometry_geojson", anomaly["geometry"])
+        return ExtractionAnomalyFeature(**props)
+    return ExtractionAnomalyFeature(**anomaly)
+

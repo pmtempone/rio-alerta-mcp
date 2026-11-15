@@ -54,18 +54,28 @@ Si no hay cliente MCP conectado, importar directamente las funciones de `src/ser
 .venv/bin/python -c "from src.server import tool_server_status; print(tool_server_status())"
 ```
 
-## 4. Flujo de Trabajo Estándar con las Herramientas MCP
+## 4. Flujo de Trabajo Estándar con las Herramientas MCP (10 Tools)
 
 1. **Verificar estado y configuración:**
    Llamar a `tool_server_status()` para confirmar rutas (`data/`, `processed/`, `reports/`), fajas POSGAR y límites de memoria.
 2. **Resolver CRS oficial argentino (POSGAR 2007):**
    Llamar a `tool_resolve_posgar_crs(lon, lat)` para obtener el código `EPSG:5343–5349` correspondiente al tramo fluvial.
-3. **Calcular diferencias espectrales (`ΔMNDWI`, `ΔBSI`, `ΔNDVI`):**
+3. **Buscar y recortar par multitemporal Sentinel-2 L2A por STAC:**
+   Llamar a `tool_search_multitemporal_pair(min_lon, min_lat, max_lon, max_lat, t1_end_date, lookback_years)`.
+4. **Calcular diferencias espectrales (`ΔMNDWI`, `ΔBSI`, `ΔNDVI`):**
    Llamar a `tool_compute_spectral_changes(t0_path, t1_path, t0_swir_20m_path, t1_swir_20m_path)` respetando bandas VNIR `10 m` y SWIR+SCL `20 m`.
-4. **Detectar anomalías morfológicas candidatas:**
-   Llamar a `tool_detect_extraction_anomalies(t0_path, t1_path, t0_swir_20m_path, t1_swir_20m_path, min_area_m2=1600.0)`.
-5. **Evaluar piloto Paraná Medio:**
+5. **Detectar anomalías morfológicas candidatas:**
+   Llamar a `tool_detect_extraction_anomalies(t0_path, t1_path, t0_swir_20m_path, t1_swir_20m_path, min_area_m2=1600.0, min_clearing_area_m2=800.0)`.
+6. **Evaluar piloto Paraná Medio:**
    Llamar a `tool_evaluate_parana_pilot(offline_mode=True)` (o `False` para consultar STAC en vivo).
+7. **Validar catastro de concesiones e hidrografía (Fase 3):**
+   Llamar a `tool_validate_permits(anomaly_dict, t1_date, permits_gpkg_path, cadastre_status, jurisdiction)` respetando estrictamente la completitud del padrón cargado.
+8. **Evaluar / registrar dictamen auxiliar VLM o morfo-espectral (Fase 3):**
+   Llamar a `tool_evaluate_vlm_verdict(anomaly_dict, verdict, certainty_pct, extraction_evidence, fluvial_dynamics_assessment)`.
+9. **Emitir dossier 9 secciones y expediente JSON reproducible (Fase 3):**
+   Llamar a `tool_generate_enforcement_report(anomaly_dict, t0_scene_id, t0_date, t1_scene_id, t1_date, study_area_name, permits_gpkg_path, cadastre_status)`.
+10. **Gestionar bitácora auditable de casos JSONL + SQLite (Fase 3):**
+   Llamar a `tool_manage_case_workflow(action="open"|"append_event"|"get"|"list", ...)` para registrar notas de analistas, solicitudes de inspección y resultados de campo.
 
 ## 5. Ejecución de Experimentos Reproducibles
 

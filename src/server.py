@@ -2,12 +2,13 @@
 
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, List, cast
 
 from fastmcp import FastMCP
 
 from src import __version__
 from src.config import POSGAR_2007_EPSG, settings
+from src.core.case_workflow import CaseWorkflowManager
 from src.core.change_detector import (
     compute_multitemporal_baseline_and_changes,
     detect_extraction_anomalies,
@@ -15,7 +16,22 @@ from src.core.change_detector import (
 from src.core.crs_manager import get_posgar_faja
 from src.core.optical_providers import search_and_fetch_stac_multitemporal
 from src.core.parana_pilot_recon import evaluate_parana_pilot_readiness
-from src.schemas import ChangeDetectionResult, MultitemporalScenePair, SpectralChangeResult
+from src.core.permits_validator import validate_anomaly_permits
+from src.core.report_generator import generate_enforcement_report
+from src.core.vlm_judge import build_vlm_fluvial_prompt, evaluate_candidate_vlm_verdict
+from src.schemas import (
+    CadastreMetadata,
+    CadastreStatusLiteral,
+    CaseActionTypeLiteral,
+    CaseStatusLiteral,
+    ChangeDetectionResult,
+    InspectionPriorityLiteral,
+    MultitemporalScenePair,
+    PermitClassificationLiteral,
+    SpectralChangeResult,
+    VLMVerdictLiteral,
+    coerce_anomaly_feature,
+)
 
 mcp = FastMCP(
     "RioAlerta-MCP",
@@ -207,6 +223,301 @@ def tool_detect_extraction_anomalies(
 def tool_evaluate_parana_pilot(offline_mode: bool = True) -> Dict[str, Any]:
     """Evalúa factibilidad geodésica, STAC e institucional del tramo piloto Río Paraná Medio."""
     return evaluate_parana_pilot_readiness(offline_mode=offline_mode)
+
+
+_VALID_CADASTRE_STATUSES = {"OFICIAL_COMPLETO", "PARCIAL_LOCAL", "NO_DISPONIBLE"}
+_VALID_VLM_VERDICTS = {
+    "EXTRACCION_ANTROPICA",
+    "DINAMICA_FLUVIAL_NATURAL",
+    "ARTEFACTO_NUBES_SOMBRAS",
+    "PENDIENTE_REVISION",
+}
+_VALID_CASE_ACTIONS = {
+    "APERTURA_CASO",
+    "NOTA_ANALISTA",
+    "ACTUALIZACION_CATASTRAL",
+    "DICTAMEN_VLM",
+    "SOLICITUD_INSPECCION",
+    "RESULTADO_CAMPO",
+    "CAMBIO_ESTADO",
+}
+_VALID_CASE_STATUSES = {
+    "PENDIENTE_VERIFICACION_TERRENO_Y_CATASTRO",
+    "SIN_CATASTRO_OFICIAL_CARGADO",
+    "SIN_COINCIDENCIA_EN_CATASTRO_LOCAL",
+    "SIN_COINCIDENCIA_EN_REGISTROS_CONSULTADOS",
+    "EN_REVISION_GABINETE",
+    "INSPECCION_SOLICITADA",
+    "INSPECCIONADO_SIN_PERMISO_REGISTRADO",
+    "EXTRACCION_AUTORIZADA",
+    "EXCESO_DE_POLIGONO_EN_VERIFICACION",
+    "DESCARTADO_DINAMICA_NATURAL",
+    "ARCHIVADO_FALSO_POSITIVO",
+}
+_VALID_PRIORITIES = {
+    "ALTA_FISCALIZACION_INMEDIATA",
+    "MEDIA_VERIFICACION",
+    "BAJA_ARCHIVO",
+}
+
+_PERMIT_CLASS_TO_CASE_STATUS: Dict[PermitClassificationLiteral, CaseStatusLiteral] = {
+    "SIN_CATASTRO_OFICIAL_CARGADO": "SIN_CATASTRO_OFICIAL_CARGADO",
+    "SIN_COINCIDENCIA_EN_CATASTRO_LOCAL": "SIN_COINCIDENCIA_EN_CATASTRO_LOCAL",
+    "SIN_COINCIDENCIA_EN_REGISTROS_CONSULTADOS": "SIN_COINCIDENCIA_EN_REGISTROS_CONSULTADOS",
+    "EXTRACCION_AUTORIZADA": "EXTRACCION_AUTORIZADA",
+    "EXCESO_DE_POLIGONO": "EXCESO_DE_POLIGONO_EN_VERIFICACION",
+    "PERMISO_VENCIDO": "PENDIENTE_VERIFICACION_TERRENO_Y_CATASTRO",
+    "EXTRACCION_SIN_PERMISO": "PENDIENTE_VERIFICACION_TERRENO_Y_CATASTRO",
+    "INSPECCIONADO_SIN_PERMISO_REGISTRADO": "INSPECCIONADO_SIN_PERMISO_REGISTRADO",
+}
+
+
+def _validate_iso_date(value: str, field_name: str) -> None:
+    try:
+        datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise ValueError(
+            f"{field_name} inválido ('{value}'): se requiere formato ISO 8601 (ej. 'YYYY-MM-DD')."
+        ) from exc
+
+
+@mcp.tool()
+def tool_validate_permits(
+    anomaly_dict: Dict[str, Any],
+    t1_date: str,
+    permits_gpkg_path: str | None = None,
+    cadastre_status: str = "NO_DISPONIBLE",
+    jurisdiction: str = "No especificada",
+    authority_name: str | None = None,
+    excess_tolerance_pct: float | None = None,
+    query_remote_hydrography: bool = False,
+) -> Dict[str, Any]:
+    """Cruza espacial y temporalmente un candidato contra el catastro de permisos e hidrografía."""
+    _validate_iso_date(t1_date, "t1_date")
+    if cadastre_status not in _VALID_CADASTRE_STATUSES:
+        raise ValueError(
+            f"cadastre_status inválido '{cadastre_status}'. Válidos: {sorted(_VALID_CADASTRE_STATUSES)}."
+        )
+    if excess_tolerance_pct is not None and excess_tolerance_pct < 0.0:
+        raise ValueError("excess_tolerance_pct debe ser >= 0.")
+
+    meta = CadastreMetadata(
+        cadastre_status=cast(CadastreStatusLiteral, cadastre_status),
+        jurisdiction=jurisdiction,
+        authority_name=authority_name,
+        source_reference=permits_gpkg_path or str(settings.permits_gpkg_path),
+    )
+    result = validate_anomaly_permits(
+        anomaly=anomaly_dict,
+        t1_date=t1_date,
+        permits_path=permits_gpkg_path,
+        cadastre_metadata=meta,
+        excess_tolerance_pct=excess_tolerance_pct,
+        query_remote_hydrography=query_remote_hydrography,
+    )
+    return result.model_dump()
+
+
+@mcp.tool()
+def tool_evaluate_vlm_verdict(
+    anomaly_dict: Dict[str, Any],
+    verdict: str | None = None,
+    certainty_pct: float | None = None,
+    extraction_evidence: str | None = None,
+    fluvial_dynamics_assessment: str | None = None,
+    backend: str = "heuristic_spectral_morphology_v1",
+    t0_date: str | None = None,
+    t1_date: str | None = None,
+) -> Dict[str, Any]:
+    """Emite o registra un dictamen auxiliar multimodal/heurístico de geomorfología fluvial."""
+    typed_verdict: VLMVerdictLiteral | None = None
+    if verdict is not None:
+        if verdict not in _VALID_VLM_VERDICTS:
+            raise ValueError(f"verdict inválido '{verdict}'. Válidos: {sorted(_VALID_VLM_VERDICTS)}.")
+        typed_verdict = cast(VLMVerdictLiteral, verdict)
+    if certainty_pct is not None and not (0.0 <= certainty_pct <= 100.0):
+        raise ValueError("certainty_pct debe estar entre 0 y 100.")
+
+    feat = coerce_anomaly_feature(anomaly_dict)
+    vlm_res = evaluate_candidate_vlm_verdict(
+        anomaly=feat,
+        verdict=typed_verdict,
+        certainty_pct=certainty_pct,
+        extraction_evidence=extraction_evidence,
+        fluvial_dynamics_assessment=fluvial_dynamics_assessment,
+        backend=backend,
+    )
+    suggested_prompt = build_vlm_fluvial_prompt(
+        anomaly=feat,
+        t0_date=t0_date or "T0",
+        t1_date=t1_date or "T1",
+    )
+    out = vlm_res.model_dump()
+    out["suggested_prompt"] = suggested_prompt
+    return out
+
+
+@mcp.tool()
+def tool_generate_enforcement_report(
+    anomaly_dict: Dict[str, Any],
+    t0_scene_id: str,
+    t0_date: str,
+    t1_scene_id: str,
+    t1_date: str,
+    study_area_name: str = "Tramo Fluvial Monitoreado",
+    permits_gpkg_path: str | None = None,
+    cadastre_status: str = "NO_DISPONIBLE",
+    jurisdiction: str = "No especificada",
+    multitemporal_series: List[Dict[str, Any]] | None = None,
+    output_dir: str | None = None,
+    open_case_workflow: bool = True,
+    case_storage_dir: str | None = None,
+) -> Dict[str, Any]:
+    """Genera el dossier Markdown de 9 secciones y el expediente JSON reproducible de Fase 3."""
+    _validate_iso_date(t0_date, "t0_date")
+    _validate_iso_date(t1_date, "t1_date")
+    if cadastre_status not in _VALID_CADASTRE_STATUSES:
+        raise ValueError(
+            f"cadastre_status inválido '{cadastre_status}'. Válidos: {sorted(_VALID_CADASTRE_STATUSES)}."
+        )
+
+    settings.ensure_directories()
+    feat = coerce_anomaly_feature(anomaly_dict)
+    meta = CadastreMetadata(
+        cadastre_status=cast(CadastreStatusLiteral, cadastre_status),
+        jurisdiction=jurisdiction,
+        source_reference=permits_gpkg_path or str(settings.permits_gpkg_path),
+    )
+    permit_res = validate_anomaly_permits(
+        anomaly=feat,
+        t1_date=t1_date,
+        permits_path=permits_gpkg_path,
+        cadastre_metadata=meta,
+    )
+    vlm_res = evaluate_candidate_vlm_verdict(anomaly=feat, permit_result=permit_res)
+
+    case_rec = None
+    if open_case_workflow:
+        manager = CaseWorkflowManager(storage_dir=case_storage_dir)
+        initial_status = _PERMIT_CLASS_TO_CASE_STATUS[permit_res.classification]
+        case_rec = manager.open_or_get_case(
+            anomaly=feat,
+            actor="tool_generate_enforcement_report",
+            summary=f"Expediente generado ({permit_res.classification}; {vlm_res.verdict}).",
+            initial_status=initial_status,
+            priority=permit_res.priority,
+            metadata={
+                "t0_scene_id": t0_scene_id,
+                "t1_scene_id": t1_scene_id,
+                "cadastre_classification": permit_res.classification,
+            },
+        )
+
+    report = generate_enforcement_report(
+        anomaly=feat,
+        t0_scene_id=t0_scene_id,
+        t0_date=t0_date,
+        t1_scene_id=t1_scene_id,
+        t1_date=t1_date,
+        permit_validation=permit_res,
+        vlm_verdict=vlm_res,
+        case_record=case_rec,
+        multitemporal_series=multitemporal_series,
+        study_area_name=study_area_name,
+        output_dir=output_dir,
+    )
+    return report.model_dump()
+
+
+@mcp.tool()
+def tool_manage_case_workflow(
+    action: str,
+    anomaly_dict: Dict[str, Any] | None = None,
+    case_id: str | None = None,
+    action_type: str | None = None,
+    summary: str | None = None,
+    actor: str = "operador",
+    new_status: str | None = None,
+    priority: str | None = None,
+    metadata: Dict[str, Any] | None = None,
+    status_filter: str | None = None,
+    storage_dir: str | None = None,
+) -> Dict[str, Any]:
+    """Gestiona expedientes de investigación territorial con bitácora JSONL append-only y SQLite."""
+    settings.ensure_directories()
+    manager = CaseWorkflowManager(storage_dir=storage_dir)
+
+    if action == "open":
+        if anomaly_dict is None:
+            raise ValueError("action='open' requiere anomaly_dict.")
+        typed_status: CaseStatusLiteral = "PENDIENTE_VERIFICACION_TERRENO_Y_CATASTRO"
+        if new_status is not None:
+            if new_status not in _VALID_CASE_STATUSES:
+                raise ValueError(f"new_status inválido '{new_status}'.")
+            typed_status = cast(CaseStatusLiteral, new_status)
+        typed_priority: InspectionPriorityLiteral = "MEDIA_VERIFICACION"
+        if priority is not None:
+            if priority not in _VALID_PRIORITIES:
+                raise ValueError(f"priority inválido '{priority}'.")
+            typed_priority = cast(InspectionPriorityLiteral, priority)
+        rec = manager.open_or_get_case(
+            anomaly=anomaly_dict,
+            actor=actor,
+            summary=summary or "Apertura inicial de expediente de monitoreo.",
+            initial_status=typed_status,
+            priority=typed_priority,
+            metadata=metadata,
+        )
+        return rec.model_dump()
+
+    if action == "append_event":
+        if not case_id or not action_type or not summary:
+            raise ValueError("action='append_event' requiere case_id, action_type y summary.")
+        if action_type not in _VALID_CASE_ACTIONS:
+            raise ValueError(f"action_type inválido '{action_type}'. Válidos: {sorted(_VALID_CASE_ACTIONS)}.")
+        typed_new_status: CaseStatusLiteral | None = None
+        if new_status is not None:
+            if new_status not in _VALID_CASE_STATUSES:
+                raise ValueError(f"new_status inválido '{new_status}'.")
+            typed_new_status = cast(CaseStatusLiteral, new_status)
+        typed_new_priority: InspectionPriorityLiteral | None = None
+        if priority is not None:
+            if priority not in _VALID_PRIORITIES:
+                raise ValueError(f"priority inválido '{priority}'.")
+            typed_new_priority = cast(InspectionPriorityLiteral, priority)
+        rec = manager.append_event(
+            case_id=case_id,
+            action_type=cast(CaseActionTypeLiteral, action_type),
+            summary=summary,
+            actor=actor,
+            new_status=typed_new_status,
+            priority=typed_new_priority,
+            metadata=metadata,
+        )
+        return rec.model_dump()
+
+    if action == "get":
+        if not case_id:
+            raise ValueError("action='get' requiere case_id.")
+        rec, events = manager.get_case(case_id)
+        return {
+            "case": rec.model_dump(),
+            "events": [evt.model_dump() for evt in events],
+        }
+
+    if action == "list":
+        typed_filter: CaseStatusLiteral | None = None
+        if status_filter is not None:
+            if status_filter not in _VALID_CASE_STATUSES:
+                raise ValueError(f"status_filter inválido '{status_filter}'.")
+            typed_filter = cast(CaseStatusLiteral, status_filter)
+        cases = manager.list_cases(status=typed_filter)
+        return {
+            "count": len(cases),
+            "cases": [c.model_dump() for c in cases],
+        }
+
+    raise ValueError("action inválido. Valores permitidos: 'open', 'append_event', 'get', 'list'.")
 
 
 if __name__ == "__main__":

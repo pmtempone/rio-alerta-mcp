@@ -79,7 +79,11 @@ rio-alerta-mcp/
 │       ├── optical_providers.py    # Cliente STAC, filtro de cobertura MGRS, ingesta COG 10m/20m y SCL
 │       ├── change_detector.py      # Índices ΔMNDWI/ΔBSI/ΔNDVI, segmentación y metadatos de incertidumbre
 │       ├── hydrological_control.py # Control de crecidas/bajantes, dipolos de barras y fenología
+│       ├── permits_validator.py    # Validación espacial/temporal contra catastro e hidrografía
+│       ├── vlm_judge.py            # Dictamen auxiliar multimodal/heurístico y prompts T0 vs T1
+│       ├── case_workflow.py        # Bitácora auditable de casos (JSONL append-only + SQLite)
 │       ├── dossier_generator.py    # Generador de Dossiers de Investigación Territorial (9 secciones)
+│       ├── report_generator.py     # Emisión de expedientes reproducibles Markdown + JSON (Fase 3)
 │       └── parana_pilot_recon.py   # Diagnóstico geodésico/STAC del tramo piloto Paraná Medio
 ├── scripts/
 │   ├── run_exp_001_parana_medio.py # Pipeline reproducible del Experimento 001 (Paraná Medio)
@@ -93,7 +97,7 @@ rio-alerta-mcp/
 ├── skills/
 │   └── rio-alerta/
 │       └── SKILL.md                # Skill portable para Antigravity, OpenCode y Claude
-└── tests/                          # Suite unitaria e integración (34 tests)
+└── tests/                          # Suite unitaria e integración (39 tests)
 ```
 
 ---
@@ -108,8 +112,12 @@ rio-alerta-mcp/
 | `tool_resolve_posgar_crs` | `lon: float`, `lat: float = -32.9` | `Dict[str, Any]` | Resuelve automáticamente la faja oficial POSGAR 2007 (`EPSG:5343–5349`) para cualquier coordenada de Argentina y proyecta `(lon, lat)` a `(x_posgar_m, y_posgar_m)`. |
 | `tool_search_multitemporal_pair` | `min_lon: float`, `min_lat: float`, `max_lon: float`, `max_lat: float`, `t1_end_date: str \| None`, `lookback_years: int = 3` | `MultitemporalScenePair` | Busca en STAC y recorta por HTTP Range Request un par comparable Sentinel-2 L2A (10m VNIR + 20m SWIR/SCL) en POSGAR 2007 listo para detección. |
 | `tool_compute_spectral_changes` | `t0_path: str`, `t1_path: str`, `t0_swir_20m_path: str \| None`, `t1_swir_20m_path: str \| None` | `SpectralChangeResult` | Calcula GeoTIFFs Float32 de $\Delta\text{MNDWI}$, $\Delta\text{BSI}$ y $\Delta\text{NDVI}$ en POSGAR 2007 respetando 10m/20m nativos y reporta `water_stage_delta_pct`. |
-| `tool_detect_extraction_anomalies` | `t0_path: str`, `t1_path: str`, `t0_swir_20m_path: str \| None`, `t1_swir_20m_path: str \| None`, `min_area_m2: float = 1600.0` | `ChangeDetectionResult` | Ejecuta el motor completo: controles hidrológicos, dipolos de barras, normalización fenológica, segmentación morfológica y emisión de `FeatureCollection` GeoJSON con `UncertaintyMetadata`. |
+| `tool_detect_extraction_anomalies` | `t0_path: str`, `t1_path: str`, `min_area_m2: float = 1600.0`, `min_clearing_area_m2: float = 800.0` | `ChangeDetectionResult` | Ejecuta el motor completo: controles hidrológicos, dipolos de barras, normalización fenológica, segmentación morfológica y emisión de `FeatureCollection` GeoJSON con `UncertaintyMetadata`. |
 | `tool_evaluate_parana_pilot` | `offline_mode: bool = True` | `Dict[str, Any]` | Evalúa factibilidad geodésica (`EPSG:5347`), disponibilidad STAC e institucional del corredor piloto Santa Fe – Paraná. |
+| `tool_validate_permits` | `anomaly_dict: Dict`, `t1_date: str`, `permits_gpkg_path: str \| None`, `cadastre_status: str = "NO_DISPONIBLE"` | `Dict[str, Any]` | Cruza el candidato en POSGAR 2007 contra concesiones locales e hidrografía respetando completitud catastral (`PermitValidationResult`). |
+| `tool_evaluate_vlm_verdict` | `anomaly_dict: Dict`, `verdict: str \| None`, `certainty_pct: float \| None` | `Dict[str, Any]` | Emite o registra un dictamen auxiliar de geomorfología fluvial (`VLMFluvialVerdict`) y prompt comparado T0 vs T1. |
+| `tool_generate_enforcement_report` | `anomaly_dict: Dict`, `t0_scene_id`, `t0_date`, `t1_scene_id`, `t1_date`, `open_case_workflow: bool = True` | `Dict[str, Any]` | Orquesta cruce catastral, dictamen VLM, apertura de caso y emisión de expediente Markdown (9 secciones) + JSON (`EnforcementReportResult`). |
+| `tool_manage_case_workflow` | `action: "open" \| "append_event" \| "get" \| "list"`, `case_id`, `action_type`, `summary` | `Dict[str, Any]` | Administra expedientes territoriales con bitácora JSONL append-only y consulta indexada en SQLite. |
 
 ### 3.2 Funciones del Núcleo (`src/core/`)
 
@@ -117,7 +125,8 @@ rio-alerta-mcp/
 - **Ingesta Óptica (`optical_providers.py`):** `decode_scl_masks(scl)`, `load_native_s2_scene_bundle(...)`, `filter_seasonally_comparable_items(...)`, `query_stac_seasonal_pair_candidates(...)`, `search_and_fetch_stac_multitemporal(...)`, `fetch_xyz_rgb_chip(...)`.
 - **Detección Multitemporal (`change_detector.py`):** `compute_spectral_indices(...)`, `compute_multitemporal_baseline_and_changes(...)`, `detect_extraction_anomalies(...)`.
 - **Dinámica Fluvial (`hydrological_control.py`):** `compute_reach_hydrological_state(...)`, `detect_natural_bar_migration_dipoles(...)`, `normalize_seasonal_riparian_indices(...)`, `compute_turbidity_confounder_flag(...)`.
-- **Dossiers de Investigación Territorial (`dossier_generator.py`):** `generate_candidate_dossier(...)`, `generate_negative_or_area_dossier(...)`.
+- **Catastro, VLM y Casos (`permits_validator.py`, `vlm_judge.py`, `case_workflow.py`):** `validate_anomaly_permits(...)`, `build_vlm_fluvial_prompt(...)`, `evaluate_candidate_vlm_verdict(...)`, `CaseWorkflowManager`.
+- **Dossiers y Expedientes (`dossier_generator.py`, `report_generator.py`):** `generate_candidate_dossier(...)`, `generate_negative_or_area_dossier(...)`, `generate_enforcement_report(...)`.
 
 ---
 
@@ -185,5 +194,5 @@ Ejemplo de configuración en clientes MCP (`mcp_config.json` / `claude_desktop_c
 
 - **Fase 1 (Completada):** Scaffolding FastMCP, esquemas Pydantic v2, `config.py` CWD-safe, fajas POSGAR 2007, Dockerfile y CI.
 - **Fase 2 (Completada):** Proveedor STAC Sentinel-2 L2A (10m/20m nativos + SCL), motor multitemporal y controles de dinámica fluvial.
-- **Fase 2.1 (En curso — Diseño aprobado en auditoría):** Corrección de agua oscura ($\text{BSI}_{\text{reg}}$ + umbrales minerales), zonificación geomorfológica en 4 zonas, integración de hidrómetros oficiales PNA/INA y validación en estiaje comparable + segundo tramo independiente (`Diamante`).
-- **Fase 3 (Planificada):** Catastro de concesiones (`permits_validator.py`), Juez Multimodal VLM (`vlm_judge.py`) y generador de actas técnicas (`report_generator.py`).
+- **Fase 2.1 (Completada):** Corrección de agua oscura ($\text{BSI}_{\text{reg}}$ + umbrales minerales), zonificación geomorfológica en 4 zonas, hidratación de hidrómetros INA, umbral diferenciado de desmonte ribereño (`800 m²`) y reconstrucción de huella de píxel completo (`4/4` recuperación en Paraná Medio y validación cruzada en Diamante).
+- **Fase 3 (Completada):** Validación catastral e hidrográfica (`permits_validator.py`), dictamen auxiliar VLM/morfología (`vlm_judge.py`), flujo auditable de casos JSONL+SQLite (`case_workflow.py`), generador de expedientes reproducibles Markdown+JSON (`dossier_generator.py`, `report_generator.py`) y 10 herramientas MCP operativas en `src/server.py`.
