@@ -25,7 +25,9 @@
         "is_systemic_stage_rise": true,
         "is_systemic_stage_drop": false,
         "stage_t0_m": 2.69,
+        "stage_t0_source": "INA_API_A5",
         "stage_t1_m": 4.76,
+        "stage_t1_source": "INA_API_A5",
         "stage_delta_m": 2.07,
         "bar_migration_dipoles_filtered": 22,
         "bar_migration_details": [
@@ -356,9 +358,11 @@
         "water_stage_delta_pct": -0.4,
         "is_systemic_stage_rise": true,
         "is_systemic_stage_drop": false,
-        "stage_t0_m": 0.78,
+        "stage_t0_m": 0.84,
+        "stage_t0_source": "INA_API_A5",
         "stage_t1_m": 2.69,
-        "stage_delta_m": 1.91,
+        "stage_t1_source": "INA_API_A5",
+        "stage_delta_m": 1.85,
         "bar_migration_dipoles_filtered": 9,
         "bar_migration_details": [
           {
@@ -605,7 +609,9 @@
         "is_systemic_stage_rise": false,
         "is_systemic_stage_drop": false,
         "stage_t0_m": 2.46,
+        "stage_t0_source": "INA_API_A5",
         "stage_t1_m": 2.66,
+        "stage_t1_source": "INA_API_A5",
         "stage_delta_m": 0.2,
         "bar_migration_dipoles_filtered": 15,
         "bar_migration_details": [
@@ -887,9 +893,11 @@
         "water_stage_delta_pct": 4.27,
         "is_systemic_stage_rise": false,
         "is_systemic_stage_drop": false,
-        "stage_t0_m": 1.82,
+        "stage_t0_m": 1.85,
+        "stage_t0_source": "INA_API_A5",
         "stage_t1_m": 1.75,
-        "stage_delta_m": -0.07,
+        "stage_t1_source": "INA_API_A5",
+        "stage_delta_m": -0.1,
         "bar_migration_dipoles_filtered": 15,
         "bar_migration_details": [
           {

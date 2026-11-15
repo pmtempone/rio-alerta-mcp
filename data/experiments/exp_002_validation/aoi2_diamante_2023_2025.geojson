@@ -17,9 +17,11 @@
       "water_stage_delta_pct": 4.27,
       "is_systemic_stage_rise": false,
       "is_systemic_stage_drop": false,
-      "stage_t0_m": 1.82,
+      "stage_t0_m": 1.85,
+      "stage_t0_source": "INA_API_A5",
       "stage_t1_m": 1.75,
-      "stage_delta_m": -0.07,
+      "stage_t1_source": "INA_API_A5",
+      "stage_delta_m": -0.1,
       "bar_migration_dipoles_filtered": 15,
       "bar_migration_details": [
         {

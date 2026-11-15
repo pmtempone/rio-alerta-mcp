@@ -518,6 +518,8 @@ def detect_extraction_anomalies(
     work_dir: Optional[Union[str, Path]] = None,
     stage_t0_m: Optional[float] = None,
     stage_t1_m: Optional[float] = None,
+    stage_t0_source: Optional[str] = None,
+    stage_t1_source: Optional[str] = None,
 ) -> ChangeDetectionResult:
     """Detecta anomalías morfológicas candidatas filtrando cambios fluviales naturales y nubes SCL.
 
@@ -767,7 +769,9 @@ def detect_extraction_anomalies(
             "is_systemic_stage_rise": hydro_state["is_systemic_stage_rise"],
             "is_systemic_stage_drop": hydro_state["is_systemic_stage_drop"],
             "stage_t0_m": hydro_state.get("stage_t0_m"),
+            "stage_t0_source": stage_t0_source or ("PARAMETRO_MANUAL" if stage_t0_m is not None else "NO_DISPONIBLE"),
             "stage_t1_m": hydro_state.get("stage_t1_m"),
+            "stage_t1_source": stage_t1_source or ("PARAMETRO_MANUAL" if stage_t1_m is not None else "NO_DISPONIBLE"),
             "stage_delta_m": hydro_state.get("stage_delta_m"),
             "bar_migration_dipoles_filtered": len(dipole_pairs),
             "bar_migration_details": dipole_pairs,

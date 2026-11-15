@@ -22,7 +22,7 @@ from pystac_client import Client  # noqa: E402
 from src.config import settings  # noqa: E402
 from src.core.change_detector import detect_extraction_anomalies  # noqa: E402
 from src.core.crs_manager import bbox_wgs84_to_posgar  # noqa: E402
-from src.core.hydrological_control import fetch_ina_stage_height  # noqa: E402
+from src.core.hydrological_control import fetch_ina_stage_height_with_provenance  # noqa: E402
 from src.core.optical_providers import _export_stac_item_to_posgar_geotiffs  # noqa: E402
 
 AOI_1_BBOX = (-60.66, -31.74, -60.53, -31.64)
@@ -118,9 +118,13 @@ def _summarize_run(name: str, res: Any) -> Dict[str, Any]:
     }
 
 
-def _safe_ina_stage(series_id: int, date_str: str, fallback: Optional[float]) -> Optional[float]:
-    val = fetch_ina_stage_height(series_id=series_id, target_date_iso=date_str)
-    return val if val is not None else fallback
+def _safe_ina_stage(series_id: int, date_str: str, fallback: Optional[float]) -> Tuple[Optional[float], str]:
+    val, src = fetch_ina_stage_height_with_provenance(series_id=series_id, target_date_iso=date_str)
+    if val is not None:
+        return val, src
+    if fallback is not None:
+        return fallback, "FALLBACK_MANUAL"
+    return None, "NO_DISPONIBLE"
 
 
 def main() -> None:
@@ -146,8 +150,8 @@ def main() -> None:
     t1_v_exp1 = EXP1_RASTERS / "t1_S2A_20HQK_20261108_1_L2A_vnir10m.tif"
     t1_s_exp1 = EXP1_RASTERS / "t1_S2A_20HQK_20261108_1_L2A_swir_scl20m.tif"
 
-    h_paran_2025 = _safe_ina_stage(30, "2025-11-13", 2.64)
-    h_paran_2026 = _safe_ina_stage(30, "2026-11-08", 4.85)
+    h_paran_2025, s_paran_2025 = _safe_ina_stage(30, "2025-11-13", 2.64)
+    h_paran_2026, s_paran_2026 = _safe_ina_stage(30, "2026-11-08", 4.85)
     res_recal = detect_extraction_anomalies(
         t0_vnir_paths=t0_v_exp1,
         t0_swir_scl_paths=t0_s_exp1,
@@ -156,13 +160,15 @@ def main() -> None:
         work_dir=OUT_RECAL / "work",
         stage_t0_m=h_paran_2025,
         stage_t1_m=h_paran_2026,
+        stage_t0_source=s_paran_2025,
+        stage_t1_source=s_paran_2026,
     )
     _save_geojson(res_recal, OUT_RECAL / "exp_001_recalibrated.geojson")
     summary_runs.append(_summarize_run("exp_001_recalibrated", res_recal))
 
     # 2. AOI_1 Estiaje 2024-11-06 -> 2025-11-13 (cacheados en exp_001)
     print("2/4 Ejecutando AOI_1 estiaje 2024-11-06 -> 2025-11-13...")
-    h_paran_2024 = _safe_ina_stage(30, "2024-11-06", 0.67)
+    h_paran_2024, s_paran_2024 = _safe_ina_stage(30, "2024-11-06", 0.67)
     res_aoi1_2425 = detect_extraction_anomalies(
         t0_vnir_paths=EXP1_RASTERS / "t0_S2A_20HQK_20241106_0_L2A_vnir10m.tif",
         t0_swir_scl_paths=EXP1_RASTERS / "t0_S2A_20HQK_20241106_0_L2A_swir_scl20m.tif",
@@ -171,6 +177,8 @@ def main() -> None:
         work_dir=OUT_EXP2 / "work_aoi1_2425",
         stage_t0_m=h_paran_2024,
         stage_t1_m=h_paran_2025,
+        stage_t0_source=s_paran_2024,
+        stage_t1_source=s_paran_2025,
     )
     _save_geojson(res_aoi1_2425, OUT_EXP2 / "aoi1_2024_2025.geojson")
     summary_runs.append(_summarize_run("aoi1_2024_2025", res_aoi1_2425))
@@ -184,8 +192,8 @@ def main() -> None:
     a1_t1_v, a1_t1_s = _ensure_stac_scene(
         client, AOI_1_BBOX, "S2C_20HQK_20260917_0_L2A", "2026-09-15/2026-09-20", rasters_exp2 / "aoi1", "t1"
     )
-    h_paran_2309 = _safe_ina_stage(30, "2023-09-28", 2.30)
-    h_paran_2609 = _safe_ina_stage(30, "2026-09-17", 2.44)
+    h_paran_2309, s_paran_2309 = _safe_ina_stage(30, "2023-09-28", 2.30)
+    h_paran_2609, s_paran_2609 = _safe_ina_stage(30, "2026-09-17", 2.44)
     res_aoi1_2326 = detect_extraction_anomalies(
         t0_vnir_paths=a1_t0_v,
         t0_swir_scl_paths=a1_t0_s,
@@ -194,6 +202,8 @@ def main() -> None:
         work_dir=OUT_EXP2 / "work_aoi1_2326",
         stage_t0_m=h_paran_2309,
         stage_t1_m=h_paran_2609,
+        stage_t0_source=s_paran_2309,
+        stage_t1_source=s_paran_2609,
     )
     _save_geojson(res_aoi1_2326, OUT_EXP2 / "aoi1_2023_2026.geojson")
     summary_runs.append(_summarize_run("aoi1_2023_2026", res_aoi1_2326))
@@ -206,8 +216,8 @@ def main() -> None:
     a2_t1_v, a2_t1_s = _ensure_stac_scene(
         client, AOI_2_BBOX, "S2B_20HQK_20250828_0_L2A", "2025-08-25/2025-08-31", rasters_exp2 / "aoi2", "t1"
     )
-    h_diam_2308 = _safe_ina_stage(31, "2023-08-29", 1.85)
-    h_diam_2508 = _safe_ina_stage(31, "2025-08-28", 1.75)
+    h_diam_2308, s_diam_2308 = _safe_ina_stage(31, "2023-08-29", 1.85)
+    h_diam_2508, s_diam_2508 = _safe_ina_stage(31, "2025-08-28", 1.75)
     res_aoi2 = detect_extraction_anomalies(
         t0_vnir_paths=a2_t0_v,
         t0_swir_scl_paths=a2_t0_s,
@@ -216,6 +226,8 @@ def main() -> None:
         work_dir=OUT_EXP2 / "work_aoi2_diamante",
         stage_t0_m=h_diam_2308,
         stage_t1_m=h_diam_2508,
+        stage_t0_source=s_diam_2308,
+        stage_t1_source=s_diam_2508,
     )
     _save_geojson(res_aoi2, OUT_EXP2 / "aoi2_diamante_2023_2025.geojson")
     summary_runs.append(_summarize_run("aoi2_diamante_2023_2025", res_aoi2))

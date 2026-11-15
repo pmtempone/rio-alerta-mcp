@@ -8,31 +8,47 @@ import numpy as np
 from scipy.ndimage import distance_transform_edt
 
 
-def fetch_ina_stage_height(
+def fetch_ina_stage_height_with_provenance(
     series_id: int,
     target_date_iso: str,
     timeout_seconds: float = 10.0,
-) -> Optional[float]:
-    """Consulta la altura hidrométrica diaria oficial (m) en la API pública del INA (PNA).
+) -> Tuple[Optional[float], str]:
+    """Consulta la altura hidrométrica diaria oficial (m) en la API pública A5 del INA.
 
-    Retorna `None` si no hay conexión o la serie no tiene observaciones en la fecha solicitada.
+    Retorna `(valor_m, procedencia)` donde `procedencia` es `"INA_API_A5"` si hubo
+    observaciones válidas o `"NO_DISPONIBLE"` si falló la consulta o no hubo datos.
     """
     url = (
-        f"https://alerta.ina.gob.ar/pub/datos/datos"
-        f"&timeStart={target_date_iso}&timeEnd={target_date_iso}&seriesId={series_id}&format=json"
+        f"https://alerta.ina.gob.ar/a5/obs/puntual/series/{series_id}/observaciones"
+        f"?timestart={target_date_iso}T00:00:00Z&timeend={target_date_iso}T23:59:59Z"
     )
     try:
         with httpx.Client(timeout=timeout_seconds) as client:
             resp = client.get(url)
             if resp.status_code != 200:
-                return None
+                return None, "NO_DISPONIBLE"
             payload = resp.json()
-        vals = [float(obs["valor"]) for obs in payload.get("data", []) if obs.get("valor") is not None]
+        rows = payload if isinstance(payload, list) else payload.get("data", [])
+        vals = [float(obs["valor"]) for obs in rows if isinstance(obs, dict) and obs.get("valor") is not None]
         if not vals:
-            return None
-        return round(sum(vals) / len(vals), 3)
+            return None, "NO_DISPONIBLE"
+        return round(sum(vals) / len(vals), 3), "INA_API_A5"
     except Exception:
-        return None
+        return None, "NO_DISPONIBLE"
+
+
+def fetch_ina_stage_height(
+    series_id: int,
+    target_date_iso: str,
+    timeout_seconds: float = 10.0,
+) -> Optional[float]:
+    """Consulta la altura hidrométrica diaria oficial (m) en la API pública A5 del INA."""
+    val, _ = fetch_ina_stage_height_with_provenance(
+        series_id=series_id,
+        target_date_iso=target_date_iso,
+        timeout_seconds=timeout_seconds,
+    )
+    return val
 
 
 def compute_reach_hydrological_state(

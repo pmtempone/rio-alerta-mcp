@@ -18,7 +18,9 @@
       "is_systemic_stage_rise": false,
       "is_systemic_stage_drop": false,
       "stage_t0_m": 2.46,
+      "stage_t0_source": "INA_API_A5",
       "stage_t1_m": 2.66,
+      "stage_t1_source": "INA_API_A5",
       "stage_delta_m": 0.2,
       "bar_migration_dipoles_filtered": 15,
       "bar_migration_details": [

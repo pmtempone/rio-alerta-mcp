@@ -1,12 +1,13 @@
-"""Genera automáticamente el primer Dossier de Investigación Territorial para RIO-0184 (P1)."""
+"""Genera automáticamente el Dossier de Investigación Territorial exacto para RIO-0184 (P0/P1)."""
 
 from __future__ import annotations
 
 import json
 import sys
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
+import matplotlib.pyplot as plt
 import numpy as np
 from rasterio.features import rasterize
 from shapely.geometry import shape
@@ -18,11 +19,15 @@ if str(PROJECT_ROOT) not in sys.path:
 from src.core.change_detector import compute_spectral_indices  # noqa: E402
 from src.core.crs_manager import reproject_geometry  # noqa: E402
 from src.core.dossier_generator import generate_candidate_dossier, write_dossier_markdown  # noqa: E402
+from src.core.hydrological_control import fetch_ina_stage_height_with_provenance  # noqa: E402
 from src.core.optical_providers import load_native_s2_scene_bundle  # noqa: E402
 
-EXP1_RASTERS = PROJECT_ROOT / "data" / "experiments" / "exp_001_parana_medio" / "rasters"
+TARGET_ID = "RIO-0184"
+EXP1_GEOJSON = PROJECT_ROOT / "data" / "experiments" / "exp_001_parana_medio" / "06_anomalias_detectadas.geojson"
 RECAL_GEOJSON = PROJECT_ROOT / "data" / "experiments" / "exp_001_recalibrated" / "exp_001_recalibrated.geojson"
+EXP1_RASTERS = PROJECT_ROOT / "data" / "experiments" / "exp_001_parana_medio" / "rasters"
 OUT_DOSSIER = PROJECT_ROOT / "data" / "experiments" / "exp_001_recalibrated" / "dossier_RIO-0184_auto.md"
+OUT_MAP = PROJECT_ROOT / "data" / "experiments" / "exp_001_recalibrated" / "mapa_candidato_RIO-0184.png"
 
 SCENES = [
     ("2023-11-07", "S2B_20HQK_20231107_0_L2A", 3.51, "t0_S2B_20HQK_20231107_0_L2A_vnir10m.tif", "t0_S2B_20HQK_20231107_0_L2A_swir_scl20m.tif"),
@@ -32,12 +37,83 @@ SCENES = [
 ]
 
 
-def _extract_series_for_feature(feat: Dict[str, Any], crs_epsg: int) -> List[Dict[str, Any]]:
-    geom_posgar = reproject_geometry(feat["geometry"], "EPSG:4326", f"EPSG:{crs_epsg}")
+def _find_feature_by_id(fc: Dict[str, Any], target_id: str) -> Dict[str, Any]:
+    for feat in fc.get("features", []):
+        fid = str(feat.get("id") or feat.get("properties", {}).get("id") or "")
+        if fid == target_id:
+            return feat
+    raise RuntimeError(f"Candidato '{target_id}' no encontrado en {EXP1_GEOJSON}. Ejecución abortada.")
+
+
+def _rgb_patch(bundle: Dict[str, Any], r0: int, r1: int, c0: int, c1: int) -> np.ndarray:
+    r = np.clip(bundle["B04"][r0:r1, c0:c1] / 2500.0, 0.0, 1.0)
+    g = np.clip(bundle["B03"][r0:r1, c0:c1] / 2500.0, 0.0, 1.0)
+    b = np.clip(bundle["B02"][r0:r1, c0:c1] / 2500.0, 0.0, 1.0)
+    return np.nan_to_num(np.dstack([r, g, b]), nan=0.0)
+
+
+def _generate_candidate_map(
+    poly: Any,
+    b_t0: Dict[str, Any],
+    b_t1: Dict[str, Any],
+    out_png: Path,
+) -> Path:
+    inv = ~b_t1["transform"]
+    minx, miny, maxx, maxy = poly.bounds
+    cx, cy = poly.centroid.x, poly.centroid.y
+    col_c, row_c = [int(round(v)) for v in (inv * (cx, cy))]
+    half = 45
+    h, w = b_t1["shape_hw"]
+    r0, r1 = max(0, row_c - half), min(h, row_c + half)
+    c0, c1 = max(0, col_c - half), min(w, col_c + half)
+
+    rgb0 = _rgb_patch(b_t0, r0, r1, c0, c1)
+    rgb1 = _rgb_patch(b_t1, r0, r1, c0, c1)
+
+    xs, ys = poly.exterior.xy
+    px_cols, px_rows = [], []
+    for x_val, y_val in zip(xs, ys):
+        col_f, row_f = inv * (x_val, y_val)
+        px_cols.append(col_f - c0)
+        px_rows.append(row_f - r0)
+
+    fig, axes = plt.subplots(1, 2, figsize=(10, 4.8), dpi=150)
+    axes[0].imshow(rgb0)
+    axes[0].plot(px_cols, px_rows, color="yellow", linewidth=1.6)
+    axes[0].set_title("T0 (2025-11-13) — RGB Sentinel-2 10m")
+    axes[0].axis("off")
+
+    axes[1].imshow(rgb1)
+    axes[1].plot(px_cols, px_rows, color="red", linewidth=1.6)
+    axes[1].set_title("T1 (2026-11-08) — RIO-0184 (3,097.80 m²)")
+    axes[1].axis("off")
+
+    fig.suptitle("Evidencia espacial específica — Candidato RIO-0184 (POSGAR EPSG:5347)", fontsize=11)
+    fig.tight_layout()
+    out_png.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out_png, bbox_inches="tight")
+    plt.close(fig)
+    return out_png
+
+
+def main() -> None:
+    fc_exp1 = json.loads(EXP1_GEOJSON.read_text(encoding="utf-8"))
+    target_feat = _find_feature_by_id(fc_exp1, TARGET_ID)
+    recal_fc = json.loads(RECAL_GEOJSON.read_text(encoding="utf-8"))
+    meta = dict(recal_fc["metadata"])
+
+    crs_epsg = int(meta["crs_metric_epsg"])
+    geom_posgar = reproject_geometry(target_feat["geometry"], "EPSG:4326", f"EPSG:{crs_epsg}")
     poly = shape(geom_posgar)
+    exact_area_m2 = round(float(poly.area), 2)
+
+    bundles: List[Dict[str, Any]] = []
     rows: List[Dict[str, Any]] = []
-    for date_str, scene_id, stage_m, v_name, s_name in SCENES:
+    stage_sources: List[str] = []
+
+    for date_str, scene_id, fallback_stage, v_name, s_name in SCENES:
         bundle = load_native_s2_scene_bundle(EXP1_RASTERS / v_name, EXP1_RASTERS / s_name)
+        bundles.append(bundle)
         idx = compute_spectral_indices(
             b02=bundle["B02"],
             b03=bundle["B03"],
@@ -57,49 +133,74 @@ def _extract_series_for_feature(feat: Dict[str, Any], crs_epsg: int) -> List[Dic
         mv = mask & bundle["valid_mask"]
         scl_vals, scl_cnts = np.unique(bundle["scl"][mask].astype(int), return_counts=True)
         scl_str = ", ".join(f"{int(k)}:{int(v)}" for k, v in zip(scl_vals, scl_cnts))
+
+        ina_val, ina_src = fetch_ina_stage_height_with_provenance(series_id=30, target_date_iso=date_str)
+        stage_val: Optional[float] = ina_val if ina_val is not None else fallback_stage
+        eff_src = ina_src if ina_val is not None else "FALLBACK_EXP001"
+        stage_sources.append(f"{date_str}:{eff_src}")
+
         rows.append(
             {
                 "date": date_str,
                 "scene_id": scene_id,
-                "stage_m": f"{stage_m:.2f} m",
+                "stage_m": f"{stage_val:.2f} m ({eff_src})",
                 "b11_median": f"{float(np.median(bundle['B11'][mv])):.0f}",
                 "ndvi_median": f"{float(np.median(idx['ndvi'][mv])):+.3f}",
                 "bsi_median": f"{float(np.median(idx['bsi'][mv])):+.3f}",
                 "mndwi_median": f"{float(np.median(idx['mndwi'][mv])):+.3f}",
                 "scl_summary": scl_str,
+                "_b11_med": float(np.median(bundle["B11"][mv])),
+                "_b04_med": float(np.median(bundle["B04"][mv])),
+                "_ndvi_med": float(np.median(idx["ndvi"][mv])),
+                "_bsi_med": float(np.median(idx["bsi"][mv])),
+                "_mndwi_med": float(np.median(idx["mndwi"][mv])),
+                "_scl_dict": {str(int(k)): int(v) for k, v in zip(scl_vals, scl_cnts)},
+                "_px": int(np.sum(mask)),
             }
         )
-    return rows
 
-
-def main() -> None:
-    fc = json.loads(RECAL_GEOJSON.read_text(encoding="utf-8"))
-    meta = fc["metadata"]
-    clearing_feats = [
-        f for f in fc["features"] if f["properties"]["anomaly_type"] == "desmonte_ribera_acopio"
+    # Enriquecer props de RIO-0184 con geometría vectorial exacta y estadísticas reales
+    props = dict(target_feat["properties"])
+    props["area_m2"] = exact_area_m2
+    props["area_ha"] = round(exact_area_m2 / 10000.0, 4)
+    props["geomorphological_zone"] = props.get("geomorphological_zone", "PLANICIE_INUNDABLE_E_ISLAS")
+    props["spectral_stats"] = {
+        "area_method": "shapely_polygon_posgar_2007",
+        "pixel_count_10m": rows[3]["_px"],
+        "effective_swir_pixels_20m": round(rows[3]["_px"] / 4.0, 2),
+        "t0_b11_median": round(rows[2]["_b11_med"], 1),
+        "t1_b11_median": round(rows[3]["_b11_med"], 1),
+        "t1_b04_median": round(rows[3]["_b04_med"], 1),
+        "t0_ndvi_median": round(rows[2]["_ndvi_med"], 3),
+        "t1_ndvi_median": round(rows[3]["_ndvi_med"], 3),
+        "t0_bsi_median": round(rows[2]["_bsi_med"], 3),
+        "t1_bsi_median": round(rows[3]["_bsi_med"], 3),
+        "t1_mndwi_median": round(rows[3]["_mndwi_med"], 3),
+        "t1_scl_counts": rows[3]["_scl_dict"],
+    }
+    props["uncertainty"] = dict(props.get("uncertainty") or {})
+    props["uncertainty"]["limitations"] = list(props["uncertainty"].get("limitations") or []) + [
+        "En Exp001 recalibrado (Fase 2.1), el núcleo de este mismo sitio sobrevive como RIO-0013 (1,848.69 m²) tras excluir píxeles de borde con SCL=7.",
+        f"Procedencia hidrométrica por fecha: {'; '.join(stage_sources)}.",
     ]
-    if not clearing_feats:
-        raise RuntimeError("No se encontró el candidato desmonte_ribera_acopio en exp_001_recalibrated.geojson.")
-    target_feat = clearing_feats[0]
-    series = _extract_series_for_feature(target_feat, int(meta["crs_metric_epsg"]))
+
+    enriched_feat = dict(target_feat)
+    enriched_feat["properties"] = props
+
+    map_png = _generate_candidate_map(poly, bundles[2], bundles[3], OUT_MAP)
     md = generate_candidate_dossier(
-        feature=target_feat,
+        feature=enriched_feat,
         detection_metadata=meta,
-        aoi_name="Paraná Medio — Sector Isla/Ribera Santa Fe–Paraná (contraste Exp 001 / RIO-0184)",
+        aoi_name="Paraná Medio — Sector Isla/Ribera Santa Fe–Paraná (RIO-0184 Exp 001)",
         period_label="2023-11-07 .. 2025-11-13 (T0) -> 2026-11-08 (T1)",
-        multitemporal_series=series,
+        multitemporal_series=rows,
         map_artifacts=[
-            str(RECAL_GEOJSON.relative_to(PROJECT_ROOT)),
-            "data/experiments/exp_001_parana_medio/08_recortes_zoom_anomalias_principales.png",
+            str(map_png.relative_to(PROJECT_ROOT)),
+            str(EXP1_GEOJSON.relative_to(PROJECT_ROOT)),
         ],
     )
     out = write_dossier_markdown(md, OUT_DOSSIER)
-    print(
-        f"Dossier generado: {out} | id={target_feat['id']} | "
-        f"area_m2={target_feat['properties']['area_m2']} | "
-        f"zone={target_feat['properties']['geomorphological_zone']} | "
-        f"confidence={target_feat['properties']['confidence']}"
-    )
+    print(f"Dossier exacto generado: {out} | id={TARGET_ID} | area_m2={exact_area_m2} | map={map_png.name}")
 
 
 if __name__ == "__main__":

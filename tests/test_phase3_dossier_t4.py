@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 from src.core.dossier_generator import (
     generate_candidate_dossier,
     generate_negative_or_area_dossier,
     write_dossier_markdown,
 )
+from src.core.hydrological_control import fetch_ina_stage_height_with_provenance
 
 
 def _sample_feature() -> dict:
@@ -72,7 +74,9 @@ def _sample_metadata() -> dict:
             "is_systemic_stage_rise": True,
             "is_systemic_stage_drop": False,
             "stage_t0_m": 2.64,
+            "stage_t0_source": "INA_API_A5",
             "stage_t1_m": 4.85,
+            "stage_t1_source": "INA_API_A5",
             "stage_delta_m": 2.21,
             "bar_migration_dipoles_filtered": 2,
             "riparian_ndvi_seasonal_shift": -0.05,
@@ -125,9 +129,32 @@ def test_t4_candidate_dossier_has_9_sections_4_levels_and_no_exaggerated_claims(
     assert "extracción confirmada" not in md.lower()
     assert "medianas espectrales por fecha" in md
     assert "medias de diferencias por píxel" in md
+    assert "no equivale a cartografía geomorfológica oficial" in md
+    assert "INA_API_A5" in md
 
     out_file = write_dossier_markdown(md, tmp_path / "dossier_RIO-0184.md")
     assert out_file.exists()
+
+
+def test_t4_ina_a5_provenance_recording() -> None:
+    """Verifica registro de procedencia hidrométrica INA_API_A5 vs NO_DISPONIBLE."""
+    mock_resp = MagicMock()
+    mock_resp.status_code = 200
+    mock_resp.json.return_value = [{"valor": 2.69}, {"valor": 2.71}]
+
+    with patch("src.core.hydrological_control.httpx.Client") as mock_client_cls:
+        mock_client_cls.return_value.__enter__.return_value.get.return_value = mock_resp
+        val, src = fetch_ina_stage_height_with_provenance(30, "2025-11-13")
+        assert val == 2.7
+        assert src == "INA_API_A5"
+
+    mock_err = MagicMock()
+    mock_err.status_code = 500
+    with patch("src.core.hydrological_control.httpx.Client") as mock_client_cls:
+        mock_client_cls.return_value.__enter__.return_value.get.return_value = mock_err
+        val_e, src_e = fetch_ina_stage_height_with_provenance(30, "2025-11-13")
+        assert val_e is None
+        assert src_e == "NO_DISPONIBLE"
 
 
 def test_t4_negative_dossier_supports_zero_candidates() -> None:

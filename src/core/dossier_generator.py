@@ -100,7 +100,7 @@ def generate_candidate_dossier(
     lines.append(f"| **Sector / AOI** | {aoi_name} |")
     lines.append(f"| **Período analizado** | {period_label} |")
     lines.append(f"| **Tipología morfológica** | `{atype}` |")
-    lines.append(f"| **Unidad geomorfológica (T0)** | `{zone}` |")
+    lines.append(f"| **Unidad geomorfológica estimada (heurística satelital T0)** | `{zone}` *(no equivale a cartografía geomorfológica oficial)* |")
     lines.append(f"| **Centroide WGS84 (lon, lat)** | `{centroid_wgs[0]}, {centroid_wgs[1]}` |")
     lines.append(f"| **Centroide POSGAR 2007 (EPSG:{crs_epsg})** | `{centroid_pos[0]}, {centroid_pos[1]}` |")
     lines.append(f"| **Superficie vectorial exacta** | **{area_m2:,.2f} m²** ({area_ha:.4f} ha) |")
@@ -140,7 +140,7 @@ def generate_candidate_dossier(
     lines.append(f"- **Área geométrica (`{stats.get('area_method', 'shapely_polygon_posgar_2007')}`):** {area_m2:,.2f} m² ({area_ha:.4f} ha).")
     lines.append(f"- **Muestreo en grilla:** {px_10m} píxeles a 10 m (~{swir_px if swir_px is not None else 'N/D'} píxeles nativos SWIR de 20 m).")
     lines.append(f"- **Morfología:** Rectangularidad `{rect:.3f}`, elongación `{elong:.3f}`.")
-    lines.append(f"- **Contexto geomorfológico T0:** `{zone}`, distancia al agua T0 `{_fmt_num(dist_water_m, 1, ' m')}`.")
+    lines.append(f"- **Contexto geomorfológico estimado (heurística satelital T0):** `{zone}`, distancia al agua T0 `{_fmt_num(dist_water_m, 1, ' m')}`.")
     if map_artifacts:
         lines.append("- **Productos cartográficos asociados:**")
         for m_path in map_artifacts:
@@ -207,10 +207,16 @@ def generate_candidate_dossier(
     )
     stage_t0 = hydro.get("stage_t0_m")
     stage_t1 = hydro.get("stage_t1_m")
+    stage_t0_src = hydro.get("stage_t0_source", "NO_DISPONIBLE")
+    stage_t1_src = hydro.get("stage_t1_source", "NO_DISPONIBLE")
     stage_delta = hydro.get("stage_delta_m")
     hydro_txt = (
         f"Δagua AOI={hydro.get('water_stage_delta_pct', 'N/D')}%"
-        + (f", Δaltura={stage_delta:+.2f} m ({stage_t0} -> {stage_t1} m)" if stage_delta is not None else "")
+        + (
+            f", Δaltura={stage_delta:+.2f} m ({stage_t0} m [{stage_t0_src}] -> {stage_t1} m [{stage_t1_src}])"
+            if stage_delta is not None
+            else ""
+        )
     )
     lines.append(
         f"| **H3. Dinámica fluvial / humedad edáfica / crecida** | Interpretación | "
@@ -269,6 +275,7 @@ def generate_candidate_dossier(
     lines.append("## 9. Fuentes, parámetros y trazabilidad técnica")
     lines.append("")
     lines.append(f"- **CRS métrico de cálculo:** `EPSG:{crs_epsg}` (POSGAR 2007). Exportación GeoJSON: `EPSG:4326`.")
+    lines.append(f"- **Procedencia hidrométrica:** T0=`{hydro.get('stage_t0_source', 'NO_DISPONIBLE')}`, T1=`{hydro.get('stage_t1_source', 'NO_DISPONIBLE')}`.")
     lines.append(f"- **Resolución de grilla / SWIR nativo:** {detection_metadata.get('grid_resolution_m', 10.0)} m / {detection_metadata.get('effective_swir_resolution_m', 20.0)} m.")
     lines.append(f"- **Área mínima de detección:** {detection_metadata.get('min_anomaly_area_m2', 1600.0)} m².")
     if calib:
