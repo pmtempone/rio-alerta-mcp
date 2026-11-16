@@ -297,7 +297,7 @@ def generate_enforcement_report(
                 "image_refs": resolved_vlm.image_refs,
                 "image_hashes": resolved_vlm.image_hashes,
                 "is_statistical_probability": resolved_vlm.is_statistical_probability,
-                "is_forensic_certification": resolved_vlm.is_forensic_certification,
+                "expert_declaration_recorded": resolved_vlm.expert_declaration_recorded,
             },
             "anomaly": feat.model_dump(),
             "permit_validation": resolved_permits.model_dump(),

@@ -30,24 +30,39 @@ from src.schemas import (
 
 _NEARBY_PERMIT_SEARCH_RADIUS_M = 500.0
 
-_COMPATIBLE_ACTIVITY_TOKENS = (
+# Tokens que, por sí solos, declaran explícitamente extracción/acopio de áridos.
+# Política de mínimo privilegio semántico: solo textos que mencionan material árido
+# (arena, árido, cantera, grava, ripio, piedra, minería) o el verbo extractivo
+# acompañado del material ("extracción de arena", "extracción de áridos").
+# Palabras genéricas ("suelo", "vial", "terraplén", "portuari*", "hidráulic*",
+# "sedimento" sin dragado) NO bastan: una "obra vial", "conservación de suelos" o
+# "relleno portuario" autoriza movimiento de tierra/construcción, no extracción de
+# áridos de lecho, y debe caer al default INCOMPATIBLE (→ PERMISO_NO_VERIFICABLE_O_INCOMPATIBLE)
+# en lugar de habilitar EXTRACCION_AUTORIZADA con prioridad BAJA_ARCHIVO.
+_EXTRACTION_MATERIAL_TOKENS = (
     "arena",
     "arido",
     "cantera",
     "dragad",
-    "extraccion",
     "acopio",
     "refulado",
     "mineria",
     "minero",
     "grava",
     "ripio",
-    "suelo",
-    "sedimento",
-    "hidraulic",
-    "portuari",
-    "vial",
-    "terraplen",
+    "piedra",
+)
+
+# Formas del verbo extractivo que solo habilitan cuando el material árido es explícito:
+# un "permiso de extracción" sin material ("extracción de agua", "extracción de agua subterránea")
+# NO habilita extracción de áridos y se clasifica INCOMPATIBLE por defecto.
+_EXPLICIT_EXTRACTION_PHRASES = (
+    "extraccion de arena",
+    "extraccion de arido",
+    "extraccion de grava",
+    "extraccion de ripio",
+    "extraccion de piedra",
+    "extraccion minera",
 )
 
 _INCOMPATIBLE_ACTIVITY_TOKENS = (
@@ -153,7 +168,15 @@ def _evaluate_permit_validity(
 
 
 def _evaluate_permit_activity(raw_activity: Any) -> Tuple[PermitActivityStatusLiteral, Optional[str]]:
-    """Clasifica si la actividad declarada en el permiso habilita extracción/movimiento de áridos."""
+    """Clasifica si la actividad declarada en el permiso habilita extracción/movimiento de áridos.
+
+    Política de mínimo privilegio semántico: solo es `COMPATIBLE` cuando el texto declara
+    explícitamente material árido (`arena`, `árido`, `cantera`, `grava`, ...) o el verbo
+    extractivo acompañado del material (`extracción de arena`, `extracción minera`).
+    Textos genéricos u obras (`obra vial`, `conservación de suelos`, `relleno portuario`,
+    `extracción de agua`) caen al default `INCOMPATIBLE`, que el motor trata como
+    `PERMISO_NO_VERIFICABLE_O_INCOMPATIBLE` con verificación humana obligatoria.
+    """
     if raw_activity is None:
         return "SIN_ACTIVIDAD_DECLARADA", None
     text = str(raw_activity).strip()
@@ -163,7 +186,9 @@ def _evaluate_permit_activity(raw_activity: Any) -> Tuple[PermitActivityStatusLi
     norm = _normalize_text(text)
     if any(tok in norm for tok in _INCOMPATIBLE_ACTIVITY_TOKENS):
         return "INCOMPATIBLE", text
-    if any(tok in norm for tok in _COMPATIBLE_ACTIVITY_TOKENS):
+    if any(phrase in norm for phrase in _EXPLICIT_EXTRACTION_PHRASES):
+        return "COMPATIBLE", text
+    if any(tok in norm for tok in _EXTRACTION_MATERIAL_TOKENS):
         return "COMPATIBLE", text
     return "INCOMPATIBLE", text
 

@@ -473,9 +473,13 @@ class VLMFluvialVerdict(BaseModel):
         default=False,
         description="Indica si certainty_pct constituye probabilidad estadística calibrada (False en cribado heurístico/VLM).",
     )
-    is_forensic_certification: bool = Field(
+    expert_declaration_recorded: bool = Field(
         default=False,
-        description="Ninguna evaluación automatizada (HEURISTIC_SCREENING o EXTERNAL_VLM) equivale a constatación pericial.",
+        description=(
+            "Registra que un especialista humano identificable (HUMAN_EXPERT) DECLARÓ un dictamen en el sistema. "
+            "El identificador (evaluator_id) es auto-declarado y NO constituye certificación pericial verificada; "
+            "la acreditación del especialista debe validarse por el organismo a través del expediente."
+        ),
     )
     human_review_required: bool = Field(
         default=True,
