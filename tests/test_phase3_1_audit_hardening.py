@@ -263,6 +263,58 @@ def test_permit_active_incompatible_activity_rejected(tmp_path: Path) -> None:
         assert res.matched_permits[0].activity_status == "INCOMPATIBLE"
 
 
+def test_permit_generic_work_activity_not_compatible(tmp_path: Path) -> None:
+    """Política de mínimo privilegio semántico: actividades genéricas/de obra NO habilitan extracción.
+
+    'obra vial', 'conservación de suelos', 'relleno portuario' y 'extracción de agua' autorizan
+    movimiento de tierra / uso de agua, NO extracción de áridos; deben clasificarse como
+    PERMISO_NO_VERIFICABLE_O_INCOMPATIBLE (nunca EXTRACCION_AUTORIZADA con BAJA_ARCHIVO).
+    """
+    anom = _make_anomaly()
+    perm_box = box(5444990.0, 6497990.0, 5445070.0, 6498070.0)
+
+    generic_activities = ["Obra vial", "Conservación de suelos", "Relleno portuario", "Extracción de agua"]
+    for idx, act in enumerate(generic_activities):
+        gpkg = _write_permits_gpkg(
+            tmp_path / f"generic_{idx}.gpkg",
+            [
+                {
+                    "permit_id": f"PERM-GEN-{idx}",
+                    "titular": "Permiso Genérico",
+                    "fecha_desde": "2025-01-01",
+                    "fecha_hasta": "2027-01-01",
+                    "actividad": act,
+                    "geometry": perm_box,
+                }
+            ],
+        )
+        res = validate_anomaly_permits(anom, t1_date="2026-03-10", permits_path=gpkg, cadastre_metadata=_official_meta(gpkg))
+        assert res.classification == "PERMISO_NO_VERIFICABLE_O_INCOMPATIBLE", act
+        assert res.matched_permits[0].activity_status == "INCOMPATIBLE", act
+        assert res.priority == "ALTA_FISCALIZACION_INMEDIATA", act
+
+    # Contrapartida: textos con material árido explícito siguen clasificando COMPATIBLE
+    explicit_activities = ["Extracción de arena", "Cantera aluvial", "Dragado hidráulico", "Extracción de áridos"]
+    for idx, act in enumerate(explicit_activities):
+        gpkg = _write_permits_gpkg(
+            tmp_path / f"explicit_{idx}.gpkg",
+            [
+                {
+                    "permit_id": f"PERM-EXPL-{idx}",
+                    "titular": "Permiso Extractivo",
+                    "fecha_desde": "2025-01-01",
+                    "fecha_hasta": "2027-01-01",
+                    "actividad": act,
+                    "geometry": perm_box,
+                }
+            ],
+        )
+        res = validate_anomaly_permits(anom, t1_date="2026-03-10", permits_path=gpkg, cadastre_metadata=_official_meta(gpkg))
+        assert res.classification == "EXTRACCION_AUTORIZADA", act
+        assert res.matched_permits[0].activity_status == "COMPATIBLE", act
+        assert res.matched_permits[0].permitted_activity == act, act
+
+
 def test_multiple_overlapping_permits_union_no_double_counting(tmp_path: Path) -> None:
     # Anomalía [5445000..5445050] x [6498000..6498060] -> área = 3000 m2
     anom = _make_anomaly(minx=5445000.0, miny=6498000.0, width_m=50.0, height_m=60.0)
@@ -642,6 +694,43 @@ def test_workflow_rebuild_sqlite_from_jsonl_disaster_recovery(tmp_path: Path) ->
         recovered_mgr.sync_jsonl_from_sqlite()
 
 
+def test_workflow_rebuild_from_jsonl_without_checkpoint_is_exact(tmp_path: Path) -> None:
+    """Sin checkpoint, el rebuild debe reconstruir los campos del caso desde el metadata del evento.
+
+    La metadata del evento APERTURA_CASO es autosuficiente (prioridad, CRS, centroide, área), por lo
+    que la reconstrucción es exacta y nunca recurre a defaults fabricados.
+    """
+    storage = tmp_path / "wf_rebuild_exact"
+    anom = _make_anomaly(anomaly_id="RIO-REB-EX", candidate_uid="CAND-REB-EX")
+    mgr = CaseWorkflowManager(storage_dir=storage)
+    rec = mgr.open_or_get_case(anom, priority="ALTA_FISCALIZACION_INMEDIATA")
+    mgr.append_event(
+        rec.case_id,
+        "NOTA_ANALISTA",
+        "Reclasificación de prioridad",
+        actor="op",
+        priority="MEDIA_VERIFICACION",
+    )
+    mgr.verify_log_integrity()
+
+    # Desastre total: sin SQLite ni checkpoint, solo sobrevive el JSONL
+    mgr.checkpoint_path.unlink()
+    mgr.sqlite_path.unlink()
+    for side in ("-wal", "-shm"):
+        Path(str(mgr.sqlite_path) + side).unlink(missing_ok=True)
+
+    rebuilt_mgr = CaseWorkflowManager(storage_dir=storage)
+    rec2, events = rebuilt_mgr.get_case(rec.case_id)
+    assert len(events) == 2
+    assert rec2.events_count == 2
+    assert rec2.priority == "MEDIA_VERIFICACION"
+    assert rec2.crs_epsg == 5347
+    assert abs(rec2.area_m2 - anom.area_m2) < 0.01
+    assert abs(rec2.centroid_wgs84[0] - anom.centroid_wgs84[0]) < 1e-6
+    assert abs(rec2.centroid_wgs84[1] - anom.centroid_wgs84[1]) < 1e-6
+    assert rebuilt_mgr.verify_log_integrity()["valid"] is True
+
+
 def test_workflow_tamper_detection_and_append_only_sqlite_triggers(tmp_path: Path) -> None:
     storage = tmp_path / "wf_tamper"
     anom = _make_anomaly(anomaly_id="RIO-TAMP-01", candidate_uid="CAND-TAMP-01")
@@ -679,7 +768,7 @@ def test_vlm_judge_separates_heuristic_external_vlm_and_human_expert(tmp_path: P
     heur = evaluate_candidate_vlm_verdict(anom)
     assert heur.evaluation_mode == "HEURISTIC_SCREENING"
     assert heur.is_statistical_probability is False
-    assert heur.is_forensic_certification is False
+    assert heur.expert_declaration_recorded is False
     assert heur.human_review_required is True
     assert "cribado heurístico" in heur.extraction_evidence.lower()
 
@@ -710,7 +799,7 @@ def test_vlm_judge_separates_heuristic_external_vlm_and_human_expert(tmp_path: P
     assert ext.model_version == "2026-01"
     assert ext.image_hashes[str(img_file)] == expected_sha
     assert ext.is_statistical_probability is False
-    assert ext.is_forensic_certification is False
+    assert ext.expert_declaration_recorded is False
     assert ext.human_review_required is True
 
     # 3. HUMAN_EXPERT exige verdict y evaluator_id
@@ -730,7 +819,7 @@ def test_vlm_judge_separates_heuristic_external_vlm_and_human_expert(tmp_path: P
     assert hum.evaluation_mode == "HUMAN_EXPERT"
     assert hum.evaluator_id == "perito_conicet_01"
     assert hum.is_statistical_probability is False
-    assert hum.is_forensic_certification is True
+    assert hum.expert_declaration_recorded is True
 
 
 # ---------------------------------------------------------------------------

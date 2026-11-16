@@ -265,6 +265,6 @@ def evaluate_candidate_vlm_verdict(
         evaluated_at_utc=eval_timestamp,
         evaluator_id=evaluator_id.strip() if evaluator_id and evaluator_id.strip() else None,
         is_statistical_probability=False,
-        is_forensic_certification=(resolved_mode == "HUMAN_EXPERT" and bool(evaluator_id)),
+        expert_declaration_recorded=(resolved_mode == "HUMAN_EXPERT" and bool(evaluator_id)),
         human_review_required=True,
     )

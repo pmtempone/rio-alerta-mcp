@@ -376,6 +376,20 @@ class CaseWorkflowManager:
                 event_id = f"EVT-{uuid4().hex[:12]}"
                 prev_hash = self._get_head_event_hash(conn)
 
+                # Metadata autosuficiente del evento de apertura: embebe los campos del caso
+                # (prioridad, CRS, centroide, área) para que `rebuild_sqlite_from_jsonl` sea
+                # exacto desde el propio JSONL, sin defaults fabricados si el checkpoint falta.
+                apertura_metadata = dict(metadata or {})
+                apertura_metadata.update(
+                    {
+                        "priority": priority,
+                        "crs_epsg": feat.crs_epsg,
+                        "centroid_lon": float(feat.centroid_wgs84[0]),
+                        "centroid_lat": float(feat.centroid_wgs84[1]),
+                        "area_m2": float(feat.area_m2),
+                    }
+                )
+
                 record = CaseRecord(
                     case_id=case_id,
                     candidate_uid=candidate_uid,
@@ -402,7 +416,7 @@ class CaseWorkflowManager:
                     previous_status=None,
                     new_status=initial_status,
                     summary=summary,
-                    metadata=metadata or {},
+                    metadata=apertura_metadata,
                     idempotency_key=f"open:{candidate_uid}",
                     prev_event_hash=prev_hash,
                     event_hash=None,
@@ -527,6 +541,10 @@ class CaseWorkflowManager:
                     priority if priority is not None else current_case.priority
                 )
                 prev_hash = self._get_head_event_hash(conn)
+                # Embebe la prioridad resuelta en el evento para que `rebuild_sqlite_from_jsonl`
+                # reconstruya el estado del caso con fidelidad sin depender del checkpoint.
+                event_metadata = dict(metadata or {})
+                event_metadata["priority"] = resolved_priority
                 draft_event = CaseEventRecord(
                     event_id=f"EVT-{uuid4().hex[:12]}",
                     case_id=current_case.case_id,
@@ -538,7 +556,7 @@ class CaseWorkflowManager:
                     previous_status=current_case.status,
                     new_status=resolved_status,
                     summary=cleaned_summary,
-                    metadata=metadata or {},
+                    metadata=event_metadata,
                     idempotency_key=cleaned_idem,
                     prev_event_hash=prev_hash,
                     event_hash=None,

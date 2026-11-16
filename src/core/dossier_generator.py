@@ -418,7 +418,8 @@ def generate_candidate_dossier(
             f"backend=`{vlm_verdict.backend}`, modelo=`{vlm_verdict.model_id or 'N/A'}`, "
             f"prompt_version=`{vlm_verdict.prompt_version or 'N/A'}`, "
             f"probabilidad_estadística=`{vlm_verdict.is_statistical_probability}`, "
-            f"constatación_pericial=`{vlm_verdict.is_forensic_certification}`."
+            f"dictamen_experto_declarado=`{vlm_verdict.expert_declaration_recorded}` "
+            f"(auto-declarado; la acreditación del especialista debe validarla el organismo)."
         )
     lines.append(f"- **Nota institucional del motor:** {detection_metadata.get('institutional_note', '')}")
     lines.append("")
