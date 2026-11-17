@@ -97,6 +97,14 @@ class UncertaintyMetadata(BaseModel):
     cloud_shadow_adjacent: bool = Field(
         default=False, description="Indica presencia de nubes/sombras SCL a <= 40 m del contorno detectado."
     )
+    cloud_shadow_source_dates: List[str] = Field(
+        default_factory=list,
+        description=(
+            "Fechas (T0 y/o T1) que aportan píxeles de nube/sombra al buffer de adyacencia. "
+            "Dominio de la advertencia (protocolo 3.2 C1): buffer perimetral de 40 m sobre la "
+            "máscara combinada; el interior del polígono se reporta por separado vía spectral_stats."
+        ),
+    )
     water_stage_delta_pct: float = Field(
         default=0.0, description="Variación porcentual global del área de lámina de agua en el tramo (T0 -> T1)."
     )
@@ -539,6 +547,7 @@ CaseStatusLiteral = Literal[
     "EXCESO_DE_POLIGONO_EN_VERIFICACION",
     "DESCARTADO_DINAMICA_NATURAL",
     "ARCHIVADO_FALSO_POSITIVO",
+    "CAMBIO_REAL_INDETERMINADO",
 ]
 
 CaseActionTypeLiteral = Literal[
