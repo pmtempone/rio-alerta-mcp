@@ -1,6 +1,7 @@
 """Servidor FastMCP principal para RíoAlerta (`rio-alerta-mcp`)."""
 
 import getpass
+import json
 import os
 import tempfile
 from datetime import datetime
@@ -11,6 +12,7 @@ from fastmcp import FastMCP
 
 from src import __version__
 from src.config import POSGAR_2007_EPSG, PROJECT_ROOT, settings
+from src.core.blind_review_queue import build_blind_queue_from_geojson, write_blind_queue
 from src.core.case_file import build_case_file, write_case_file
 from src.core.case_workflow import CaseWorkflowManager
 from src.core.change_detector import (
@@ -880,6 +882,109 @@ def tool_generate_case_file(
     )
     out_path = write_case_file(payload, validated_output, feat.id)
     return {"status": "success", "case_file_path": str(out_path), "ficha_version": payload["ficha_version"]}
+
+
+@mcp.tool()
+def tool_export_blind_review_queue(
+    source_geojson_path: str | None = None,
+    anomaly_dicts: List[Dict[str, Any]] | None = None,
+    discarded_log_path: str | None = None,
+    output_dir: str | None = None,
+    min_per_stratum: int = 20,
+    seed: int = 2026,
+    chips_by_candidate: Dict[str, List[str]] | None = None,
+    resolution_m: float | None = None,
+    source_label: str = "",
+) -> Dict[str, Any]:
+    """Exporta la cola de revisión en ciego del Protocolo de Validación Independiente (Fase 3.2 §4.3).
+
+    Genera una hoja de trabajo que contiene únicamente polígono, escenas, fechas, resolución y
+    chips opcionales por caso (identificados con ID ciego que no revela la tipología del detector),
+    junto con un manifiesto privado de correspondencia que NO debe entregarse al revisor y la
+    plantilla de acta de revisión. Admite candidatos retenidos (GeoJSON del detector o lista inline)
+    y opcionalmente registros de la bitácora de descartes (muestreados igualmente, sin revelar su
+    condición de descarte al revisor).
+    """
+    if (source_geojson_path is None) == (anomaly_dicts is None):
+        raise ValueError("Se requiere exactamente una fuente: source_geojson_path o anomaly_dicts.")
+    if min_per_stratum < 1:
+        raise ValueError("min_per_stratum debe ser mayor o igual a 1.")
+    if anomaly_dicts is not None:
+        geojson: Dict[str, Any] = {"type": "FeatureCollection", "features": list(anomaly_dicts)}
+    else:
+        assert source_geojson_path is not None
+        safe_src = _validate_safe_path(
+            source_geojson_path,
+            allowed_roots=_get_allowed_read_roots(),
+            must_exist=True,
+            expect_dir=False,
+            allowed_suffixes=(".geojson", ".json"),
+            is_write=False,
+            missing_prefix="No existe el GeoJSON de candidatos",
+        )
+        geojson = json.loads(safe_src.read_text(encoding="utf-8"))
+
+    discarded: List[Dict[str, Any]] | None = None
+    if discarded_log_path is not None:
+        safe_disc = _validate_safe_path(
+            discarded_log_path,
+            allowed_roots=_get_allowed_read_roots(),
+            must_exist=True,
+            expect_dir=False,
+            allowed_suffixes=(".json",),
+            is_write=False,
+            missing_prefix="No existe la bitácora de descartes",
+        )
+        discarded = json.loads(safe_disc.read_text(encoding="utf-8"))
+
+    validated_output = _validate_safe_path(
+        output_dir if output_dir is not None else str(settings.reports_dir),
+        allowed_roots=_get_allowed_write_roots(),
+        must_exist=False,
+        expect_dir=True,
+        allowed_suffixes=None,
+        is_write=True,
+    )
+
+    chips_validated: Dict[str, List[str]] = {}
+    for uid, chips in (chips_by_candidate or {}).items():
+        safe_chips: List[str] = []
+        for chip in chips:
+            safe_chip = _validate_safe_path(
+                chip,
+                allowed_roots=_get_allowed_read_roots(),
+                must_exist=True,
+                expect_dir=False,
+                allowed_suffixes=(".png", ".jpg", ".jpeg", ".webp"),
+                is_write=False,
+                missing_prefix="No existe el chip de revisión",
+            )
+            safe_chips.append(str(safe_chip))
+        chips_validated[uid] = safe_chips
+
+    worksheet, private_manifest = build_blind_queue_from_geojson(
+        geojson,
+        discarded_log=discarded,
+        min_per_stratum=min_per_stratum,
+        seed=seed,
+        chips_by_candidate=chips_validated,
+        resolution_m=resolution_m,
+        source_label=source_label,
+    )
+    queue_dir, worksheet_path, private_path = write_blind_queue(
+        worksheet, private_manifest, validated_output, chips_by_candidate=chips_validated
+    )
+    return {
+        "status": "success",
+        "queue_dir": str(queue_dir),
+        "review_worksheet_path": str(worksheet_path),
+        "private_manifest_path": str(private_path),
+        "n_casos": len(worksheet["casos"]),
+        "advertencia": (
+            "Entregue al revisor únicamente review_worksheet.json, los chips y la plantilla de acta; "
+            "private_manifest.json permanece bajo custodia del coordinador del protocolo."
+        ),
+    }
 
 
 if __name__ == "__main__":
