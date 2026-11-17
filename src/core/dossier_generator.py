@@ -37,6 +37,50 @@ def _format_scl_counts(scl_counts: Optional[Dict[str, int]]) -> str:
     return "; ".join(parts)
 
 
+def _open_water_signature(
+    stats: Dict[str, Any],
+    scl_counts: Dict[str, int],
+    calib: Dict[str, Any],
+) -> bool:
+    """Determina si el candidato presenta firma de agua abierta en T1 (lectura física, no detección).
+
+    Criterios (umbrales de lectura tomados de los parámetros congelados, sin alterar detección):
+    - `MNDWI_T1` > `flooded_min_t1_mndwi`, o
+    - clase SCL=6 (agua) modal y ≥ 50% del soporte declarado del polígono.
+    """
+    t1_mndwi = stats.get("t1_mndwi_median")
+    min_mndwi = float(calib.get("flooded_min_t1_mndwi", 0.20))
+    mndwi_water = t1_mndwi is not None and float(t1_mndwi) > min_mndwi
+    total_px = sum(int(v) for v in scl_counts.values())
+    water_px = int(scl_counts.get("6", 0))
+    scl_water = (
+        total_px > 0
+        and water_px == max(int(v) for v in scl_counts.values())
+        and water_px >= 0.5 * total_px
+    )
+    return bool(mndwi_water or scl_water)
+
+
+def _b11_low_is_open_water(
+    stats: Dict[str, Any],
+    calib: Dict[str, Any],
+) -> bool:
+    """Verifica si `B11_T1` está por debajo del umbral físico de mineral (lectura, no detección)."""
+    t1_b11 = stats.get("t1_b11_median")
+    min_b11_dn = float(calib.get("dark_water_min_b11_dn", 600.0))
+    return t1_b11 is not None and float(t1_b11) < min_b11_dn
+
+
+def _b11_open_water_note(stats: Dict[str, Any]) -> str:
+    """Nota de lectura física para B11 bajo con agua abierta (regla C2/R3 del protocolo 3.2)."""
+    b11 = stats.get("t1_b11_median")
+    b11_txt = f"{float(b11):,.0f} DN" if b11 is not None else "N/D"
+    return (
+        f"`B11_T1={b11_txt}` (bajo; consistente con absorción de agua abierta en SWIR1, "
+        "no con exposición mineral)"
+    )
+
+
 def generate_candidate_dossier(
     feature: Dict[str, Any],
     detection_metadata: Dict[str, Any],
@@ -302,9 +346,25 @@ def generate_candidate_dossier(
         f"Cambio localizado `{atype}` de {area_m2:,.0f} m² en `{zone}`, `ΔBSI_adj={_fmt_num(db_mean, 3)}`. | "
         f"Resolución SWIR 20 m insuficiente para distinguir acopio mineral de obra civil sin VHR/campo. | `A VERIFICAR EN TERRENO` |"
     )
+    # Regla C2/R3 (protocolo 3.2): si el candidato muestra firma de agua abierta con B11 bajo,
+    # cualquier mención de B11 debe aclarar la absorción SWIR1 y NO debe leerse como suelo expuesto.
+    water_like = _open_water_signature(stats, scl_counts, calib)
+    low_b11 = _b11_low_is_open_water(stats, calib)
+    b11_open_water_note = _b11_open_water_note(stats) if (water_like and low_b11) else ""
+
+    if water_like and low_b11:
+        h2_evidence = (
+            f"{b11_open_water_note} y geometría con elongación `{elong:.2f}`. "
+            "No hay evidencia de suelo expuesto en T1 dentro del polígono."
+        )
+    else:
+        h2_evidence = (
+            f"Incremento de suelo expuesto (`B11_T1={_fmt_num(stats.get('t1_b11_median'), 0)} DN`) "
+            f"y geometría con elongación `{elong:.2f}`."
+        )
     lines.append(
-        "| **H2. Obra civil, camino rural o infraestructura ribereña** | Hipótesis | "
-        f"Incremento de suelo expuesto (`B11_T1={_fmt_num(stats.get('t1_b11_median'), 0)} DN`) y geometría con elongación `{elong:.2f}`. | "
+        f"| **H2. Obra civil, camino rural o infraestructura ribereña** | Hipótesis | "
+        f"{h2_evidence} | "
         "No se dispone de catastro parcelario ni permisos de obra cargados en el sistema. | `NO DESCARTABLE` |"
     )
     hydro_txt = (
@@ -315,16 +375,36 @@ def generate_candidate_dossier(
             else ""
         )
     )
+    h3_uncertainty = (
+        f"El polígono superó filtros de cinturón de crecida, migración dipolar y agua oscura "
+        f"(`B11_T1={_fmt_num(stats.get('t1_b11_median'), 0)}` DN)."
+    )
+    if b11_open_water_note:
+        h3_uncertainty += f" {b11_open_water_note}."
     lines.append(
         f"| **H3. Dinámica fluvial / humedad edáfica / crecida** | Interpretación | "
         f"Contexto hidrométrico: {hydro_txt}. | "
-        f"El polígono superó filtros de cinturón de crecida, migración dipolar y agua oscura (`B11_T1={_fmt_num(stats.get('t1_b11_median'), 0)}`). | `RESIDUAL TRAS FILTROS` |"
+        f"{h3_uncertainty} | `RESIDUAL TRAS FILTROS` |"
     )
+    # Regla C1/R1 (protocolo 3.2): toda advertencia SCL declara su dominio
+    # (fecha × interior-polígono|buffer × resolución). El conteo SCL=7 proviene del interior
+    # del polígono en T1 (grilla 10 m); la adyacencia proviene del buffer de 40 m sobre la
+    # máscara combinada de nubes/sombras de T0 y T1.
+    scl7_interior_txt = f"SCL=7 interior del polígono (T1, 10 m): {scl7_px} px"
+    adjacency_txt = f"adyacencia nube/sombra (buffer ≤ 40 m sobre máscara combinada T0∪T1): `{unc.get('cloud_shadow_adjacent', False)}`"
+    if scl7_px > 0 and unc.get("cloud_shadow_adjacent"):
+        h4_state = "ATENCIÓN: SCL=7 INTERIOR Y ADYACENCIA NUBE/SOMBRA"
+    elif scl7_px > 0:
+        h4_state = "ATENCIÓN: SCL=7 INTERIOR (T1)"
+    elif unc.get("cloud_shadow_adjacent"):
+        h4_state = "ATENCIÓN: ADYACENCIA NUBE/SOMBRA (SIN SCL=7 INTERIOR)"
+    else:
+        h4_state = "SIN INDICIOS"
     lines.append(
         f"| **H4. Artefacto atmosférico / sombra / borde SCL=7** | Interpretación | "
-        f"Píxeles `SCL=7` en T1: {scl7_px}; adyacencia nube/sombra: `{unc.get('cloud_shadow_adjacent', False)}`. | "
+        f"{scl7_interior_txt}; {adjacency_txt}. | "
         f"Fracción de píxeles válidos `{unc.get('valid_pixel_fraction', 'N/D')}`. | "
-        f"{'ATENCIÓN: PRESENCIA SCL=7' if scl7_px > 0 or unc.get('cloud_shadow_adjacent') else 'BAJA PROBABILIDAD'} |"
+        f"`{h4_state}` |"
     )
     lines.append("")
 
@@ -339,7 +419,7 @@ def generate_candidate_dossier(
     lines.append("")
     lines.append("| Dimensión | Medición / Estado |")
     lines.append("| :--- | :--- |")
-    lines.append(f"| **Calidad espectral y máscara SCL** | Fracción válida: `{unc.get('valid_pixel_fraction', 'N/D')}`, adyacencia nube/sombra: `{unc.get('cloud_shadow_adjacent', False)}`, SCL=7: `{scl7_px}` px |")
+    lines.append(f"| **Calidad espectral y máscara SCL** | Fracción válida: `{unc.get('valid_pixel_fraction', 'N/D')}`, adyacencia nube/sombra (buffer ≤ 40 m, T0∪T1): `{unc.get('cloud_shadow_adjacent', False)}`, SCL=7 interior (T1, 10 m): `{scl7_px}` px |")
     lines.append(f"| **Resolución espacial efectiva** | {unc.get('effective_resolution_m', 20.0)} m SWIR (~{swir_px if swir_px is not None else 'N/D'} píxeles SWIR en el polígono) |")
     lines.append(f"| **Estabilidad hidrométrica del tramo** | Variación lámina AOI: `{unc.get('water_stage_delta_pct', 'N/D')}%`; score de confundidores naturales: `{unc.get('natural_dynamics_confounder_score', 'N/D')}` |")
     lines.append(f"| **Persistencia temporal de línea base** | `{unc.get('persistence_scenes_count', 1)}` escena(s) en T0 |")

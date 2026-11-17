@@ -569,7 +569,8 @@ def _polygonize_mask_components(
         ]
         if cloud_adj:
             limitations.append(
-                f"Contorno adyacente a píxeles de nube o sombra en máscara SCL (buffer <= {settings.cloud_shadow_buffer_m:.0f} m)."
+                f"Contorno adyacente (buffer ≤ {settings.cloud_shadow_buffer_m:.0f} m) a píxeles de nube o "
+                "sombra en máscara SCL combinada de T0 y T1."
             )
         if abs(float(hydro_state["water_stage_delta_pct"])) >= settings.water_stage_warning_pct:
             limitations.append(
