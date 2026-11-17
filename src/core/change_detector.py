@@ -339,6 +339,8 @@ def _polygonize_mask_components(
     delta_ndvi: np.ndarray,
     valid_mask: np.ndarray,
     cloud_shadow_dilated: np.ndarray,
+    cloud_shadow_t0_dilated: np.ndarray,
+    cloud_shadow_t1_dilated: np.ndarray,
     hydro_state: Dict[str, Any],
     mndwi_t0: np.ndarray,
     b04_t0: np.ndarray,
@@ -517,6 +519,14 @@ def _polygonize_mask_components(
 
         valid_frac = float(np.mean(valid_mask[poly_mask])) if np.any(poly_mask) else 0.0
         cloud_adj = bool(np.any(cloud_shadow_dilated[poly_mask]))
+        cloud_shadow_source_dates = [
+            date_label
+            for date_label, date_mask in (
+                ("T0", cloud_shadow_t0_dilated),
+                ("T1", cloud_shadow_t1_dilated),
+            )
+            if bool(np.any(date_mask[poly_mask]))
+        ]
 
         # Estadísticas auditables por polígono (medianas por fecha vs medias de delta)
         px_10m = int(np.sum(poly_mask))
@@ -605,6 +615,7 @@ def _polygonize_mask_components(
             effective_resolution_m=effective_res_m,
             valid_pixel_fraction=round(valid_frac, 3),
             cloud_shadow_adjacent=cloud_adj,
+            cloud_shadow_source_dates=cloud_shadow_source_dates,
             water_stage_delta_pct=float(hydro_state["water_stage_delta_pct"]),
             natural_dynamics_confounder_score=round(confounder_score, 3),
             persistence_scenes_count=persistence_count,
@@ -785,7 +796,6 @@ def detect_extraction_anomalies(
     )
 
     combined_valid = t0_base["valid_mask"] & t1_bundle["valid_mask"]
-    combined_cloud_shadow = t0_base["cloud_or_shadow_mask"] | t1_bundle["cloud_or_shadow_mask"]
 
     grid_res_m = float(t1_bundle["grid_resolution_m"])
     swir_native_res_m = float(t1_bundle["swir_native_resolution_m"])
@@ -911,10 +921,15 @@ def detect_extraction_anomalies(
         & (~clearing_flood_excl)
     )
 
-    # Dilatar máscara de nubes/sombras SCL según buffer métrico para registrar adyacencia de incertidumbre
+    # Dilatar máscara de nubes/sombras SCL según buffer métrico para registrar adyacencia de incertidumbre.
+    # La dilatación se aplica por fecha y se combina por unión: dilate(A ∪ B) = dilate(A) ∪ dilate(B),
+    # de modo que `cloud_shadow_dilated` es idéntica a la dilatación de la máscara combinada,
+    # pero permite declarar qué fechas aportan la advertencia (protocolo 3.2 C1).
     buf_px = max(1, int(round(settings.cloud_shadow_buffer_m / max(1.0, grid_res_m))))
     k_buf = np.ones((2 * buf_px + 1, 2 * buf_px + 1), dtype=np.uint8)
-    cloud_shadow_dilated = cv2.dilate(combined_cloud_shadow.astype(np.uint8), k_buf) > 0
+    t0_cloud_dilated = cv2.dilate(t0_base["cloud_or_shadow_mask"].astype(np.uint8), k_buf) > 0
+    t1_cloud_dilated = cv2.dilate(t1_bundle["cloud_or_shadow_mask"].astype(np.uint8), k_buf) > 0
+    cloud_shadow_dilated = t0_cloud_dilated | t1_cloud_dilated
 
     crs_epsg = int(t1_bundle["crs_epsg"])
     transform = t1_bundle["transform"]
@@ -933,6 +948,8 @@ def detect_extraction_anomalies(
         delta_ndvi=delta_ndvi_adj,
         valid_mask=combined_valid,
         cloud_shadow_dilated=cloud_shadow_dilated,
+        cloud_shadow_t0_dilated=t0_cloud_dilated,
+        cloud_shadow_t1_dilated=t1_cloud_dilated,
         hydro_state=hydro_state,
         mndwi_t0=t0_base["mndwi"],
         b04_t0=t0_base["b04"],
@@ -959,6 +976,8 @@ def detect_extraction_anomalies(
         delta_ndvi=delta_ndvi_adj,
         valid_mask=combined_valid,
         cloud_shadow_dilated=cloud_shadow_dilated,
+        cloud_shadow_t0_dilated=t0_cloud_dilated,
+        cloud_shadow_t1_dilated=t1_cloud_dilated,
         hydro_state=hydro_state,
         mndwi_t0=t0_base["mndwi"],
         b04_t0=t0_base["b04"],

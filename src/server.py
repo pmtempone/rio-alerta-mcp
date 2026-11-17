@@ -11,6 +11,7 @@ from fastmcp import FastMCP
 
 from src import __version__
 from src.config import POSGAR_2007_EPSG, PROJECT_ROOT, settings
+from src.core.case_file import build_case_file, write_case_file
 from src.core.case_workflow import CaseWorkflowManager
 from src.core.change_detector import (
     compute_multitemporal_baseline_and_changes,
@@ -423,6 +424,7 @@ _VALID_CASE_STATUSES = {
     "EXCESO_DE_POLIGONO_EN_VERIFICACION",
     "DESCARTADO_DINAMICA_NATURAL",
     "ARCHIVADO_FALSO_POSITIVO",
+    "CAMBIO_REAL_INDETERMINADO",
 }
 _VALID_PRIORITIES = {
     "ALTA_FISCALIZACION_INMEDIATA",
@@ -817,6 +819,67 @@ def tool_manage_case_workflow(
         }
 
     raise ValueError("action inválido. Valores permitidos: 'open', 'append_event', 'get', 'list'.")
+
+
+@mcp.tool()
+def tool_generate_case_file(
+    anomaly_dict: Dict[str, Any],
+    case_id: str | None = None,
+    storage_dir: str | None = None,
+    output_dir: str | None = None,
+    scenes: List[Dict[str, Any]] | None = None,
+    hypotheses: List[Dict[str, str]] | None = None,
+    review: Dict[str, Any] | None = None,
+    verification: Dict[str, Any] | None = None,
+    detection_metadata: Dict[str, Any] | None = None,
+) -> Dict[str, Any]:
+    """Genera la ficha de caso versionada del Protocolo de Validación Independiente (Fase 3.2).
+
+    Materializa el esquema canónico (Apéndice B del protocolo) como `case_file.json` atómico,
+    vinculado al expediente del workflow si se indica `case_id`. Los campos de revisión humana
+    y verificación externa quedan pendientes hasta que la institución los complete; la ficha
+    nunca los fabrica ni declara legalidad.
+    """
+    validated_output: Path = _validate_safe_path(
+        output_dir if output_dir is not None else str(settings.reports_dir),
+        allowed_roots=_get_allowed_write_roots(),
+        must_exist=False,
+        expect_dir=True,
+        allowed_suffixes=None,
+        is_write=True,
+    )
+    validated_storage: Path | None = (
+        _validate_safe_path(
+            storage_dir,
+            allowed_roots=_get_allowed_write_roots(),
+            must_exist=False,
+            expect_dir=True,
+            allowed_suffixes=None,
+            is_write=True,
+        )
+        if storage_dir is not None
+        else None
+    )
+
+    feat = coerce_anomaly_feature(anomaly_dict)
+    case_record = None
+    events = None
+    if case_id:
+        manager = CaseWorkflowManager(storage_dir=validated_storage)
+        case_record, events = manager.get_case(case_id)
+
+    payload = build_case_file(
+        anomaly=feat,
+        case_record=case_record,
+        events=events,
+        scenes=scenes,
+        hypotheses=hypotheses,
+        review=review,
+        verification=verification,
+        detection_metadata=detection_metadata,
+    )
+    out_path = write_case_file(payload, validated_output, feat.id)
+    return {"status": "success", "case_file_path": str(out_path), "ficha_version": payload["ficha_version"]}
 
 
 if __name__ == "__main__":
