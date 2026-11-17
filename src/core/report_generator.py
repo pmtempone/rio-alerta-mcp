@@ -11,11 +11,12 @@ import subprocess
 from datetime import datetime, timezone
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Dict, Optional, Sequence, Union
+from typing import Any, Dict, List, Optional, Sequence, Union
 from uuid import uuid4
 
 from src.config import PROJECT_ROOT, settings
 from src.core.dossier_generator import generate_candidate_dossier
+from src.core.figure_generator import generate_report_figures
 from src.core.permits_validator import validate_anomaly_permits
 from src.core.vlm_judge import evaluate_candidate_vlm_verdict
 from src.schemas import (
@@ -164,12 +165,18 @@ def generate_enforcement_report(
     figure_captions: Optional[Dict[str, str]] = None,
     permits_path: Optional[Union[str, Path]] = None,
     cadastre_metadata: Optional[CadastreMetadata] = None,
+    raster_paths: Optional[Dict[str, Optional[str]]] = None,
+    auto_figures: bool = True,
 ) -> EnforcementReportResult:
     """Emite una generación atómica completa (`report.md`, `report.json`, `manifest.json`).
 
     Estructura de publicación por candidato y generación:
       `<output_dir>/<anomaly_id>/generations/<report_generation_id>/{report.md, report.json, manifest.json}`
       `<output_dir>/<anomaly_id>/current_generation.json`
+
+    Si no se proveen `map_artifacts` y `auto_figures=True`, se generan figuras de análisis
+    (mapa de contexto + chips RGB T0/T1 + comparación, según disponibilidad de rasters) dentro
+    de la propia generación, de modo que el dossier siempre incorpore evidencia visual.
     """
     feat = coerce_anomaly_feature(anomaly)
     queried_at_utc = _utc_now_iso()
@@ -241,6 +248,25 @@ def generate_enforcement_report(
     )
 
     staging_dir.mkdir(parents=True, exist_ok=False)
+
+    # Auto-figuras (protocolo: todo expediente incorpora evidencia visual para su análisis).
+    # Se generan dentro del staging para publicarse atómicamente junto a la generación.
+    figure_rel_names: List[str] = []
+    figure_captions_resolved: Dict[str, str] = dict(figure_captions or {})
+    if not map_artifacts and auto_figures:
+        figures_dir = staging_dir / "figures"
+        fig_paths = generate_report_figures(
+            feat,
+            out_dir=figures_dir,
+            raster_paths=raster_paths,
+            scene_labels={"t0": t0_date, "t1": t1_date},
+        )
+        for fig_path in fig_paths:
+            rel = f"figures/{fig_path.name}"
+            figure_rel_names.append(rel)
+            figure_captions_resolved.setdefault(rel, fig_path.stem.replace("_", " "))
+        map_artifacts = figure_rel_names
+
     try:
         md_content = generate_candidate_dossier(
             feature=feature_dict,
@@ -249,7 +275,7 @@ def generate_enforcement_report(
             period_label=f"{t0_date} -> {t1_date}",
             multitemporal_series=multitemporal_series,
             map_artifacts=map_artifacts,
-            figure_captions=figure_captions,
+            figure_captions=figure_captions_resolved,
             strict_hydrometric_consistency=strict_hydrometric_validation,
             permit_validation=resolved_permits,
             vlm_verdict=resolved_vlm,
@@ -324,6 +350,10 @@ def generate_enforcement_report(
                 "report.json": {"sha256": json_sha256, "bytes": json_bytes},
             },
             "input_hashes": input_hashes,
+            "figures": {
+                rel: {"sha256": _sha256_file(staging_dir / rel), "bytes": (staging_dir / rel).stat().st_size}
+                for rel in figure_rel_names
+            },
         }
         staging_manifest = staging_dir / "manifest.json"
         _write_and_fsync(staging_manifest, json.dumps(manifest_payload, indent=2, ensure_ascii=False))
@@ -371,6 +401,7 @@ def generate_enforcement_report(
         t0_date=t0_date,
         t1_scene_id=t1_scene_id,
         t1_date=t1_date,
+        figure_paths=[str(final_gen_dir / rel) for rel in figure_rel_names],
     )
 
 

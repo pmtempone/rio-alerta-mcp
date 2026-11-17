@@ -533,6 +533,10 @@ class EnforcementReportResult(BaseModel):
     t0_date: str = Field(..., description="Fecha ISO de adquisición de la escena T0.")
     t1_scene_id: str = Field(..., description="ID STAC de la escena actual T1.")
     t1_date: str = Field(..., description="Fecha ISO de adquisición de la escena T1.")
+    figure_paths: List[str] = Field(
+        default_factory=list,
+        description="Rutas de las figuras de análisis incluidas en la generación (mapa de contexto, chips RGB, comparación).",
+    )
 
 
 CaseStatusLiteral = Literal[
