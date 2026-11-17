@@ -1,0 +1,89 @@
+{
+  "audit_target": "RIO-0001",
+  "audit_date_utc": "2026-11-17T21:48:00Z",
+  "producer_commit": "1d13eb7ad9cb22aeb9f5bb78f6ad99293350c2bd",
+  "report_generation_id": "GEN-20261116T220512Z-1e9574ce",
+  "local_artifacts": [
+    {
+      "role": "report_markdown",
+      "path": "data/reports/demo_real/RIO-0001/generations/GEN-20261116T220512Z-1e9574ce/report.md",
+      "sha256": "86414b190bd61441f451720486f7d177693ef6eb6d44b5dd583111666a778a67",
+      "provenance": "local_generation"
+    },
+    {
+      "role": "report_json",
+      "path": "data/reports/demo_real/RIO-0001/generations/GEN-20261116T220512Z-1e9574ce/report.json",
+      "sha256": "a5a8edb2f68e95ebcdb3b296b94d7852c59f1c7925f1898ba43d7e4df6840787",
+      "provenance": "local_generation"
+    },
+    {
+      "role": "report_manifest",
+      "path": "data/reports/demo_real/RIO-0001/generations/GEN-20261116T220512Z-1e9574ce/manifest.json",
+      "sha256": "e3b1fc6cce4abc834fe366435a64c259d6caabdcdddac7b47831e3cab464f4ae",
+      "provenance": "local_generation"
+    },
+    {
+      "role": "t0_vnir_10m",
+      "path": "data/experiments/exp_002_validation/rasters/aoi1/t0_S2B_20HQK_20230928_0_L2A_vnir10m.tif",
+      "sha256": "30d86808537373c11141770c22c9c68b8e21122ef86811b5fdcf816354f0c696",
+      "provenance": "exp_002_validation_aoi1",
+      "date": "2023-09-28",
+      "crs": "EPSG:5347"
+    },
+    {
+      "role": "t0_swir_scl_20m",
+      "path": "data/experiments/exp_002_validation/rasters/aoi1/t0_S2B_20HQK_20230928_0_L2A_swir_scl20m.tif",
+      "sha256": "598cc18d30188887bd3e91651e7e439b0d45cf8501a2055b6abbe336224eb848",
+      "provenance": "exp_002_validation_aoi1",
+      "date": "2023-09-28",
+      "crs": "EPSG:5347"
+    },
+    {
+      "role": "t1_vnir_10m",
+      "path": "data/experiments/exp_002_validation/rasters/aoi1/t1_S2C_20HQK_20260917_0_L2A_vnir10m.tif",
+      "sha256": "aae944edd95fe3b97de4ed151f6cd24b580d9b5d14907ea748592e1900f30b05",
+      "provenance": "exp_002_validation_aoi1",
+      "date": "2026-09-17",
+      "crs": "EPSG:5347"
+    },
+    {
+      "role": "t1_swir_scl_20m",
+      "path": "data/experiments/exp_002_validation/rasters/aoi1/t1_S2C_20HQK_20260917_0_L2A_swir_scl20m.tif",
+      "sha256": "efef7300036e3292ce136ea00f60f9855c769cee030a6e792d38967a0297fbe7",
+      "provenance": "exp_002_validation_aoi1",
+      "date": "2026-09-17",
+      "crs": "EPSG:5347"
+    }
+  ],
+  "external_stac_scenes_consulted": [
+    {
+      "scene_id": "S2A_20HQK_20241116_0_L2A",
+      "date": "2024-11-16",
+      "cloud_cover_pct": 0.003215,
+      "source": "Earth Search STAC (https://earth-search.aws.element84.com/v1)"
+    },
+    {
+      "scene_id": "S2B_20HQK_20251126_1_L2A",
+      "date": "2025-11-26",
+      "cloud_cover_pct": 0.78323,
+      "source": "Earth Search STAC (https://earth-search.aws.element84.com/v1)"
+    }
+  ],
+  "unavailable_or_failed_sources": [
+    {
+      "source": "OpenStreetMap Overpass API",
+      "status": "HTTP 406 Not Acceptable",
+      "impact": "Sin verificación automática de caminos/parcelas OSM en buffer de 500 m."
+    },
+    {
+      "source": "Catastro oficial provincial / concesiones mineras",
+      "status": "NO_DISPONIBLE (sin archivo local ni endpoint público consultable)",
+      "impact": "No es posible confirmar ni descartar autorización administrativa."
+    },
+    {
+      "source": "Imágenes VHR (< 1 m)",
+      "status": "NO_DISPONIBLE en fuentes públicas abiertas consultadas",
+      "impact": "No es posible observar maquinaria, taludes rectilíneos ni huellas de camiones."
+    }
+  ]
+}

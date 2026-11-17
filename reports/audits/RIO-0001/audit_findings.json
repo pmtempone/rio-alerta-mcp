@@ -1,0 +1,32 @@
+{
+  "anomaly_id": "RIO-0001",
+  "final_classification": "INDETERMINADO",
+  "legal_determination": false,
+  "reproducibility_verified": true,
+  "geometry_check": {
+    "area_m2_reported": 5065.02,
+    "area_m2_recomputed_epsg5347": 5065.02,
+    "centroid_posgar_reported": [5441127.25, 6488813.89],
+    "centroid_posgar_recomputed": [5441127.25, 6488813.89],
+    "centroid_wgs84": [-60.621284, -31.739658]
+  },
+  "change_reality": {
+    "is_real_territorial_change": true,
+    "is_persistent": true,
+    "chronology": "Vegetación firme en 2023-09-28 (NDVI +0.5287, MNDWI -0.2619) -> transición a superficie inundada/agua abierta desde 2024-11-16 (MNDWI +0.1901) y consolidación en 2025-11-26 (MNDWI +0.3705) y 2026-09-17 (MNDWI +0.4999, B11 248.4 DN)."
+  },
+  "scl7_contradiction_finding": {
+    "section_5_t1_scl7_pixels": 0,
+    "t0_scl7_pixels_20m": 4,
+    "t1_40m_buffer_scl7_pixels_20m": 2,
+    "root_cause": "La Sección 5 del dossier reporta únicamente t1_scl_counts dentro del polígono (0 píxeles SCL=7 en T1), mientras que la advertencia de proximidad/presencia SCL=7 proviene de T0 (4/16 píxeles 20m) y del buffer de 40 m en T1 (2 píxeles SCL=7 y 5 píxeles SCL=2)."
+  },
+  "b11_240_dn_interpretation": "B11=240 DN en T1 NO indica exposición mineral ni arena seca; refleja absorción fuerte de agua abierta en SWIR1, coherente con MNDWI=+0.4964, NDVI=-0.4257 y SCL=6 (agua).",
+  "hypotheses": {
+    "H1_extraccion_aridos": "PLAUSIBLE_NO_CONFIRMADA",
+    "H2_obra_civil_infraestructura": "BAJA_PLAUSIBILIDAD_SIN_VHR",
+    "H3_dinamica_fluvial_erosion_inundacion": "PLAUSIBLE_NO_CONFIRMADA",
+    "H4_variacion_estacional": "DESCARTADA_COMO_CAUSA_UNICA (cambio persiste 2024-2026)",
+    "H5_artefacto_satelital": "DESCARTADA (cambio consistente en 4 escenas independientes 2023-2026)"
+  }
+}

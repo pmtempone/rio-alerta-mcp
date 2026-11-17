@@ -1,0 +1,102 @@
+{
+  "meta_audit_version": "phase3.2.p0.v1",
+  "audit_dir": "/Users/pablotempone/rio-alerta-mcp/reports/audits/RIO-0001",
+  "verified_at_utc": "2026-11-17T22:26:28+00:00",
+  "summary": {
+    "PASS": 12,
+    "WARN": 1,
+    "MANUAL": 2
+  },
+  "results": [
+    {
+      "check": "M1",
+      "target": "data/reports/demo_real/RIO-0001/generations/GEN-20261116T220512Z-1e9574ce/report.md",
+      "status": "PASS",
+      "detail": "SHA-256 verificado (86414b190bd61441…)."
+    },
+    {
+      "check": "M1",
+      "target": "data/reports/demo_real/RIO-0001/generations/GEN-20261116T220512Z-1e9574ce/report.json",
+      "status": "PASS",
+      "detail": "SHA-256 verificado (a5a8edb2f68e95eb…)."
+    },
+    {
+      "check": "M1",
+      "target": "data/reports/demo_real/RIO-0001/generations/GEN-20261116T220512Z-1e9574ce/manifest.json",
+      "status": "PASS",
+      "detail": "SHA-256 verificado (e3b1fc6cce4abc83…)."
+    },
+    {
+      "check": "M1",
+      "target": "data/experiments/exp_002_validation/rasters/aoi1/t0_S2B_20HQK_20230928_0_L2A_vnir10m.tif",
+      "status": "PASS",
+      "detail": "SHA-256 verificado (30d86808537373c1…)."
+    },
+    {
+      "check": "M1",
+      "target": "data/experiments/exp_002_validation/rasters/aoi1/t0_S2B_20HQK_20230928_0_L2A_swir_scl20m.tif",
+      "status": "PASS",
+      "detail": "SHA-256 verificado (598cc18d30188887…)."
+    },
+    {
+      "check": "M1",
+      "target": "data/experiments/exp_002_validation/rasters/aoi1/t1_S2C_20HQK_20260917_0_L2A_vnir10m.tif",
+      "status": "PASS",
+      "detail": "SHA-256 verificado (aae944edd95fe3b9…)."
+    },
+    {
+      "check": "M1",
+      "target": "data/experiments/exp_002_validation/rasters/aoi1/t1_S2C_20HQK_20260917_0_L2A_swir_scl20m.tif",
+      "status": "PASS",
+      "detail": "SHA-256 verificado (efef7300036e3292…)."
+    },
+    {
+      "check": "M1",
+      "target": "manifest.json",
+      "status": "PASS",
+      "detail": "report_generation_id consistente."
+    },
+    {
+      "check": "R5",
+      "target": "spectral_audit_metrics.json",
+      "status": "WARN",
+      "detail": "Provenance metodológica incompleta (hallazgo documentado M3-1 del protocolo): faltan claves ['compute_method', 'resampling', 'count_domain', 'source_sha256'] (ejemplo: 'S2B_20HQK_20230928_0_L2A'); no queda acreditado con qué código ni remuestreo se calcularon los índices, por lo que la independencia metodológica es parcial."
+    },
+    {
+      "check": "M2",
+      "target": "S2A_20HQK_20241116_0_L2A",
+      "status": "PASS",
+      "detail": "Fecha confirmada en STAC (2024-11-16). Nubosidad consistente (0.0032%)."
+    },
+    {
+      "check": "M2",
+      "target": "S2B_20HQK_20230928_0_L2A",
+      "status": "PASS",
+      "detail": "Fecha confirmada en STAC (2023-09-28)."
+    },
+    {
+      "check": "M2",
+      "target": "S2B_20HQK_20251126_1_L2A",
+      "status": "PASS",
+      "detail": "Fecha confirmada en STAC (2025-11-26). Nubosidad consistente (0.7832%)."
+    },
+    {
+      "check": "M2",
+      "target": "S2C_20HQK_20260917_0_L2A",
+      "status": "PASS",
+      "detail": "Fecha confirmada en STAC (2026-09-17)."
+    },
+    {
+      "check": "M5",
+      "target": "AUDIT_*.md",
+      "status": "MANUAL",
+      "detail": "Mapeo afirmación→fuente: revisión manual asistida."
+    },
+    {
+      "check": "M6",
+      "target": "AUDIT_*.md + pending_verifications.md",
+      "status": "MANUAL",
+      "detail": "Limitaciones materiales documentadas: revisión manual (resolución, catastro, OSM, VHR)."
+    }
+  ]
+}

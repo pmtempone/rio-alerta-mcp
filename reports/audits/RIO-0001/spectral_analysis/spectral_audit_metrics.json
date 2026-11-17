@@ -1,0 +1,53 @@
+[
+  {
+    "date": "2023-09-28 (T0)",
+    "scene_id": "S2B_20HQK_20230928_0_L2A",
+    "ndvi_median": 0.5287,
+    "mndwi_median": -0.2619,
+    "bsi_median": -0.1398,
+    "b11_median_dn": 1087.2,
+    "scl_10m_counts": {
+      "4": 22,
+      "5": 19,
+      "7": 16
+    }
+  },
+  {
+    "date": "2024-11-16",
+    "scene_id": "S2A_20HQK_20241116_0_L2A",
+    "ndvi_median": -0.2487,
+    "mndwi_median": 0.1901,
+    "bsi_median": 0.1202,
+    "b11_median_dn": 525.9,
+    "scl_10m_counts": {
+      "4": 1,
+      "5": 26,
+      "6": 13,
+      "7": 7
+    }
+  },
+  {
+    "date": "2025-11-26",
+    "scene_id": "S2B_20HQK_20251126_1_L2A",
+    "ndvi_median": -0.3221,
+    "mndwi_median": 0.3705,
+    "bsi_median": 0.0771,
+    "b11_median_dn": 420.3,
+    "scl_10m_counts": {
+      "5": 43,
+      "7": 4
+    }
+  },
+  {
+    "date": "2026-09-17 (T1)",
+    "scene_id": "S2C_20HQK_20260917_0_L2A",
+    "ndvi_median": -0.415,
+    "mndwi_median": 0.4999,
+    "bsi_median": 0.0927,
+    "b11_median_dn": 248.4,
+    "scl_10m_counts": {
+      "5": 13,
+      "6": 44
+    }
+  }
+]
