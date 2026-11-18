@@ -6,7 +6,7 @@ import os
 import tempfile
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Tuple, cast
+from typing import Any, Dict, List, Optional, Tuple, cast
 
 from fastmcp import FastMCP
 
@@ -615,8 +615,15 @@ def tool_generate_enforcement_report(
     authority_name: str | None = None,
     source_reference: str | None = None,
     strict_hydrometric_validation: bool = False,
+    t0_vnir_10m_path: str | None = None,
+    t1_vnir_10m_path: str | None = None,
 ) -> Dict[str, Any]:
-    """Genera el dossier Markdown de 9 secciones y el expediente JSON reproducible en generación atómica."""
+    """Genera el dossier Markdown de 9 secciones y el expediente JSON reproducible en generación atómica.
+
+    Si no se proveen figuras y se indican `t0_vnir_10m_path`/`t1_vnir_10m_path` (o aun sin rasters),
+    el expediente incorpora automáticamente sus figuras de análisis (mapa de contexto, chips RGB y
+    comparación multitemporal) con hashes en el manifest.
+    """
     _validate_iso_date(t0_date, "t0_date")
     _validate_iso_date(t1_date, "t1_date")
     if cadastre_status not in _VALID_CADASTRE_STATUSES:
@@ -664,6 +671,23 @@ def tool_generate_enforcement_report(
         if case_storage_dir is not None
         else None
     )
+
+    validated_rasters: Dict[str, Optional[str]] = {}
+    for label, raw in (("t0", t0_vnir_10m_path), ("t1", t1_vnir_10m_path)):
+        if raw is None:
+            validated_rasters[label] = None
+            continue
+        validated_rasters[label] = str(
+            _validate_safe_path(
+                raw,
+                allowed_roots=_get_allowed_read_roots(),
+                must_exist=True,
+                expect_dir=False,
+                allowed_suffixes=(".tif", ".tiff"),
+                is_write=False,
+                missing_prefix=f"No existe el raster VNIR {label}",
+            )
+        )
 
     settings.ensure_directories()
     feat = coerce_anomaly_feature(anomaly_dict)
@@ -714,6 +738,7 @@ def tool_generate_enforcement_report(
         strict_hydrometric_validation=strict_hydrometric_validation,
         permits_path=validated_permits,
         cadastre_metadata=meta,
+        raster_paths=validated_rasters,
     )
     return report.model_dump()
 
